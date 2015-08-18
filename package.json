@@ -1,0 +1,45 @@
+{
+  "name": "mercury-cfrp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack-dev-server --hot --inline --history-api-fallback",
+    "build": "webpack -p",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "babel": "^5.8.21",
+    "babel-core": "^5.5.8",
+    "babel-loader": "^5.1.4",
+    "css-loader": "^0.15.1",
+    "express": "^4.13.3",
+    "json-loader": "^0.5.2",
+    "node-libs-browser": "^0.5.2",
+    "style-loader": "^0.12.3",
+    "webpack": "^1.9.11",
+    "webpack-dev-server": "^1.9.0"
+  },
+  "dependencies": {
+    "d3": "^3.5.6",
+    "dom-delegator": "^13.1.0",
+    "geval": "^2.1.1",
+    "main-loop": "^3.1.0",
+    "mercury": "^14.0.0",
+    "mercury-router": "^1.0.7",
+    "object-assign": "^3.0.0",
+    "observ": "^0.2.0",
+    "observ-array": "^3.2.1",
+    "observ-struct": "^6.0.0",
+    "querystring": "^0.2.0",
+    "queue-async": "^1.0.7",
+    "value-event": "^5.1.0",
+    "vdom": "0.0.22",
+    "vdom-thunk": "^3.0.0",
+    "virtual-hyperscript": "^4.6.0",
+    "vtree": "0.0.22",
+    "xtend": "^4.0.0"
+  }
+}
