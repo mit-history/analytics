@@ -26,6 +26,7 @@
     "d3": "^3.5.6",
     "dom-delegator": "^13.1.0",
     "geval": "^2.1.1",
+    "global": "^4.3.0",
     "main-loop": "^3.1.0",
     "mercury": "^14.0.0",
     "mercury-router": "^1.0.7",

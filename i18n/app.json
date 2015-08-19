@@ -1,0 +1,12 @@
+{ "en":
+  { "dot1" : "Crosstab",
+    "dot2" : "Crosstab + Calendar",
+    "dot3" : "Calendar + Register"
+  },
+
+  "fr": 
+  { "dot1" : "Tableau croisé",
+    "dot2" : "Tableau croisé + Calendrier",
+    "dot3" : "Calendrier + Registre"
+  }
+}

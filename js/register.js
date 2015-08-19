@@ -1,3 +1,5 @@
+require('../css/register.css')
+
 var hg = require('mercury')
 var h = require('mercury').h
 

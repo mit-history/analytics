@@ -1,9 +1,6 @@
-// var document = require('global/document');
+var document = require('global/document');
 var hg = require('mercury')
 var h = require('mercury').h
-
-var RouterComponent = require('mercury-router')
-var Router = RouterComponent
 
 var App = require('./js/app')
 

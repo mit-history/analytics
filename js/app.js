@@ -1,4 +1,5 @@
-// var document = require('global/document');
+require('../css/app.css')
+
 var hg = require('mercury')
 var h = require('mercury').h
 
@@ -14,6 +15,8 @@ var Register = require('./register')
 var datapoint = require('./utils/datapoint')
 
 var assign = require('object-assign')
+
+const msgs = require("json!../i18n/app.json")
 
 const DATE_NAME = 'day'
 const VALUE_NAME = 'sum_receipts'
@@ -101,11 +104,13 @@ App.sel_dates = function(state, range) {
 App.focus_cell = function(state, new_focus) {
   console.log("Setting new focus: " + JSON.stringify(new_focus))
   state.focus_cell.set(new_focus)
+  Carousel.setSlide(state.carousel, 1)
 }
 
 App.focus_day = function(state, new_day) {
   console.log("Setting new day: " + new_day)
   state.focus_day.set(new_day)
+  Carousel.setSlide(state.carousel, 2)
 }
 
 App.focus_theater = function(state, new_theater) {
@@ -113,6 +118,7 @@ App.focus_theater = function(state, new_theater) {
   var filter = state.query.filter
   var new_filter = assign(filter, { theater_period: new_theater })
   state.query.filter.set(new_filter)
+  Carousel.setSlide(state.carousel, 1)
 }
 
 App.openModal = function(state, modal) {
@@ -138,15 +144,21 @@ App.render = function(state) {
   }
 
   function render_i18n(lang) {
+    var i18n = msgs[lang]
+    var panes = [ {start: 0, run: 1, title: i18n.dot1 },
+                  {start: 0, run: 2, title: i18n.dot2 },
+                  {start: 1, run: 2, title: i18n.dot3 }]
     return h('div', [
              h('div.lang', [ "Language is " + lang ]),
              h('div.modal', [ String("Current modal: " + (state.modal || "none")) ]),
-             hg.partial(Carousel.render, state.carousel),
-             hg.partial(Query.render, state.query),
-             hg.partial(Crosstab.render, state),
-             hg.partial(Calendar.render, state),
-             String("Current register page: " + state.focus_day),
-             hg.partial(Register.render, state.register)
+             Carousel.render(state.carousel, panes, [
+               h('div.crosstab', [
+                 hg.partial(Query.render, state.query),
+                 hg.partial(Crosstab.render, state)
+               ]),
+               hg.partial(Calendar.render, state),
+               hg.partial(Register.render, state.register)
+             ])
            ])
   }
 }
