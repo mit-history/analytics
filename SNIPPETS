@@ -1,0 +1,101 @@
+
+<script>
+
+/*
+        // event dispatching
+
+        var datapoint_dispatch = d3.dispatch("change", "refine");
+        d3.rebind(cfrp, datapoint_dispatch, "on", "refine", "dispatch");
+        d3.rebind(cfrp, datapoint_dispatch, "on", "change", "dispatch");
+
+        //
+        // state
+        //
+
+
+        var default_query = {
+            filter: {},
+            rows: [ 'auteur' ],
+            cols: [ 'saison' ],
+            agg: 'somme(recette)'
+          };
+
+        //
+        // listen for changes in the model (internal events) or the url (external events)
+        //
+
+        cfrp.cur_query = function() {
+          var dim_names = d3.keys(cfrp.dimension()),
+              agg_names = d3.keys(cfrp.aggregate());
+
+          var query = mdat.router.parse_url(window.location.href, dim_names, agg_names, default_query);
+
+          return query;
+        }
+
+        cfrp.on("refine.mdat", function(query) {
+          var url = mdat.router.url(query);
+          history.pushState(null, "", url);
+        });
+
+        window.onpopstate = function(event) {
+          var query = cfrp.cur_query();
+          cfrp.refine(query);
+          cfrp.change();
+        };
+*/
+        //
+        // initialize visualization components
+        //
+/*
+        var pivot = mdat.visualization.pivot_table()
+                      .datapoint(cfrp),
+            calendar = mdat.visualization.calendar()
+                         .datapoint(cfrp),
+            register = mdat.visualization.register()
+                         .datapoint(cfrp);
+            query = mdat.visualization.query()
+                      .datapoint(cfrp)
+                      .dimensions(d3.keys(pivot.dimension()))
+                      .aggregates(d3.keys(pivot.aggregate()))
+                      .formats(pivot.format());
+
+
+        d3.select("#report_panel")
+          .call(pivot);
+
+        d3.select("#calendar_panel")
+          .call(calendar);
+
+        d3.select("#register_panel")
+          .call(register);
+
+        d3.select("#query_panel")
+          .call(query);
+
+*/
+
+    /*
+    //
+    // inter-component communication, not mirrored in URLs
+    //
+
+    calendar.on("preview", function(date) {
+      register.preview(date);
+    });
+    // TODO. remove & find a proper initialisation order
+    register.preview(fr_FR.timeFormat("%Y-%m-%d").parse("1773-04-19"));
+
+    //
+    // fire initial update to parse urls
+    //
+
+    cfrp.refine(cfrp.cur_query());
+    cfrp.change();
+
+    // remove loading spinner
+
+    d3.select("body")
+      .classed("setup", false);
+    */
+  </script>

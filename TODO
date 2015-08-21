@@ -1,0 +1,124 @@
+TODO
+====
+
+- start at query/aggregate
+- restructure query & focus state into stores
+
+- day click should switch to calendar + register DONE
+- selection box
+- draggable handles on selection box
+- make calendar invert use drawing scale
+-
+- i18n in calendar                               DONE
+- tooltips with actual data
+- tooltips near rect (not mouse)                 DONE
+- animation: focus / context
+- theater rules                                  DONE
+- currently selected day                         DONE
+
+- draggable margins for crosstab table           DONE
+- prettier crosstab axes on scale
+- bounded dragging for crosstab table
+- carousel: crosstab / crosstab + calendar / calendar + register  DONE
+- bounded dragging for register
+- graph mode for pivot columns
+
+- january appearing out of order                 DONE
+- loading spinner in react                       DONE
+- handle case where an axis is unset             DONE
+- reformat the dimension selector
+- formatting of 'date du piece'                  NOT TO DO
+- boolean dimensions repeat 'non'                DONE
+- check the back button                          DONE
+
+- requires / forbids relationships between dims
+- authors out of order                           DONE
+- playbill 1-5 badly formatted
+- signal when loading
+- ordering and formatting domains                DONE
+- natural order for some dimensions (weekday)    DONE
+- filtering on formatted values doesnt work      DONE
+- cells need to be formatted                     DONE
+- better url grooming
+
+- formatting for all dimensions in client        DONE
+- set border based on size of domains
+
+- url doesn't include filter
+  [ move routing to separate file ]
+- reading from url is broken                     DONE
+- webpack breaking unicode in css                DONE
+- use a compile regexp in the search widget
+
+- node api install/configuration in jekyll       DONE
+- react updating correctly                       DONE
+- graph layout indents for hierarchy             DONE
+- server loads from postgres
+- seating categories with n/a value              NOT NECESSARY
+- formatting for the obscure categories          DONE
+
+- use webpack for css too?                       DONE
+- move spinner into react
+
+- feed from a proper star schema [dimensions]
+  * date
+  * seating category
+  * performance[n]
+  * play[m]
+
+- fix urls
+- modals in right place, truly modal
+- subtotals below/after their children
+  [ mouseover to group visually ]
+- move data to server                            DONE
+- refining on numerical values isn't working     DONE
+
+- toggle ordering by alpha or value
+- adding new searches (via autocomplete)         DONE
+- subtotals for nested queries
+-   (don't show enclosing category)
+- scrolling (only in table; headers track)
+- drag and drop reorder for categories
+- size svg correctly                             DONE
+- activate measures other than count of days     DONE
+
+- adjust size of header & cell spacing?
+
+- not adding a row when button clicked           DONE
+- not loading register page at beginning         DONE
+
+- calendar selection shown in toolbox & url
+- back button not working reliably               DONE
+
+- click & drag to set calendar selection         DONE
+- highlight current register page                DONE
+
+- loading signal                                 DONE
+- make sure filters are being applied            DONE
+- pivot table & calendar not connected           DONE
+- fix css for pivot (see green lis)              DONE
+- layout with small CFRP stamp on right          DONE
+- bin list for rows + cols + agg                 DONE
+- + / - for bin list                             DONE
+- pulldown to select categories                  DONE
+
+- drag and drop to reorder categories
+- nice CSS styling for table
+
+- labels for calendar months
+- subscript play data fields
+- order weekdays logically
+- sorting results by measure
+
+- scroll gesture on calendar
+- calendar selection via opacity
+- multiple calendar selections?
+
+- compact calendar configuration
+- pivot columns
+
+FIXES
+=====
+- boolean categories not filtering properly
+- filter values containing '&' truncated
+- check URL keys against dimensions & aggs

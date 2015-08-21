@@ -1,0 +1,63 @@
+/*
+* Data analytics aggregation server + javascript pivot browser for CFRP
+*
+* Copyright (c) 2015 MIT Hyperstudio
+* Christopher York, 06/2015
+*
+*/
+
+Tooling for npm + webpack + react is a little incoherent.  Here is a cheatsheet for myself:
+
+
+-- local development mode:
+
+$ npm start       # start the API server locally
+$ npm run dev     # start the client UI locally
+
+Browse to http://localhost:8080/development.html.  The client constructs the API url at http://localhost:5000.
+
+
+-- staging (heroku) mode:
+
+$ git push heroku master
+
+Browse to http://cfrp-analytics.herokuapp.com.  The client constructs the API url via window.location.
+
+
+-- production (heroku+jekyll) mode (API via CORS):
+
+$ git push heroku master              # starts API at http://cfrp-analytics.herokuapp.com/api/cfrp
+$ npm run build
+$ cp build/*.js ../cfrp-website/app   # moves the distribution bundles into the host app
+
+The host HTML should be modified to something like this:
+
+<body>
+<div id="app" data-analytics="http://cfrp-analytics.herokuapp.com/api/cfrp"></div>
+<script src="bundle.js?a35ce6b1fd66c5cb565c209e8d347341"></script>
+</body>
+
+
+
+
+-- start a local analytics API server:
+
+npm start
+
+-- run a local hot-swap react server for development: [ assumes local API server ]
+
+npm run dev
+
+-- build a CFRP client in ./build [ assumes API server on heroku ]
+
+npm run build
+# then to put in website: cp build/*.js ../cfrp-web/app
+
+-- build and run the UI in heroku (not in jekyll website)
+
+git push heroku master    # this runs webpack in postinstall
+                          # and babel-node via Procfile
+
+
+NB.  Remember that node will serve build/bundle.js before anything else, so clean it out
+during development!

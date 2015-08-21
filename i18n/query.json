@@ -22,7 +22,7 @@
     "title": "Title",
     "genre": "Genre",
     "acts": "Acts",
-    "pros_vers": "Prose/Verse",
+    "prose_vers": "Prose/Verse",
 
     "prologue": "Prolog",
     "musique_danse_machine": "Music/Dance/Machinery",
@@ -68,7 +68,7 @@
     "title": "Pièce",
     "genre": "Genre",
     "acts": "Acte(s)",
-    "pros_vers": "Prose/Vers",
+    "prose_vers": "Prose/Vers",
 
     "prologue": "Prologue",
     "musique_danse_machine": "Musique/Danse/Machine",

@@ -8,7 +8,7 @@
 
 const d3 = require('d3')
 
-import {fr_spec} from './js/utils/i18n'
+import {fr_spec} from './js/i18n'
 
 const subscript = (range, items) => {
   var result = range.map( (i) => items.map( (item) => item + "_" + i ) )

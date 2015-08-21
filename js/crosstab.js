@@ -1,4 +1,10 @@
-require('../css/crosstab.css')
+/*
+* Main CFRP application component
+*
+* Copyright (c) 2015 MIT Hyperstudio
+* Christopher York, 06/2015
+*
+*/
 
 var hg = require('mercury')
 var h = require('mercury').h

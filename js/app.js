@@ -1,3 +1,12 @@
+/*
+* MDAT Calendar component
+*
+* Copyright (c) 2015 MIT Hyperstudio
+* Christopher York, 08/2015
+*
+*/
+
+
 require('../css/app.css')
 
 var hg = require('mercury')
@@ -12,7 +21,7 @@ var Crosstab = require('./crosstab')
 var Calendar = require('./calendar')
 var Register = require('./register')
 
-var datapoint = require('./utils/datapoint')
+var datapoint = require('./datapoint')
 
 var assign = require('object-assign')
 
@@ -39,9 +48,10 @@ function App(url, initial_query) {
             focus_day: hg.value(null),
             register: Register(),
 // data loaded from server
-            theater_data: hg.array([]), // should be initialized once, at load
             calendar_data: hg.array([]),
             cube_data: hg.array([]),
+            domains_data: hg.struct({}),
+            theater_data: hg.array([]), // should be initialized once, at load
 // global state transitions
             channels: {
               sel_dates: App.sel_dates,
@@ -51,6 +61,7 @@ function App(url, initial_query) {
             }
           })
     state.query(loadCube)
+    state.query(loadDomains)
     state.cube_data(alignFocus)
     state.focus_cell(loadCalendar)
 
@@ -58,6 +69,7 @@ function App(url, initial_query) {
     state.focus_day( (date) => Register.setDate(state.register, url, date) )
 
     loadCube()
+    loadDomains()
     loadTheaters()
 
   return state
@@ -69,6 +81,20 @@ function App(url, initial_query) {
     api.summarize(axes, query.agg, query.filters, function(err, data) {
       if (err) { throw err}
       state.cube_data.set(data)
+    })
+  }
+
+  function loadDomains() {
+    var query = state.query()
+    var active_dims = [].concat(query.rows).concat(query.cols)
+    active_dims.forEach( (dim) => {
+      if(!state.domains_data()[dim]) {
+        api.domain(dim, (vals) => {
+          vals.sort()
+          // TODO.  not clear that this will trigger observers for new keys
+          state.domains_data.set(dim, vals)
+        })
+      }
     })
   }
 

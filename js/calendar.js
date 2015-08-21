@@ -1,11 +1,21 @@
+/*
+* MDAT Calendar component
+*
+* Copyright (c) 2015 MIT Hyperstudio
+* Christopher York, 04/2015
+*
+*/
+
+
+
 require('../css/calendar.css')
 
 var hg = require('mercury')
 var h = require('mercury').h
 
-var d3 = require('d3')
+var d3_time_format = require('d3-time-format')
 
-const format = d3.time.format("%Y-%m-%d");
+const format = d3_time_format.format("%Y-%m-%d")
 
 function Calendar() {
   return null

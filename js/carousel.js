@@ -1,3 +1,12 @@
+/*
+* MDAT Carousel component
+*
+* Copyright (c) 2015 MIT Hyperstudio
+* Christopher York, 07/2015
+*
+*/
+
+
 require('../css/carousel.css')
 
 var hg = require('mercury')
