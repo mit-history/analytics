@@ -12,87 +12,23 @@ require('../css/register.css')
 var hg = require('mercury')
 var h = require('mercury').h
 
+var extend = require('xtend');
+
 var d3 = require('d3')
 
 const format = d3.time.format("%Y-%m-%d");
-
-/*
-* Canvas-backed image viewer, with internal zoom and pan via d3
-*
-*/
-
-function ImageWidget(url) {
-  if (!(this instanceof ImageWidget)) {
-    return new ImageWidget(url)
-  }
-  this.url = url
-}
-
-ImageWidget.prototype.type = 'Widget'
-
-ImageWidget.prototype.draw = function(canvas) {
-  var context = canvas.getContext('2d')
-  var scale = this.zoom.scale()
-  var [ trans_x, trans_y ] = this.zoom.translate()
-
-  context.save()
-  context.clearRect(0, 0, canvas.width, canvas.height)
-  context.translate(trans_x, trans_y)
-  context.scale(scale, scale)
-  context.drawImage(this.image, 0, 0, this.image.width, this.image.height,
-                                0, 0, this.image.width, this.image.height)
-  context.translate(-trans_x, -trans_y)
-  context.restore()
-}
-
-ImageWidget.prototype.loadIndicator = function(canvas) {
-  var context = canvas.getContext('2d')
-  context.save()
-  context.fillStyle = 'rgba(255,255,255,0.2)'
-  context.fillRect(0, 0, canvas.width, canvas.height)
-  context.restore()
-}
-
-ImageWidget.prototype.init = function() {
-  var canvas = document.createElement('canvas')
-
-  canvas.style.width = "100%"
-  canvas.style.width = "100%"
-  console.log("created widget, with url " + JSON.stringify(this.url))
-
-  this.image = new Image()
-
-  if (this.url) {
-    this.image.onload = () => { this.draw(canvas) }
-    this.image.src = this.url
-  }
-
-  return canvas
-}
-
-ImageWidget.prototype.update = function(prev, canvas) {
-  this.image = this.image || prev.image
-  this.zoom = this.zoom || prev.zoom ||
-    d3.behavior.zoom()
-      .on('zoom', () => this.draw(canvas) )
-
-  if(this.url !== prev.url) {
-    if (prev.url) { this.loadIndicator(canvas) }
-    // must redeclare onload to capture new value of "this"
-    this.image.onload = () => { this.draw(canvas) }
-    this.image.src = this.url
-
-    d3.select(canvas).call(this.zoom)
-  }
-}
 
 // Register component proper
 
 function Register() {
   return hg.state({
     url: hg.value(null),
+    scale: hg.value(1.0),
+    translate: hg.value([0,0]),
     channels: {
-      setDate: Register.setDate
+      setDate: Register.setDate,
+      setScale: setScale,
+      setTranslate: setTranslate
     }
   })
 }
@@ -104,9 +40,55 @@ Register.setDate = function(state, url, date) {
   })
 }
 
+function setScale(state, new_scale) {
+  state.scale.set(new_scale)
+}
+
+function setTranslate(state, new_translate) {
+  state.translate.set(new_translate)
+}
+
+// Pipe DOM-side event handling through D3 to a custom event
+
+function ZoomHook(scale, translate) {
+  this.scale = scale
+  this.translate = translate
+}
+
+// pity to have to use a global... but mercury proxies the event, stripping all info
+var zoom_stats = {}
+
+ZoomHook.prototype.hook = function (elem, prop) {
+  elem.setAttribute(prop, 'transform: scale(' + this.scale + '); transform-origin: 0px 0px')
+  var zoom = d3.behavior.zoom()
+    .scaleExtent([0, 1.0])
+    .scale(this.scale)
+    .translate(this.translate)
+    .on('zoom', () => {
+      // create a custom event wrapper to dispatch to the DOM element
+      zoom_stats = { scale: zoom.scale(), translate: zoom.translate() }
+      elem.dispatchEvent(new Event('zoom'))
+    })
+  d3.select(elem).call(zoom)
+}
+
+hg.Delegator().listenTo('zoom')
+
+
+// Rendering for Register
+
 Register.render = function(state) {
+
+  var scaleEvent = hg.BaseEvent(handleScale)
+  function handleScale(ev, broadcast) {
+    broadcast(zoom_stats.scale)
+  }
+
   return (
-    h('div.register', [ ImageWidget(state.url) ])
+    h('img', { src: state.url,
+               style: new ZoomHook(state.scale, state.translate),
+               'ev-zoom': scaleEvent(state.channels.setScale)
+             }, [])
   )
 }
 
