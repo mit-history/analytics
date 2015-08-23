@@ -8,7 +8,7 @@ TODO
 - selection box
 - draggable handles on selection box
 - make calendar invert use drawing scale
--
+
 - i18n in calendar                               DONE
 - tooltips with actual data
 - tooltips near rect (not mouse)                 DONE

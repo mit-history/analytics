@@ -8,6 +8,8 @@
 
 const d3 = require('d3')
 
+const h = require('mercury').h
+
 var fr_spec = {
   decimal: ",",
   thousands: ".",
@@ -40,4 +42,15 @@ var en_spec = {
 }
 var en = d3.locale(en_spec)
 
-export {fr, fr_spec, en, en_spec}
+function htmlize(msgs, s, lang) {
+  if (!msgs[lang]) { throw "Unknown language (" + lang + ")" }
+
+  var m = /(.*?)(_\d+)?$/.exec(s)
+  var stem = m[1]
+  stem = msgs[lang][stem] || stem
+  s = stem + (m[2] || "")
+  return h('span', [ s ])
+  // return s.replace(/_(\d+)$/, (match, p1) => "<sub>&nbsp;" + p1 + "</sub>" );
+}
+
+export {fr, fr_spec, en, en_spec, htmlize}

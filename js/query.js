@@ -14,6 +14,10 @@ var h = require('mercury').h
 
 const msgs = require("json!../i18n/query.json")
 
+var Aggregate = require('./aggregate')
+var Axis = require('./axis')
+
+
 function strMatch(s, p) {
   s = ("" + s).toLowerCase()
   p = ("" + p).toLowerCase()
@@ -32,40 +36,23 @@ function htmlize(s, lang) {
   return {__html: s.replace(/_(\d+)$/, (match, p1) => "<sub>&nbsp;" + p1 + "</sub>" ) };
 }
 
-/** Axis selector **/
-
-function Axis() {
-  return null
-}
-
-Axis.render = function(state) {
-  return ""
-}
-
-/** Aggregate selector **/
-
-function Aggregate() {
-  return null
-}
-
-Aggregate.render = function(state, name) {
-  return name
-}
 
 /** Query selector as a whole **/
 
 function Query() {
-  return null
+  return hg.state({
+    axis: Axis()
+  })
 }
 
-Query.render = function(state) {
+Query.render = function(state, lang) {
 //  return h('div.query', [ String("Current query: " + JSON.stringify(state)) ])
 
   return (
     h('div.query', {id: 'query_panel'}, [
-      Axis.render(state.query, 'rows'),
-      Axis.render(state.query, 'cols'),
-      Aggregate.render(state.query)
+      Axis.render(state, 'rows', lang),
+      Axis.render(state, 'cols', lang),
+      Aggregate.render(state, lang)
     ]))
 /*
       <Axis className="rows" axis="rows" title={i18n.rows}

@@ -33,31 +33,42 @@ const VALUE_NAME = 'sum_receipts'
 function App(url, initial_query) {
   var api = datapoint(url)
   var state = hg.state({
+
+// component state
             route: Router(),
             modal: hg.value(null),
             carousel: Carousel(),
-            query: hg.struct({
+            query_component: Query(),
+            register: Register(),
+
+// global state
+//            query: hg.value(initial_query),
+            query: hg.varhash({
               rows: hg.array(initial_query.rows),
               cols: hg.array(initial_query.cols),
               agg: hg.value(initial_query.agg),
               order: hg.struct(initial_query.order),
-              filter: hg.struct(initial_query.filter)
+              filter: hg.varhash(initial_query.filter)
             }),
             sel_dates: hg.value([]),
             focus_cell: hg.value({}),
             focus_day: hg.value(null),
-            register: Register(),
+
 // data loaded from server
             calendar_data: hg.array([]),
             cube_data: hg.array([]),
-            domains_data: hg.struct({}),
+            domains_data: hg.varhash({}),
             theater_data: hg.array([]), // should be initialized once, at load
+
 // global state transitions
             channels: {
+              set_query: App.set_query,
+              toggle_filter: App.toggle_filter,
               sel_dates: App.sel_dates,
               focus_cell: App.focus_cell,
               focus_day: App.focus_day,
-              focus_theater: App.focus_theater
+              focus_theater: App.focus_theater,
+              toggle_modal: App.toggle_modal
             }
           })
     state.query(loadCube)
@@ -92,7 +103,7 @@ function App(url, initial_query) {
         api.domain(dim, (vals) => {
           vals.sort()
           // TODO.  not clear that this will trigger observers for new keys
-          state.domains_data.set(dim, vals)
+          state.domains_data.put(dim, vals)
         })
       }
     })
@@ -119,8 +130,34 @@ function App(url, initial_query) {
       state.theater_data.set(data)
     })
   }
-
 }
+
+// query manipulation
+
+App.set_query = function(state, new_query) {
+  console.log('setting query: ' + JSON.stringify(new_query))
+  state.query.set(new_query)
+}
+
+App.toggle_filter = function(state, data) {
+
+  var [ dim, d ] = [ data.dimension, data.value ]
+  var sv = state.query.filter.get(dim)
+
+  console.log('toggling filter: ' + dim + '.' + d + ' from ' + JSON.stringify(sv))
+
+  var j = sv.indexOf(d)
+
+  if (j > -1) { sv.splice(j, 1) }
+  else { sv.push(d) }
+  sv.sort()
+
+  console.log('new values: ' + JSON.stringify(sv))
+
+  state.query.filter.put(dim, sv)
+}
+
+// focus changes
 
 App.sel_dates = function(state, range) {
   console.log("Setting new date selection: " + range.join(' - '))
@@ -147,9 +184,14 @@ App.focus_theater = function(state, new_theater) {
   Carousel.setSlide(state.carousel, 1)
 }
 
-App.openModal = function(state, modal) {
-  state.modal.set(modal)
+App.toggle_modal = function(state, modal) {
+  var prev = state.modal()
+  var next = (modal !== prev) ? modal : null
+
+  state.modal.set(next)
 }
+
+// rendering
 
 App.render = function(state) {
   return RouterComponent.render(state, {
@@ -179,7 +221,7 @@ App.render = function(state) {
              h('div.modal', [ String("Current modal: " + (state.modal || "none")) ]),
              Carousel.render(state.carousel, panes, [
                h('div.crosstab', [
-                 hg.partial(Query.render, state.query),
+                 hg.partial(Query.render, state, lang),
                  hg.partial(Crosstab.render, state)
                ]),
                hg.partial(Calendar.render, state),

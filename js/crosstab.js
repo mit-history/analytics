@@ -22,10 +22,13 @@ Crosstab.render = function(state) {
          ])
   function renderCell(d) {
     var focus_target = assign({}, d)
-    delete focus_target['sum_receipts']
+    var agg = state.query.agg
+
+    delete focus_target[agg]
+
     return h('span.agg', {
              'ev-click': hg.send(state.channels.focus_cell, focus_target)
-           }, [ String(Math.round(d.sum_receipts)) + ", " ])
+           }, [ String(d3.round(d[agg])) + ", " ])
   }
 }
 
