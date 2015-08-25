@@ -77,8 +77,16 @@ GraphWidget.prototype.init = function() {
       .attr('width', 550)
   var svg = graph.append('svg')
     .attr('width', 550)
-  svg.append('g')
-    .classed('foreground', true)
+  var foreground = svg.append('g')
+      .classed('foreground', true)
+      .attr('transform', 'translate(' + margins.left + ',' + margins.top + ')')
+  var periods = foreground.append('g')
+      .classed('periods', true)
+      .attr('transform', 'translate(' + (59 * cellSize) + ',0)')
+  var x_axis = foreground.append('g')
+      .classed('x axis', true)
+  var y_axis = foreground.append('g')
+      .classed('y axis', true)
 
   this.listen(elem)
 
@@ -210,7 +218,7 @@ GraphWidget.prototype.update = function(prev, elem) {
 
   seasons.forEach( (season) => {
     ctx.save()
-    ctx.translate(margins.left, margins.top + y(season))
+    ctx.translate(margins.left, margins.top + Math.round( y(season) ))
 
     var x = (date) => weeksOffset(season, date) * cellSize
 
@@ -263,85 +271,113 @@ GraphWidget.prototype.update = function(prev, elem) {
       throw "Unkown mode " + mode;
     }
 
-    // y axis
-
-    var y_label = yearRange(season.getFullYear(), season.getFullYear()+1)
-    ctx.translate(margins.left - 36, Math.round( cellSize * 7 / 2.0) )
-    ctx.rotate(-Math.PI/2.0)
-    ctx.fillStyle = "black"
-    ctx.textBaseline="bottom";
-    ctx.textAlign = "center"
-    ctx.fillText(y_label, 0, 0)
-
     ctx.restore()
   })
 
-  // selected date
+  ctx.restore()
 
-  d3.select(".calendar svg")
-    .select(".foreground")
-    .attr("transform", "translate(" + margins.left + "," + margins.top + ")")
+  // svg layer
 
-    var circle = d3.select(".calendar svg")
-        .selectAll("circle")
-      .data(this.focus_day ? [this.focus_day] : [])
+  var svg = d3.select(elem)
+    .select('svg .foreground')
+      .attr("transform", "translate(" + margins.left + "," + margins.top + ")")
 
-    circle.exit().remove()
-    circle.enter()
-      .append('circle')
-      .attr("r", 5)
-      .attr("stroke", "red")
-      .attr("stroke-width", 1.5)
-      .attr("fill", "none")
+  // focused date
 
-    circle
-      .attr("cx", (d) => Math.round( margins.left + weeksOffset(easter(d), d) * cellSize + 4) )
-      .attr("cy", (d) => Math.round( margins.top + y(easter(d)) + +day(d) * cellSize + 4) )
+  var circle = svg.selectAll("circle.focus")
+    .data(this.focus_day ? [this.focus_day] : [])
 
-  // periods
+  circle.exit().remove()
+  circle.enter()
+    .append('circle')
+    .classed('focus', true)
+    .attr("r", 5)
+    .attr("stroke", "red")
+    .attr("stroke-width", 1.5)
+    .attr("fill", "none")
 
-  ctx.translate(margins.left + 59 * cellSize, margins.top)
-  ctx.strokeStyle = 'black'
+  circle
+    .attr("cx", (d) => weeksOffset(easter(d), d) * cellSize + 4)
+    .attr("cy", (d) => y(easter(d)) + +day(d) * cellSize + 4)
 
-  d3.keys(this.theater_data).forEach( (name) => {
-    ctx.save()
+  // theater periods
+
+  var theater_extents = (name) => {
     var theater = this.theater_data[name]
     var start_season = easter(theater.start_date)
     var end_season = easterCeiling(theater.end_date)
-    var path = new Path2D()
-    var yStart = Math.round( y(start_season) )
-    path.lineWidth = 1
-    path.moveTo(0, yStart)
-    path.lineTo(cellSize * 2, yStart)
-    path.moveTo(cellSize, yStart)
-    path.lineTo(cellSize, Math.round(y(end_season) - cellSize * 3))
-    path.lineTo(0, Math.round(y(end_season) - cellSize * 2))
-    ctx.stroke(path)
 
-    ctx.textAlign = "left"
-    ctx.translate(cellSize * 2, y(start_season) + cellSize)
-    ctx.rotate(Math.PI / 2.0)
-    ctx.fillText(name, 0, 0)
-    ctx.restore()
-  })
+    return { top : Math.round( y(start_season) ),
+             bottom : Math.round( y(end_season) - cellSize * 2 ) }
+  }
 
-  ctx.restore()
+  var period = svg.select('.periods')
+    .selectAll('.period')
+      .data(d3.keys(this.theater_data))
 
-  // axes
+  var period_g = period.enter().append("g")
+      .classed("period", true)
+    .attr('transform', (name) => 'translate(0,' + theater_extents(name).top + ')')
+    .on('click', (d) => alert('selected ' + d))
 
-  var months = d3.time.months( new Date(seasons[0].getFullYear(), 3, 1),
-                               new Date(seasons[0].getFullYear()+1, 4, 1) )
+  period_g
+    .append('path')
+      .attr('d', period_path)
+      .attr('stroke', 'black')
+      .attr('fill', 'transparent')
 
-  ctx.save()
-  ctx.translate(margins.left, margins.top)
-  ctx.fillStyle = "black"
-  ctx.textAlign = "left"
-  months.forEach( (d) => {
-    ctx.fillText(xAxisFormat(d), +weeksOffset(seasons[0], d) * cellSize + cellSize * 2, -9)
-  })
-  ctx.restore()
+  period_g
+    .append("text")
+      .attr("dy", "-1.5em")
+      .attr("dx", "1em")
+      .attr("transform", "rotate(90)")
+      .style("text-anchor", "start")
+      .text( (name) => name )
 
-  ctx.restore()
+  function period_path(name) {
+    var { top, bottom } = theater_extents(name)
+    var height = bottom - top
+    return 'M0,0h' + cellSize * 2 + 'h' + -cellSize +
+           'V' + (height - cellSize) +
+           'L0,' + height
+  }
+
+  // x axis
+
+  var months_extent = d3.time.months( new Date(seasons[0].getFullYear(), 3, 1),
+                                      new Date(seasons[0].getFullYear()+1, 4, 1) )
+
+  var month = svg.select('.axis.x')
+    .selectAll('.month')
+      .data(months_extent)
+
+  month.enter()
+    .append('text')
+      .classed('month', true)
+      .attr('x', (d) => +weeksOffset(seasons[0], d) * cellSize + cellSize * 2, -9)
+      .attr('dy', '-1em')
+      .text(xAxisFormat)
+
+  // y axis
+
+  var all_years = d3.range(data_extent[0].getFullYear(), data_extent[1].getFullYear())
+
+  var year = svg.select('.axis.x')
+    .selectAll('.year')
+      .data(all_years, (x) => x)
+
+  year.exit().remove()
+  year.enter()
+    .append('g')
+      .classed('year', true)
+    .append('text')
+      .attr('dy', '-1em')
+      .attr('transform', 'rotate(-90)')
+      .attr('text-anchor', 'middle')
+    .text( (year) => yearRange(year, year+1))
+
+  year
+    .attr('transform', (year) => 'translate(0,' + Math.round( y(easterForYear(year)) + (cellSize * 7) / 2.0) + ')')
 }
 
 function Calendar() {
@@ -351,8 +387,9 @@ function Calendar() {
 Calendar.render = function(state, lang) {
   var sendDay = hg.BaseEvent(function(ev, broadcast) {
     var date = pointToDate(ev, state.calendar_extent)
-    console.log(date)
-    broadcast(assign(this.data, { date: date }))
+    if(date) {
+      broadcast(assign(this.data, { date: date }))
+    }
   })
 
   return (
