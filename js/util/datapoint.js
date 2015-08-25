@@ -6,6 +6,8 @@
 *
 */
 
+const schema = require('../../cfrp-schema')
+
 const d3 = require('d3');  // solely for ajax
 
 const qs = require('querystring');
@@ -14,11 +16,16 @@ function datapoint(datapoint_url) {
 
   datapoint_url = datapoint_url || "/api/cfrp";
 
+  // TODO.  change these calls to Javascript promises
+
   return {
     domain: (dim, fn) => {
       d3.csv(datapoint_url + "/aggregate/default.csv?" + qs.stringify({'axis[]': dim}), (error, data) => {
         if (error) { return console.error(error); }
-        else { fn(data.map( (d) => d[dim] )); }
+        else {
+          data = data.map( (d) => schema.parse(dim)(d[dim]) )
+          fn(data)
+        }
       });
     },
 
@@ -29,7 +36,17 @@ function datapoint(datapoint_url) {
           params['filter.' + dim + '[]'] = filters[dim];
       }
 
-      d3.csv(datapoint_url + "/aggregate/" + encodeURIComponent(agg) + ".csv?" + qs.stringify(params), fn);
+      d3.csv(datapoint_url + "/aggregate/" + encodeURIComponent(agg) + ".csv?" + qs.stringify(params), (error, data) => {
+        if(data) {
+          data = data.map( (d) => {
+            for(var key in d) {
+              d[key] = schema.parse(key)(d[key])
+            }
+            return d
+          })
+        }
+        fn(error, data)
+      });
     }
   }
 }

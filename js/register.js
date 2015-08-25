@@ -110,8 +110,12 @@ function Register() {
 }
 
 Register.setDate = function(state, url, date) {
+  date = format(date)
   d3.text(url + '/image?date=' + date, (err, data) => {
-    if (err) throw err
+    if (err) {
+      data = null
+      console.log(error)
+    }
     state.url.set(data)
   })
 }

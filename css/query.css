@@ -147,7 +147,7 @@
 .query .dimensionSelector .subscripts:hover .dimension:not(:first-child) {
   display: block;
   position: relative;
-  padding-left: 15px;
+  margin-left: 10px;
 }
 
 .query .dimensionSelector .dimension {
@@ -164,13 +164,16 @@
   border-radius: 7.5px;
 }
 
+.query .dimension {
+  padding: 2px 10px 2px 10px !important;
+}
 
 .query .dropdown button,
 .query .grouping li {
-  margin: 4px;
   position: relative;
   display: inline-block;
-  padding: 5px 10px 5px 10px;
+/*  padding: 5px 10px 5px 10px; */
+  margin: 0;
   background: #fece3c;
   border-radius: 25px;
 }
@@ -267,8 +270,14 @@
 .query .filter input[type='submit'] {
   border: 1px lightgray solid;
   padding: 0;
+  margin-top: 2px;
   padding-bottom: 10px;
   padding-top: 5px;
   background: white;
-  width: 50%;
+  color: black;
+  width: 33%;
+}
+
+.query .filter button::after {
+  content: '';
 }

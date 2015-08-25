@@ -15,20 +15,25 @@ var h = require('mercury').h
 var RouterComponent = require('mercury-router')
 var Router = RouterComponent
 
+var Modal = require('./modal')
 var Carousel = require('./carousel')
 var Query = require('./query')
 var Crosstab = require('./crosstab')
 var Calendar = require('./calendar')
 var Register = require('./register')
 
-var datapoint = require('./datapoint')
+var datapoint = require('./util/datapoint')
 
 var assign = require('object-assign')
+
+var queue = require('queue-async')
 
 const msgs = require("json!../i18n/app.json")
 
 const DATE_NAME = 'day'
 const VALUE_NAME = 'sum_receipts'
+
+const dateIndexFormat = d3.time.format('%Y-%m-%d')
 
 function App(url, initial_query) {
   var api = datapoint(url)
@@ -36,12 +41,14 @@ function App(url, initial_query) {
 
 // component state
             route: Router(),
-            modal: hg.value(null),
+            modal: Modal(),
             carousel: Carousel(),
-            query_component: Query(),
             register: Register(),
 
 // global state
+            query: Query(initial_query),
+
+/*
 //            query: hg.value(initial_query),
             query: hg.varhash({
               rows: hg.array(initial_query.rows),
@@ -50,20 +57,19 @@ function App(url, initial_query) {
               order: hg.struct(initial_query.order),
               filter: hg.varhash(initial_query.filter)
             }),
+*/
             sel_dates: hg.value([]),
             focus_cell: hg.value({}),
             focus_day: hg.value(null),
 
 // data loaded from server
-            calendar_data: hg.array([]),
+            calendar_data: hg.value([]),
+            calendar_extent: hg.value(null),
             cube_data: hg.array([]),
-            domains_data: hg.varhash({}),
-            theater_data: hg.array([]), // should be initialized once, at load
+            theater_data: hg.value([]), // should be initialized once, at load
 
 // global state transitions
             channels: {
-              set_query: App.set_query,
-              toggle_filter: App.toggle_filter,
               sel_dates: App.sel_dates,
               focus_cell: App.focus_cell,
               focus_day: App.focus_day,
@@ -72,7 +78,6 @@ function App(url, initial_query) {
             }
           })
     state.query(loadCube)
-    state.query(loadDomains)
     state.cube_data(alignFocus)
     state.focus_cell(loadCalendar)
 
@@ -80,7 +85,6 @@ function App(url, initial_query) {
     state.focus_day( (date) => Register.setDate(state.register, url, date) )
 
     loadCube()
-    loadDomains()
     loadTheaters()
 
   return state
@@ -95,20 +99,6 @@ function App(url, initial_query) {
     })
   }
 
-  function loadDomains() {
-    var query = state.query()
-    var active_dims = [].concat(query.rows).concat(query.cols)
-    active_dims.forEach( (dim) => {
-      if(!state.domains_data()[dim]) {
-        api.domain(dim, (vals) => {
-          vals.sort()
-          // TODO.  not clear that this will trigger observers for new keys
-          state.domains_data.put(dim, vals)
-        })
-      }
-    })
-  }
-
   function alignFocus() {
     var cube_data = state.cube_data()
     var focus_cell = state.focus_cell()
@@ -118,43 +108,41 @@ function App(url, initial_query) {
   function loadCalendar() {
     // presumes access to state... seems bad
     state.calendar_data.set([])
-    api.summarize([DATE_NAME], VALUE_NAME, state.focus_cell(), function(err, data) {
+    api.summarize([DATE_NAME], VALUE_NAME, state.focus_cell(), function(err, raw_data) {
       if (err) { throw err }
+      var data = Object.create({})
+      raw_data.forEach( (d) => {
+        var day = d[DATE_NAME]
+        data[day] = d[VALUE_NAME]
+      })
       state.calendar_data.set(data)
+      // NB this works because the date format sorts alphanumerically
+      var min_max = d3.extent(d3.keys(data))
+      state.calendar_extent.set(min_max)
     })
   }
 
   function loadTheaters() {
-    api.summarize([ 'theater_period' ], 'min(date)', {}, function(err, data) {
-      if (err) { throw err; }
-      state.theater_data.set(data)
-    })
+    queue().defer(api.summarize, [ 'theater_period' ], 'min(date)', {})
+           .defer(api.summarize, [ 'theater_period' ], 'max(date)', {})
+    .await( (err, theater_mins, theater_maxes) => {
+      if(err) throw err
+      var data = Object.create({})
+        theater_mins.forEach( (d) => {
+          var key = d['theater_period']
+          var val = d['min(date)']
+          data[key] = { start_date: dateIndexFormat.parse(val) }
+        })
+
+        theater_maxes.forEach( (d) => {
+          var key = d['theater_period']
+          var val = d['max(date)']
+          data[key].end_date = dateIndexFormat.parse(val)
+        })
+
+        state.theater_data.set(data)
+      })
   }
-}
-
-// query manipulation
-
-App.set_query = function(state, new_query) {
-  console.log('setting query: ' + JSON.stringify(new_query))
-  state.query.set(new_query)
-}
-
-App.toggle_filter = function(state, data) {
-
-  var [ dim, d ] = [ data.dimension, data.value ]
-  var sv = state.query.filter.get(dim)
-
-  console.log('toggling filter: ' + dim + '.' + d + ' from ' + JSON.stringify(sv))
-
-  var j = sv.indexOf(d)
-
-  if (j > -1) { sv.splice(j, 1) }
-  else { sv.push(d) }
-  sv.sort()
-
-  console.log('new values: ' + JSON.stringify(sv))
-
-  state.query.filter.put(dim, sv)
 }
 
 // focus changes
@@ -170,8 +158,9 @@ App.focus_cell = function(state, new_focus) {
   Carousel.setSlide(state.carousel, 1)
 }
 
-App.focus_day = function(state, new_day) {
-  console.log("Setting new day: " + new_day)
+App.focus_day = function(state, data) {
+  var new_day = data.date
+  console.log("Setting focus day: " + new_day)
   state.focus_day.set(new_day)
   Carousel.setSlide(state.carousel, 2)
 }
@@ -221,10 +210,10 @@ App.render = function(state) {
              h('div.modal', [ String("Current modal: " + (state.modal || "none")) ]),
              Carousel.render(state.carousel, panes, [
                h('div.crosstab', [
-                 hg.partial(Query.render, state, lang),
+                 hg.partial(Query.render, state.modal, state.query, lang),
                  hg.partial(Crosstab.render, state)
                ]),
-               hg.partial(Calendar.render, state),
+               hg.partial(Calendar.render, state, lang),
                hg.partial(Register.render, state.register)
              ])
            ])

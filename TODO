@@ -1,14 +1,16 @@
 TODO
 ====
 
-- start at query/aggregate
-- restructure query & focus state into stores
-
-- day click should switch to calendar + register DONE
+- CSV downloads
+- click on theater name
+- legend for calendar
+- calendar shows current query
 - selection box
 - draggable handles on selection box
-- make calendar invert use drawing scale
 
+- day click should switch to calendar + register DONE
+
+- make calendar invert use drawing scale
 - i18n in calendar                               DONE
 - tooltips with actual data
 - tooltips near rect (not mouse)                 DONE
@@ -20,7 +22,7 @@ TODO
 - prettier crosstab axes on scale
 - bounded dragging for crosstab table
 - carousel: crosstab / crosstab + calendar / calendar + register  DONE
-- bounded dragging for register
+- bounded dragging for register                  DONE
 - graph mode for pivot columns
 
 - january appearing out of order                 DONE

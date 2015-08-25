@@ -8,7 +8,7 @@
 
 const d3 = require('d3')
 
-import {fr_spec} from './js/i18n'
+import {fr_spec, fr, en_spec, en} from './js/util/i18n'
 
 const subscript = (range, items) => {
   var result = range.map( (i) => items.map( (item) => item + "_" + i ) )
@@ -22,7 +22,8 @@ const schema = {
     [ "decade",
       "season",
       "month",
-      "day",
+// TODO.  day yields 40,000 results -- query latency unacceptable
+//      "day",
       "weekday" ],
   performance:
     subscript(playbills,
@@ -30,7 +31,7 @@ const schema = {
       "title",
       "genre",
       "acts",
-      "pros_vers" ]),
+      "prose_vers" ]),
   performance_addl:
     subscript(playbills,
     [ "prologue",
@@ -54,22 +55,6 @@ const public_aggregates = [
   "mean_receipts_day",
   "mean_price" ]
 
-const formats = {
-  fr: {
-    weekday: (i) => (i === null) ? "" : fr_spec.days[i-1]
-  },
-  en: {
-    weekday: (i) => (i === null) ? "" : fr_spec.days[i-1]
-  }
-}
-
-function boolfmt(b, t, f) {
-  if (b === true) { return t; }
-  if (b === false) { return f; }
-  if (b === "undefined") { return ""; }
-  return b;
-}
-
 function group() {
   return schema
 }
@@ -82,8 +67,98 @@ function aggregate() {
   return public_aggregates
 }
 
-function format(field) {
-  return (x) => "" + x
+function parse(field) {
+  // only necessary for non-text fields received via AJAX/CSV
+  switch(true) {
+    case /^decade(_.*)?/.test(field):
+      return parseInt
+    case /^month(_.*)?/.test(field):
+      return parseInt
+    case /^weekday(_.*)?/.test(field):
+      return parseInt
+    case /^acts(_.*)?/.test(field):
+      return parseInt
+    case /^prologue(_.*)?/.test(field):
+      return parseBool
+    case /^musique_danse_machine(_.*)?/.test(field):
+      return parseBool
+    case /^free_entry(_.*)?/.test(field):
+      return parseBool
+    case /^reprise(_.*)?/.test(field):
+      return parseBool
+    case /^firstrun(_.*)?/.test(field):
+      return parseBool
+
+    // aggregates
+    case /sum_receipts/.test(field):
+      return parseFloat
+    case /performances_days/.test(field):
+      return parseInt
+    case /mean_receipts_day/.test(field):
+      return parseFloat
+    case /mean_price/.test(field):
+      return parseFloat
+  }
+  return (x) => x
+
+  function parseBool(s) {
+    switch(s) {
+      case 't': return true
+      case 'f': return false
+      default: return null
+    }
+  }
 }
 
-export { group, dimension, aggregate, format };
+function format(lang, field) {
+  // TODO logic could be clearer... some much easier in ruby
+  //      lets us use the same logic for both languages
+
+  var spec = (lang === 'en') ? en_spec : fr_spec
+  var fmt = (lang === 'en') ? en : fr
+
+  switch(true) {
+
+    // dimensions
+    case /^month(_.*)?/.test(field):
+    // NB. months and weekdays are kept in 1-indexed format (like postgresql; unlike javascript)
+      return (i) => (i === null) ? "" : spec.months[+i-1]
+    case /^day(_.*)?/.test(field):
+      return fmt.timeFormat("%a %d %b %Y")
+    case /^weekday(_.*)?/.test(field):
+    // NB. months and weekdays are kept in 1-indexed format (like postgresql; unlike javascript)
+      return (i) => (i === null) ? "" : spec.days[+i-1]
+    case /^prologue(_.*)?/.test(field):
+      return formatBool
+    case /^musique_danse_machine(_.*)?/.test(field):
+      return formatBool
+    case /^free_entry(_.*)?/.test(field):
+      return formatBool
+    case /^reprise(_.*)?/.test(field):
+      return formatBool
+    case /^firstrun(_.*)?/.test(field):
+      return formatBool
+
+    // aggregates
+    case /sum_receipts/.test(field):
+      return fmt.numberFormat(",.2f")
+    case /performances_days/.test(field):
+      return fmt.numberFormat(",.0f")
+    case /mean_receipts_day/.test(field):
+      return fmt.numberFormat(",.2f")
+    case /mean_price/.test(field):
+      return fmt.numberFormat(",.2f")
+  }
+
+//  return (x) => x ? ("*** " + x) : ""
+  return (x) => x ? ("" + x) : ""
+
+  function formatBool(b) {
+    if (b === true) { return lang === 'en' ? 'yes' : 'oui' }
+    if (b === false) { return lang === 'en' ? 'no' : 'non' }
+    if (b === "undefined") { return ""; }
+    return b;
+  }
+}
+
+export { group, dimension, aggregate, parse, format };

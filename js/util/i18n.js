@@ -45,12 +45,12 @@ var en = d3.locale(en_spec)
 function htmlize(msgs, s, lang) {
   if (!msgs[lang]) { throw "Unknown language (" + lang + ")" }
 
-  var m = /(.*?)(_\d+)?$/.exec(s)
+  var m = /(.*?)_?(\d+)?$/.exec(s)
   var stem = m[1]
   stem = msgs[lang][stem] || stem
-  s = stem + (m[2] || "")
-  return h('span', [ s ])
-  // return s.replace(/_(\d+)$/, (match, p1) => "<sub>&nbsp;" + p1 + "</sub>" );
+  var sub = m[2]
+
+  return h('span', [ stem, sub ? h('sub', [ sub ]) : null ])
 }
 
 export {fr, fr_spec, en, en_spec, htmlize}
