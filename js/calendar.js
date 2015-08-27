@@ -23,6 +23,8 @@ const datapoint = require('./util/datapoint')
 
 const assign = require('object-assign')
 
+const Status = require('./status')
+
 const cellSize = 8
 const timeFormat = d3.time.format
 const numberFormat = d3.format
@@ -192,8 +194,6 @@ GraphWidget.prototype.update = function(prev, elem) {
     .domain( d3.values(this.calendar_data) )
 
   var dayColor = (d, blur) => {
-    var bisect = d3.bisector( (d) => d.day ).right;
-
     var s = dateIndexFormat(d)
     var d = this.calendar_data[s]
 
@@ -237,7 +237,7 @@ GraphWidget.prototype.update = function(prev, elem) {
         var se = this.sel_dates
         var sel = !se || (se[0] < d && d < se[1])
 
-        ctx.fillStyle = dayColor(d, false)//!sel)
+        ctx.fillStyle = dayColor(d, !sel)
         ctx.fillRect(rx, ry, cellSize, cellSize)
       })
 
@@ -385,6 +385,37 @@ function Calendar() {
 }
 
 Calendar.render = function(state, lang) {
+
+  var dragDateExtent = hg.BaseEvent(function (ev, broadcast) {
+    // @see https://github.com/Raynos/mercury/blob/master/examples/geometry/lib/drag-handler.js
+    var data = this.data
+    var del = hg.Delegator()
+
+    var startDate = pointToDate(ev, state.calendar_extent)
+
+    function onmove(ev2) {
+      var endDate = pointToDate(ev2, state.calendar_extent)
+      var msg = { startDate: startDate, endDate: endDate }
+      ev2.preventDefault()
+
+      broadcast(assign(data, msg))
+    }
+
+    function onup(ev2) {
+      del.unlistenTo('mousemove')
+      del.removeGlobalEventListener('mousemove', onmove)
+      del.removeGlobalEventListener('mouseup', onup)
+
+      ev2.preventDefault()
+    }
+
+    ev.preventDefault()
+
+    del.listenTo('mousemove')
+    del.addGlobalEventListener('mousemove', onmove)
+    del.addGlobalEventListener('mouseup', onup)
+  })
+
   var sendDay = hg.BaseEvent(function(ev, broadcast) {
     var date = pointToDate(ev, state.calendar_extent)
     if(date) {
@@ -393,11 +424,13 @@ Calendar.render = function(state, lang) {
   })
 
   return (
-    h('div.calendar', {
-      'ev-click' : sendDay(state.channels.focus_day)
-    }, [
-      new GraphWidget(state.calendar_data, state.theater_data, state.calendar_extent, state.sel_dates, state.focus_day, 'focus', lang)
-    ])
+      h('div.calendar', {
+        'ev-click' : sendDay(state.channels.focus_day),
+        'ev-mousedown' : dragDateExtent(state.channels.sel_dates)
+      }, [
+        Status.render(state, lang),
+        new GraphWidget(state.calendar_data, state.theater_data, state.calendar_extent, state.sel_dates, state.focus_day, 'focus', lang)
+      ])
   )
 }
 

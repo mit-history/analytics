@@ -1,6 +1,10 @@
 TODO
 ====
 
+- check that date ranges limit analytics
+- debounce date range changes
+
+- sel dates in the database query
 - CSV downloads
 - click on theater name
 - legend for calendar

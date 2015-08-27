@@ -93,7 +93,8 @@ function App(url, initial_query) {
     state.cube_data.set([])
     var query = state.query()
     var axes = [].concat(query.rows).concat(query.cols)
-    api.summarize(axes, query.agg, query.filters, function(err, data) {
+    var day_window = state.sel_dates ? { day : state.sel_dates } : {}
+    api.summarize(axes, query.agg, query.filters, day_window, function(err, data) {
       if (err) { throw err}
       state.cube_data.set(data)
     })
@@ -108,7 +109,8 @@ function App(url, initial_query) {
   function loadCalendar() {
     // presumes access to state... seems bad
     state.calendar_data.set([])
-    api.summarize([DATE_NAME], VALUE_NAME, state.focus_cell(), function(err, raw_data) {
+    var day_window = state.sel_dates ? { day : state.sel_dates } : {}
+    api.summarize([DATE_NAME], VALUE_NAME, state.focus_cell(), day_window, function(err, raw_data) {
       if (err) { throw err }
       var data = Object.create({})
       raw_data.forEach( (d) => {
@@ -123,8 +125,8 @@ function App(url, initial_query) {
   }
 
   function loadTheaters() {
-    queue().defer(api.summarize, [ 'theater_period' ], 'min(date)', {})
-           .defer(api.summarize, [ 'theater_period' ], 'max(date)', {})
+    queue().defer(api.summarize, [ 'theater_period' ], 'min(date)', {}, {})
+           .defer(api.summarize, [ 'theater_period' ], 'max(date)', {}, {})
     .await( (err, theater_mins, theater_maxes) => {
       if(err) throw err
       var data = Object.create({})
@@ -147,9 +149,10 @@ function App(url, initial_query) {
 
 // focus changes
 
-App.sel_dates = function(state, range) {
-  console.log("Setting new date selection: " + range.join(' - '))
-  state.sel_dates.set(range)
+App.sel_dates = function(state, data) {
+  var { startDate, endDate } = data
+  console.log("Setting new date selection: " + startDate + ' - ' + endDate)
+  state.sel_dates.set([startDate, endDate])
 }
 
 App.focus_cell = function(state, new_focus) {

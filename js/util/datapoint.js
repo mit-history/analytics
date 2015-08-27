@@ -29,11 +29,16 @@ function datapoint(datapoint_url) {
       });
     },
 
-    summarize: (dims, agg, filters, fn) => {
+    summarize: (dims, agg, filters, windows, fn) => {
       var params = Object.create({});
       params['axis[]'] = dims;
       for(var dim in filters) {
-          params['filter.' + dim + '[]'] = filters[dim];
+        params['filter.' + dim + '[]'] = filters[dim];
+      }
+      for(var dim in windows) {
+        console.log("window " + dim + " = " + JSON.stringify(windows[dim]))
+        if(windows[dim][0]) { params['filter.' + dim + '.gt'] = windows[dim][0] }
+        if(windows[dim][1]) { params['filter.' + dim + '.lt'] = windows[dim][1] }
       }
 
       d3.csv(datapoint_url + "/aggregate/" + encodeURIComponent(agg) + ".csv?" + qs.stringify(params), (error, data) => {
