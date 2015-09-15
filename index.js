@@ -14,9 +14,11 @@ const DEFAULT_QUERY = {
   order: { "author_1": "asc",
            "decade": "nat" },
   filter: { "author_1":
-            ["Beaumarchais (Pierre-Augustin Caron de)",
-            "Voltaire (François-Marie Arouet dit)",
-            "Marivaux (Pierre de)"] }
+            ["Corneille (Pierre)",
+             "Molière (Jean-Baptiste Poquelin dit)",
+             "Racine (Jean)",
+             "Voltaire (François-Marie Arouet dit)",
+            ] }
 }
 
 const elem = document.getElementById("app") || document.body

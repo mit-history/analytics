@@ -1,6 +1,8 @@
 TODO
 ====
 
+- order theaters chronologically                 DONE
+
 - check that date ranges limit analytics
 - debounce date range changes
 
