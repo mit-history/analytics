@@ -145,12 +145,18 @@ Query.toggleDimensionOrder = function(query, dim) {
 
 Query.render = function(modal_state, query_state, lang) {
 //  return h('div.query', [ String("Current query: " + JSON.stringify(state)) ])
+  var all_dims = ([]).concat(query_state.rows).concat(query_state.cols)
+  var download_url = api.url(all_dims, query_state.agg, query_state.filter)
 
   return (
     h('div.query', {id: 'query_panel'}, [
       Axis.render(modal_state, query_state, 'rows', lang),
       Axis.render(modal_state, query_state, 'cols', lang),
-      Aggregate.render(modal_state, query_state, lang)
+      Aggregate.render(modal_state, query_state, lang),
+      h('div.selector', [
+        h('div.download', h('a', { href: download_url })),
+        h('div.title', 'Data')
+      ])
     ]))
 }
 

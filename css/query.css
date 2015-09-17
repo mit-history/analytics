@@ -248,6 +248,33 @@
   width: 350px;  /* TODO. size width automatically */
 }
 
+.query .download {
+  display: inline-block;
+  vertical-align: top;
+  margin: 0;
+  padding: 0;
+  border: 1px dashed #fece3c;
+  border-radius: 10px;
+}
+
+.query .download a {
+  margin: 4px;
+  position: relative;
+  display: inline-block;
+  background: #fece3c;
+  border-radius: 25px;
+
+  font-size: 0.75rem;
+  color: white;
+  cursor: pointer;
+
+  width:            24px;
+  height:           24px;
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAt0lEQVQ4T+2TWw3CQBRE5zjAAZUADrCAAyRUAhJwABKQUAcgARzUwZBpmgboi8Av87PN3bkne2e76Ecx1W+7zD5wGPPNAfYtoFmH9AdIvQxsnyTVQGm7C9F2bmIB7J7DHAIUkq6ScoX5jm6SAiiA+gVgewNUz0XbK0mpXdr6WlJ8AXdqem0bGDpJjnps3Vvg/P4fNL1jgJhtN/MCyaWnWcDcM+kAmW/OPLJfZYQkvPwScJ98C59AH7d8ZBsL0nKGAAAAAElFTkSuQmCC');
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
 .query .filter input[type='text'] {
   height: 1.5rem;
   margin: 0;

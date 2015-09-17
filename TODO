@@ -7,7 +7,7 @@ TODO
 - debounce date range changes
 
 - sel dates in the database query
-- CSV downloads
+- CSV downloads                                  DONE
 - click on theater name
 - legend for calendar
 - calendar shows current query
