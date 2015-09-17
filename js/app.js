@@ -210,7 +210,7 @@ App.render = function(state) {
                   {start: 1, run: 2, title: i18n.dot3 }]
     return h('div', [
              h('div.lang', [ "Language is " + lang ]),
-             h('div.modal', [ String("Current modal: " + (state.modal || "none")) ]),
+             h('div.modal', [ String("Current modal: " + state.modal.modal || "none") ]),
              Carousel.render(state.carousel, panes, [
                h('div.crosstab', [
                  hg.partial(Query.render, state.modal, state.query, lang),
