@@ -10,11 +10,11 @@ const schema = require('../../cfrp-schema')
 
 const d3 = require('d3');  // solely for ajax
 
-const qs = require('querystring');
+const qs = require('querystring')
 
 function datapoint(datapoint_url) {
 
-  datapoint_url = datapoint_url || "/api/cfrp";
+  datapoint_url = datapoint_url || "/api/cfrp"
 
   // TODO.  change these calls to Javascript promises
 

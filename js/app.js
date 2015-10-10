@@ -65,7 +65,7 @@ function App(url, initial_query) {
 // data loaded from server
             calendar_data: hg.value([]),
             calendar_extent: hg.value(null),
-            cube_data: hg.array([]),
+            cube_data: hg.varhash({}),
             theater_data: hg.value([]), // should be initialized once, at load
 
 // global state transitions
@@ -92,12 +92,25 @@ function App(url, initial_query) {
   function loadCube() {
     state.cube_data.set([])
     var query = state.query()
-    var axes = [].concat(query.rows).concat(query.cols)
+    var first_row = query.rows.slice(0, 1)
+    var first_col = query.cols.slice(0, 1)
     var day_window = state.sel_dates ? { day : state.sel_dates } : {}
-    api.summarize(axes, query.agg, query.filters, day_window, function(err, data) {
-      if (err) { throw err}
-      state.cube_data.set(data)
-    })
+
+    // load the 4 fundamental combinations of cube dimensions;
+    // remainder are accessible via drill-down in the UI
+    queue().defer(api.summarize, [], query.agg, query.filters, day_window)
+           .defer(api.summarize, first_row, query.agg, query.filters, day_window)
+           .defer(api.summarize, first_col, query.agg, query.filters, day_window)
+           .defer(api.summarize, [].concat(first_row).concat(first_col), query.agg, query.filters, day_window)
+           .await( (err, d1, d2, d3, d4) => {
+              if(err) { throw err }
+              state.cube_data.set({
+                '0x0': d1,
+                '1x0': d2,
+                '0x1': d3,
+                '1x1': d4
+              })
+          })
   }
 
   function alignFocus() {
@@ -155,7 +168,8 @@ App.sel_dates = function(state, data) {
   state.sel_dates.set([startDate, endDate])
 }
 
-App.focus_cell = function(state, new_focus) {
+App.focus_cell = function(state, data) {
+  var new_focus = data.focus
   console.log("Setting new focus: " + JSON.stringify(new_focus))
   state.focus_cell.set(new_focus)
   Carousel.setSlide(state.carousel, 1)

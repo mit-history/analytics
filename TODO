@@ -1,6 +1,22 @@
 TODO
 ====
 
+- Agathe:
+  * clear query entirely?
+  * left column cut off (resizing not obvious)
+  * tous button sometimes takes too long
+  ** select more than one cell?
+  * reveal scroll bars on Windows
+  ** download data in pivoted format
+
+- Sara:
+  * temporal dimensions only in rows (not columns)
+  * two columns (UNCLEAR)
+  * require theater when seating category is selected
+
+- SEPARATE: 'verifie mais incomplet' status
+- SEPARATE: faceted browser receipts totals
+
 - order theaters chronologically                 DONE
 
 - check that date ranges limit analytics

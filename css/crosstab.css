@@ -1,0 +1,61 @@
+.pivot {
+  font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
+  font-size: 11px;
+  font-weight: normal;
+
+  display: inline-block;
+
+  width: 100%;
+  height: 100%;
+}
+
+.pivot .filler {
+  float: left;
+}
+
+.pivot .header * {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.pivot .header.top {
+  overflow: hidden;
+  cursor: row-resize;
+}
+
+.pivot .header.top svg {
+  left: 50px;
+}
+
+.pivot .header.left {
+  float: left;
+  overflow: hidden;
+  cursor: col-resize;
+}
+
+.pivot .content {
+  overflow: auto;
+}
+
+.pivot svg text {
+  stroke: black;
+  fill: black;
+}
+
+.pivot .domain {
+  stroke: gray;
+  fill: transparent;
+}
+
+.pivot .cell {
+  cursor: pointer;
+}
+
+.pivot .cell:hover path,
+.pivot .cell.focused path {
+  stroke: red;
+}
