@@ -104,10 +104,8 @@
 }
 
 .query .dimensionSelector {
-  width: 722px;
   height: 340px;
   margin: 0;
-  padding: 0;
 }
 
 .query .dimensionSelector li {

@@ -58,13 +58,14 @@ var yearRange = function(i0, i1) {
 }
 
 
-function GraphWidget(calendar_data, theater_data, calendar_extent, sel_dates, focus_day, mode, lang) {
+function GraphWidget(calendar_data, theater_data, calendar_extent, sel_dates, focus_day, mode, scale, lang) {
   this.calendar_data = calendar_data
   this.theater_data = theater_data
   this.calendar_extent = calendar_extent
   this.sel_dates = sel_dates
   this.focus_day = focus_day
   this.mode = mode
+  this.scale = scale
   this.lang = lang
 }
 
@@ -190,24 +191,6 @@ GraphWidget.prototype.update = function(prev, elem) {
   // TODO.  bad, very bad -- replace with a more sustainable solution
   y_global = y
 
-  var dayColorScale = d3.scale.quantile()
-    .domain( d3.values(this.calendar_data) )
-
-  var dayColor = (d, blur) => {
-    var s = dateIndexFormat(d)
-    var d = this.calendar_data[s]
-
-    if (!d) { return "white" }
-
-    if (blur) {
-      return dayColorScale
-        .range(colorbrewer.Greys[9].slice(0,7))(d)
-    } else {
-      return dayColorScale
-        .range(colorbrewer.YlGnBu[9].slice(0,7))(d)
-    }
-  }
-
   var ctx = canvas.getContext('2d')
   ctx.save()
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -226,7 +209,7 @@ GraphWidget.prototype.update = function(prev, elem) {
     var days = d3.time.days( season, nextSeason )
 
     if (this.mode === 'focus') {
-
+      var scale = this.scale
       days.forEach( (d) => {
         var rx = Math.round( x(d) )
         var ry = Math.round( +day(d) * cellSize )
@@ -237,7 +220,15 @@ GraphWidget.prototype.update = function(prev, elem) {
         var se = this.sel_dates
         var sel = !se || (se[0] < d && d < se[1])
 
-        ctx.fillStyle = dayColor(d, !sel)
+        var s = dateIndexFormat(d)
+        var d = this.calendar_data[s]
+
+        ctx.fillStyle = "white"
+        if(d) {
+          var c = scale(d)
+          // TODO.  change to greyscale on blur
+          ctx.fillStyle = blur ? c : c
+        }
         ctx.fillRect(rx, ry, cellSize, cellSize)
       })
 
@@ -423,13 +414,17 @@ Calendar.render = function(state, lang) {
     }
   })
 
+  var scale = d3.scale.quantile()
+    .domain( d3.values(state.calendar_data) )
+    .range( colorbrewer.YlGnBu[9].slice(0,7) )
+
   return (
       h('div.calendar', {
         'ev-click' : sendDay(state.channels.focus_day),
         'ev-mousedown' : dragDateExtent(state.channels.sel_dates)
       }, [
-        Status.render(state, lang),
-        new GraphWidget(state.calendar_data, state.theater_data, state.calendar_extent, state.sel_dates, state.focus_day, 'focus', lang)
+        Status.render(state, lang, scale),
+        new GraphWidget(state.calendar_data, state.theater_data, state.calendar_extent, state.sel_dates, state.focus_day, 'focus', scale, lang)
       ])
   )
 }

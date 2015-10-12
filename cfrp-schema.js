@@ -31,7 +31,7 @@ const schema = {
       "title",
       "genre",
       "acts",
-      "prose_vers" ]),
+      "prose_vers" ]) /*,
   performance_addl:
     subscript(playbills,
     [ "prologue",
@@ -46,7 +46,7 @@ const schema = {
       "ex_place" ]),
   theater:
     [ "theater_period",
-      "seating_area" ]
+      "seating_area" ] */
 }
 
 const public_aggregates = [

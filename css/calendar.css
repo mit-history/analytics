@@ -3,15 +3,6 @@
   height: 100%;
 }
 
-.calendar .titlebar {
-  width: 440px;
-  margin: 10px 5px 10px 20px;
-  padding: 10px;
-  border: 1px dashed #fece3c;
-  border-radius: 10px;
-  min-height: .8em;
-}
-
 .calendar .graph {
   position: relative;
   height: 95%;

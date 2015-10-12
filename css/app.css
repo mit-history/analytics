@@ -4,6 +4,12 @@ body {
   margin: 0;
 }
 
+
+/* special case: suppress temporal categories for the columns */
+.axis.cols .group.time {
+  display: none;
+}
+
 .pivot {
   margin-top: 5px;
   padding-top: 5px;
@@ -35,7 +41,9 @@ body {
   display: block;
   margin: 0;
 
-  background-color: gray;
+  background-color: white;
+  border-top: 1px gray dotted;
+  border-bottom: 1px gray dotted;
   height: 40px;
   line-height: 40px;
 }
@@ -50,7 +58,7 @@ body {
 }
 
 .dots li a {
-  color: white;
+  color: black;
   text-decoration: none;
 }
 
