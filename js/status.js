@@ -31,12 +31,110 @@ function uniq(xs) {
   return xs.filter( (y, i, ys) => ys.indexOf(y) == i )
 }
 
+// based on https://github.com/d3/d3-scale/blob/master/src/threshold.js
+// N.B. unlike d3's threshold scale, this one doesn't require the outer bounds in the domain
+function threshold_linear(domain, range) {
+
+  function scale(x) {
+    if(x <= x) {
+      var block = (range[1] - range[0]) / domain.length
+      var i = d3.bisect(domain, x)
+
+      var offset = (domain[i] - x) /  (domain[i] - domain[i-1])
+      i = i + (offset || 0.0)
+
+      return block * i
+    }
+  }
+
+  scale.domain = function(x) {
+    if (!arguments.length) return domain.slice()
+    domain = x.slice()
+    return scale
+  }
+
+  scale.range = function(x) {
+    if (!arguments.length) return range.slice()
+    range = x.slice()
+    return scale
+  }
+
+  scale.copy = function() {
+    return threshold_linear(domain, range)
+  }
+
+  return scale
+}
+
 function update(graph, qscale, format, regular) {
   var width = legendwidth - margin.right - margin.left
 
+  var data = qscale.domain()
+  var [ low, high ] = data.length > 0 ? d3.extent(data) : [ 0, 0 ]
+  var qtiles = qscale.quantiles()
+  var qticks = uniq( qtiles.concat([high]) )
+
+  var percent = d3.format('0%')
+
+  var x_linear = d3.scale.linear()
+    .domain([low, high])
+    .range([0, width])
+
+  var x_regular = threshold_linear()
+    .domain(qticks)
+    .range([0, width])
+
+  var x = regular ? x_regular : x_linear
+
+  var axis_linear = d3.svg.axis()
+    .scale(x)
+    .orient('top')
+    .tickValues(regular ? qtiles : x_linear.ticks())
+    .tickFormat(format)
+
+  var axis_qtile = d3.svg.axis()
+    .scale(x)
+    .orient('bottom')
+    .tickValues(qticks)
+    .tickFormat( (d) => '≤ ' + percent( d3.bisect(qticks, d) / (qtiles.length+1) ) )
+
+  graph.select('.axis.linear')
+    .call(axis_linear)
+
+  graph.select('.axis.qtile')
+    .call(axis_qtile)
+     .selectAll("text")
+     .style("text-anchor", "end")
+
+  var qtile = graph.select('.qtiles')
+      .selectAll('.qtile')
+    .data(qscale.range())
+
+  qtile.exit().remove()
+
+  qtile.enter().append('path')
+    .attr('class', 'qtile')
+    .attr('height', cellsize)
+
+  qtile.attr('d', (d) => {
+    d = qscale.invertExtent(d)
+    d[0] = d[0] || low
+    d[1] = d[1] || high
+    return 'M' + x(d[0]) + ',0H' + x(d[1]) + 'V' + cellsize + 'H' + x(d[0]) + 'Z'
+  })
+
+  qtile.attr('fill', (d) => d)
+
+
+
+
+
+
+/*
+  var data = qscale.domain()
+
   var [ low, high ] = [ 0, 0 ]
   var qtiles = []
-  var data = qscale.domain()
 
   if(data.length > 0) {
     [ low, high ] = d3.extent(qscale.domain())
@@ -87,6 +185,7 @@ function update(graph, qscale, format, regular) {
   rect.attr('x', (d, i) => regular ? x_regular(i) : x(d) )
       .attr('width', (d, i) => width - (regular ? x_regular(i) : x(d)) )
       .attr('fill', qscale)
+*/
 }
 
 function LegendWidget(scale, format, regular) {
@@ -110,15 +209,13 @@ LegendWidget.prototype.init = function() {
      .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
 
   graph.append('g')
-    .classed('bars', true)
+    .classed('qtiles', true)
 
   graph.append('g')
-    .classed({ axis: true, quantile: true })
-    .attr('transform', 'translate(0,' + cellsize + ')')
+    .classed({ axis: true, qtile: true })
 
   graph.append('g')
     .classed({ axis: true, linear: true })
-    .attr('transform', 'translate(0,' + cellsize + ')')
 
   update(graph, this.scale, this.format, this.regular)
 

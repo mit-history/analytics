@@ -17,8 +17,12 @@
 .titlebar .legend .axis .tick path,
 .titlebar .legend .axis .tick line {
   fill: none;
-  stroke: black;
+  stroke: #ccc;
   shape-rendering: crispEdges;
+}
+
+.titlebar .legend .axis.qtile .tick line {
+  visibility: hidden;
 }
 
 .titlebar .legend .axis .domain {
