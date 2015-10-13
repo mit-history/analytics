@@ -1,148 +1,124 @@
 TODO
 ====
 
-- Agathe:
-  * clear query entirely?
-  * left column cut off (resizing not obvious)
-  * tous button sometimes takes too long
-  ** select more than one cell?
-  * reveal scroll bars on Windows
-  ** download data in pivoted format
+Agathe:
+- [ ] clear query entirely?
+- [ ] left column cut off (resizing not obvious)
+- [ ] tous button sometimes takes too long
+- [ ] select more than one cell?
+- [ ] reveal scroll bars on Windows
+- [ ] download data in pivoted format
 
-- Sara:
-  * temporal dimensions only in rows (not columns)
-  * two columns (UNCLEAR)
-  * require theater when seating category is selected
+Sara:
+- [ ] temporal dimensions only in rows (not columns) - two columns (UNCLEAR)
+- [ ] require theater when seating category is selected
 
-- SEPARATE: 'verifie mais incomplet' status
-- SEPARATE: faceted browser receipts totals
+- [ ] SEPARATE: 'verifie mais incomplet' status
+- [x] SEPARATE: faceted browser receipts totals
 
-- order theaters chronologically                 DONE
-
-- check that date ranges limit analytics
-- debounce date range changes
-
-- sel dates in the database query
-- CSV downloads                                  DONE
-- click on theater name
-- legend for calendar
-- calendar shows current query
-- selection box
-- draggable handles on selection box
-
-- day click should switch to calendar + register DONE
-
-- make calendar invert use drawing scale
-- i18n in calendar                               DONE
-- tooltips with actual data
-- tooltips near rect (not mouse)                 DONE
-- animation: focus / context
-- theater rules                                  DONE
-- currently selected day                         DONE
-
-- draggable margins for crosstab table           DONE
-- prettier crosstab axes on scale
-- bounded dragging for crosstab table
-- carousel: crosstab / crosstab + calendar / calendar + register  DONE
-- bounded dragging for register                  DONE
-- graph mode for pivot columns
-
-- january appearing out of order                 DONE
-- loading spinner in react                       DONE
-- handle case where an axis is unset             DONE
-- reformat the dimension selector
-- formatting of 'date du piece'                  NOT TO DO
-- boolean dimensions repeat 'non'                DONE
-- check the back button                          DONE
-
-- requires / forbids relationships between dims
-- authors out of order                           DONE
-- playbill 1-5 badly formatted
-- signal when loading
-- ordering and formatting domains                DONE
-- natural order for some dimensions (weekday)    DONE
-- filtering on formatted values doesnt work      DONE
-- cells need to be formatted                     DONE
-- better url grooming
-
-- formatting for all dimensions in client        DONE
-- set border based on size of domains
-
-- url doesn't include filter
+- [x] order theaters chronologically
+- [ ] check that date ranges limit analytics
+- [ ] debounce date range changes
+- [ ] sel dates in the database query
+- [x] CSV downloads
+- [ ] click on theater name
+- [ ] legend for calendar
+- [ ] calendar shows current query
+- [ ] selection box
+- [ ] draggable handles on selection box
+- [x] day click should switch to calendar + register
+- [ ] make calendar invert use drawing scale
+- [x] i18n in calendar
+- [ ] tooltips with actual data
+- [x] tooltips near rect (not mouse)
+- [ ] animation: focus / context
+- [x] theater rules
+- [x] currently selected day
+- [x] draggable margins for crosstab table
+- [ ] prettier crosstab axes on scale
+- [ ] bounded dragging for crosstab table
+- [x] carousel: crosstab / crosstab + calendar / calendar + register
+- [x] bounded dragging for register
+- [ ] graph mode for pivot columns
+- [x] january appearing out of order
+- [x] loading spinner in react
+- [x] handle case where an axis is unset
+- [ ] reformat the dimension selector
+- [ ] formatting of 'date du piece'                  NOT TO DO
+- [x] boolean dimensions repeat 'non'
+- [x] check the back button
+- [ ] requires / forbids relationships between dims
+- [x] authors out of order
+- [ ] playbill 1-5 badly formatted
+- [ ] signal when loading
+- [x] ordering and formatting domains
+- [x] natural order for some dimensions (weekday)
+- [x] filtering on formatted values doesnt work
+- [x] cells need to be formatted
+- [ ] better url grooming
+- [x] formatting for all dimensions in client
+- [ ] set border based on size of domains
+- [ ] url doesn't include filter
   [ move routing to separate file ]
-- reading from url is broken                     DONE
-- webpack breaking unicode in css                DONE
-- use a compile regexp in the search widget
-
-- node api install/configuration in jekyll       DONE
-- react updating correctly                       DONE
-- graph layout indents for hierarchy             DONE
-- server loads from postgres
-- seating categories with n/a value              NOT NECESSARY
-- formatting for the obscure categories          DONE
-
-- use webpack for css too?                       DONE
-- move spinner into react
-
-- feed from a proper star schema [dimensions]
-  * date
-  * seating category
-  * performance[n]
-  * play[m]
-
-- fix urls
-- modals in right place, truly modal
-- subtotals below/after their children
+- [x] reading from url is broken
+- [x] webpack breaking unicode in css
+- [ ] use a compile regexp in the search widget
+- [x] node api install/configuration in jekyll
+- [x] react updating correctly
+- [x] graph layout indents for hierarchy
+- [ ] server loads from postgres
+- [ ] seating categories with n/a value              NOT NECESSARY
+- [x] formatting for the obscure categories
+- [x] use webpack for css too?
+- [ ] move spinner into react
+- [ ] feed from a proper star schema [dimensions]
+- [ ] date
+- [ ] seating category
+- [ ] performance[n]
+- [ ] play[m]
+- [ ] fix urls
+- [ ] modals in right place, truly modal
+- [ ] subtotals below/after their children
   [ mouseover to group visually ]
-- move data to server                            DONE
-- refining on numerical values isn't working     DONE
-
-- toggle ordering by alpha or value
-- adding new searches (via autocomplete)         DONE
-- subtotals for nested queries
--   (don't show enclosing category)
-- scrolling (only in table; headers track)
-- drag and drop reorder for categories
-- size svg correctly                             DONE
-- activate measures other than count of days     DONE
-
-- adjust size of header & cell spacing?
-
-- not adding a row when button clicked           DONE
-- not loading register page at beginning         DONE
-
-- calendar selection shown in toolbox & url
-- back button not working reliably               DONE
-
-- click & drag to set calendar selection         DONE
-- highlight current register page                DONE
-
-- loading signal                                 DONE
-- make sure filters are being applied            DONE
-- pivot table & calendar not connected           DONE
-- fix css for pivot (see green lis)              DONE
-- layout with small CFRP stamp on right          DONE
-- bin list for rows + cols + agg                 DONE
-- + / - for bin list                             DONE
-- pulldown to select categories                  DONE
-
-- drag and drop to reorder categories
-- nice CSS styling for table
-
-- labels for calendar months
-- subscript play data fields
-- order weekdays logically
-- sorting results by measure
-
-- scroll gesture on calendar
-- calendar selection via opacity
-- multiple calendar selections?
-
-- compact calendar configuration
-- pivot columns
+- [x] move data to server
+- [x] refining on numerical values isn't working
+- [ ] toggle ordering by alpha or value
+- [x] adding new searches (via autocomplete)
+- [ ] subtotals for nested queries
+- [ ]   (don't show enclosing category)
+- [ ] scrolling (only in table; headers track)
+- [ ] drag and drop reorder for categories
+- [x] size svg correctly
+- [x] activate measures other than count of days
+- [ ] adjust size of header & cell spacing?
+- [x] not adding a row when button clicked
+- [x] not loading register page at beginning
+- [ ] calendar selection shown in toolbox & url
+- [x] back button not working reliably
+- [x] click & drag to set calendar selection
+- [x] highlight current register page
+- [x] loading signal
+- [x] make sure filters are being applied
+- [x] pivot table & calendar not connected
+- [x] fix css for pivot (see green lis)
+- [x] layout with small CFRP stamp on right
+- [x] bin list for rows + cols + agg
+- [x] + / - for bin list
+- [x] pulldown to select categories
+- [ ] drag and drop to reorder categories
+- [ ] nice CSS styling for table
+- [ ] labels for calendar months
+- [ ] subscript play data fields
+- [ ] order weekdays logically
+- [ ] sorting results by measure
+- [ ] scroll gesture on calendar
+- [ ] calendar selection via opacity
+- [ ] multiple calendar selections?
+- [ ] compact calendar configuration
+- [ ] pivot columns
 
 FIXES
 =====
-- boolean categories not filtering properly
-- filter values containing '&' truncated
-- check URL keys against dimensions & aggs
+- [ ] boolean categories not filtering properly
+- [ ] filter values containing '&' truncated
+- [ ] check URL keys against dimensions & aggs
