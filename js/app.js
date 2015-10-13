@@ -21,6 +21,7 @@ var Query = require('./query')
 var Crosstab = require('./crosstab')
 var Calendar = require('./calendar')
 var Register = require('./register')
+var Status = require('./status')
 
 var datapoint = require('./util/datapoint')
 
@@ -44,6 +45,7 @@ function App(url, initial_query) {
             modal: Modal(),
             carousel: Carousel(),
             register: Register(),
+            status: Status(),
 
 // global state
             query: Query(initial_query),

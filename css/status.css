@@ -5,19 +5,27 @@
   padding: 10px;
 }
 
-.querystatus {
+.titlebar .querystatus {
   border: 1px dashed #fece3c;
   border-radius: 10px;
 }
 
-.axis .tick path,
-.axis .tick line {
-    fill: none;
-    stroke: black;
-    shape-rendering: crispEdges;
+.titlebar .legend {
+  cursor: pointer;
 }
 
-.axis text {
-    font-family: sans-serif;
-    font-size: 9px;
+.titlebar .legend .axis .tick path,
+.titlebar .legend .axis .tick line {
+  fill: none;
+  stroke: black;
+  shape-rendering: crispEdges;
+}
+
+.titlebar .legend .axis .domain {
+  display: none;
+}
+
+.titlebar .legend .axis text {
+  font-family: sans-serif;
+  font-size: 9px;
 }

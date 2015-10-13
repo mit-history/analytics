@@ -20,52 +20,79 @@ const colorbrewer = require('colorbrewer')
 
 const format = d3.time.format('%Y-%m-%d')
 
-const cellfill = 8
-const cellmargin = 2
-const cellsize = cellfill + cellmargin
+const cellsize = 8
 
-const legendwidth = 500
+const legendwidth = 550
 const legendheight = 50
 
-const margin = { top: 20, right: 5, bottom: 0, left: 25 }
+const margin = { top: 20, right: 50, bottom: 0, left: 25 }
 
+function uniq(xs) {
+  return xs.filter( (y, i, ys) => ys.indexOf(y) == i )
+}
 
-function update(graph, qscale, format) {
-  var [ low, high ] = d3.extent(qscale.domain())
-  var qtiles = qscale.quantiles()
-  var data = [ low ].concat(qtiles).concat( [ high ] )
-  data = d3.pairs(data)
+function update(graph, qscale, format, regular) {
+  var width = legendwidth - margin.right - margin.left
+
+  var [ low, high ] = [ 0, 0 ]
+  var qtiles = []
+  var data = qscale.domain()
+
+  if(data.length > 0) {
+    [ low, high ] = d3.extent(qscale.domain())
+    qtiles = [ low ].concat( qscale.quantiles() ).concat([ high ])
+    qtiles = uniq(qtiles)
+  }
 
   var x = d3.scale.linear()
-    .domain([ low, high ])
-    .range([0, legendwidth - margin.right - margin.left])
+    .range([0, width])
+    .domain([low, high])
+
+  var x_regular = d3.scale.linear()
+    .range([0, width])
+    .domain([0, qtiles.length])
 
   var axis = d3.svg.axis()
     .scale(x)
-    .orient("top")
-    .tickFormat(format)
+    .orient("bottom")
+    .tickFormat( (d) => format(d) )
 
-  graph.select(".axis")
+  var axis_regular = d3.svg.axis()
+    .scale(x_regular)
+    .orient("top")
+    .tickFormat( (d, i) => qtiles[i] ? ("≥ " + format( qtiles[i] )) : "" )
+
+  axis_regular = regular ? axis_regular.ticks(qtiles.length)
+                         : axis_regular.tickValues(qtiles)
+
+  graph.select(".axis.linear")
     .call(axis)
 
-  var path = graph.selectAll('path')
-    .data(data)
+  graph.select(".axis.quantile")
+    .call(axis_regular)
 
-  path.exit().remove()
+  graph.select(".axis")
+    .selectAll("text")
+    .style("text-anchor", "start")
 
-  path.enter().append('path')
-    .append('title')
+  var rect = graph.select('.bars')
+      .selectAll('rect')
+    .data(qtiles)
 
-  path.attr('d', ( ( [x1,x2] ) => x1 && x2 ? "M" + x(x1) + ",0H" + x(x2) + "V" + cellfill + "H" + x(x1) + "Z" : "" ) )
-     .attr('fill', ( [x1, x2] ) => qscale( (x1 + x2) / 2.0) )
-     .attr('stroke', 'none')
-    .select('title')
-     .text( ( [x1, x2] ) => format(x1) + ' - ' + format(x2) )
+  rect.exit().remove()
+
+  rect.enter().append('rect')
+    .attr('height', cellsize)
+
+  rect.attr('x', (d, i) => regular ? x_regular(i) : x(d) )
+      .attr('width', (d, i) => width - (regular ? x_regular(i) : x(d)) )
+      .attr('fill', qscale)
 }
 
-function LegendWidget(scale, format) {
+function LegendWidget(scale, format, regular) {
   this.scale = scale
   this.format = format
+  this.regular = regular
 }
 
 LegendWidget.prototype.type = 'Widget'
@@ -83,9 +110,17 @@ LegendWidget.prototype.init = function() {
      .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
 
   graph.append('g')
-    .classed('axis', true)
+    .classed('bars', true)
 
-  update(graph, this.scale, this.format)
+  graph.append('g')
+    .classed({ axis: true, quantile: true })
+    .attr('transform', 'translate(0,' + cellsize + ')')
+
+  graph.append('g')
+    .classed({ axis: true, linear: true })
+    .attr('transform', 'translate(0,' + cellsize + ')')
+
+  update(graph, this.scale, this.format, this.regular)
 
   return elem
 }
@@ -97,13 +132,22 @@ LegendWidget.prototype.update = function(prev, elem) {
   var svg = d3.select(elem)
     .select('svg g')
 
-  update(svg, this.scale, this.format)
+  update(svg, this.scale, this.format, this.regular)
 }
 
 
 
 function Status() {
-  return null
+  return hg.state({
+    regular: hg.value(true),
+    channels: {
+      toggleRegular: Status.toggleRegular
+    }
+  })
+}
+
+Status.toggleRegular = function(state) {
+  state.regular.set(!state.regular())
 }
 
 Status.render = function(state, lang, scale) {
@@ -111,14 +155,16 @@ Status.render = function(state, lang, scale) {
   var format = schema.format(lang, state.query.agg)
 
   return (
-    h('div.titlebar', [
+    h('div.titlebar', {
+        'ev-click' : hg.send(state.status.channels.toggleRegular)
+      }, [
       /*
       h('div.querystatus', [
         state.sel_dates.map(format).join(' <--> '),
         JSON.stringify(state.focus_cell)
       ]),
       */
-      new LegendWidget(scale, format)
+      new LegendWidget(scale, format, state.status.regular)
     ])
   )
 }

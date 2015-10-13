@@ -372,7 +372,9 @@ GraphWidget.prototype.update = function(prev, elem) {
 }
 
 function Calendar() {
-  return null
+  return hg.state({
+    status: Status()
+  })
 }
 
 Calendar.render = function(state, lang) {
@@ -423,7 +425,7 @@ Calendar.render = function(state, lang) {
         'ev-click' : sendDay(state.channels.focus_day),
         'ev-mousedown' : dragDateExtent(state.channels.sel_dates)
       }, [
-        Status.render(state, lang, scale),
+        Status.render(state, lang, scale, state.status),
         new GraphWidget(state.calendar_data, state.theater_data, state.calendar_extent, state.sel_dates, state.focus_day, 'focus', scale, lang)
       ])
   )

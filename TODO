@@ -1,6 +1,13 @@
 TODO
 ====
 
+- [ ] minor legend problems
+- [ ] add second axis to legend in invert mode
+- [ ] swap rows & columns button
+- [ ] minor CSS problems
+- [ ] resizing headers not working
+- [ ] final column not sizing correctly
+
 Agathe:
 - [ ] clear query entirely?
 - [ ] left column cut off (resizing not obvious)
