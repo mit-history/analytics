@@ -1,35 +1,31 @@
 
 .titlebar {
-  width: 440px;
-  margin: 10px 5px 10px 20px;
-  padding: 10px;
+  position: relative;
+  width: 100%;
+  height: 70px;
 }
 
 .titlebar .querystatus {
+  margin: 10px 5px 10px 20px;
+  padding: 10px;
   border: 1px dashed #fece3c;
   border-radius: 10px;
 }
 
 .titlebar .legend {
-  cursor: pointer;
+  position: absolute;
+  margin-left: 430px;
 }
 
-.titlebar .legend .axis .tick path,
-.titlebar .legend .axis .tick line {
-  fill: none;
-  stroke: #ccc;
-  shape-rendering: crispEdges;
+.titlebar .legend text {
+  font-family: sans-serif;
+  font-size: 9px;
 }
 
-.titlebar .legend .axis.qtile .tick line {
+.titlebar .legend .qtile .cumulative {
   visibility: hidden;
 }
 
-.titlebar .legend .axis .domain {
-  display: none;
-}
-
-.titlebar .legend .axis text {
-  font-family: sans-serif;
-  font-size: 9px;
+.titlebar:hover .legend .cumulative {
+  visibility: visible;
 }
