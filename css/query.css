@@ -120,14 +120,14 @@
   height: 95%;
   margin: 2px;
   padding: 6px;
-  border: 2px solid white;
+  border: 2px solid;
   border-radius: 10px;
 }
 
 .query .dimensionSelector .dimensionGroupLabel {
   font-style: bold;
   text-align: right;
-  border-bottom: 1px solid white;
+  border-bottom: 1px solid;
 }
 
 .query .dimensionSelector .group ul {

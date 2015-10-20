@@ -63,7 +63,7 @@ DimensionSelector.render = function(modal_state, query_state, axis, lang) {
     var names = Object.keys(groups)
     return names.map( (name) => {
       return (
-        h('li.group', [
+        h('li.group.' + name, [
           h('div.dimensionGroupLabel', i18n.htmlize(msgs, name, lang)),
           h('ul.dimensionGroup.' + name, dim_lis(groups[name]) )
         ])
