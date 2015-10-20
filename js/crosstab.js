@@ -236,7 +236,7 @@ GraphWidget.prototype.init = function() {
 
   var header_left = graph.append('div')
     .classed({header: true, left: true})
-    .style({ width: marginLeft + 'px', height: 'calc(100% - ' + (marginTop + 90) + 'px)' })
+    .style({ width: marginLeft + 'px', height: 'calc(100% - ' + (marginTop + 70) + 'px)' })
 
   header_left.append('svg')
     .append('g')
@@ -245,7 +245,7 @@ GraphWidget.prototype.init = function() {
 
   var content = graph.append('div')
     .classed('content', true)
-    .style({ height: 'calc(100% - ' + (marginTop + 90) + 'px)', width: 'calc(100% - ' + marginLeft +'px)' })
+    .style({ height: 'calc(100% - ' + (marginTop + 70) + 'px)', width: 'calc(100% - ' + marginLeft +'px)' })
 
   var cells_svg = content.append('svg')
     .classed('cells', true)
