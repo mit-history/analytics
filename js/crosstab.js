@@ -89,6 +89,8 @@ function update(query, cube_data, focus_cell, lang) {
 
     var dims = [].concat(query.rows).concat(query.cols);
 
+    console.log("DIMS ARE NOW " + JSON.stringify(dims) + " [ " + cells.length + " cells ]")
+
     var content_div = elem.select(".content")
     content_div.on('scroll', scrolled)
 

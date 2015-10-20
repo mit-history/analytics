@@ -44,7 +44,8 @@ function Query(initial_query) {
       removeDimension: Query.removeDimension,
       clearFilter: Query.clearFilter,
       toggleFilterValue: Query.toggleFilterValue,
-      toggleDimensionOrder: Query.toggleDimensionOrder
+      toggleDimensionOrder: Query.toggleDimensionOrder,
+      togglePivot: Query.togglePivot
     }
   })
 
@@ -143,6 +144,21 @@ Query.toggleDimensionOrder = function(query, dim) {
   query.order.put(dim, new_order)
 }
 
+Query.togglePivot = function(query) {
+  var row_splice = query.rows.splice
+  var col_splice = query.cols.splice
+
+  var rows = query.rows()
+  var cols = query.cols()
+
+  console.log(JSON.stringify(rows) + ' <--> ' + JSON.stringify(cols))
+
+  row_splice.apply(query.rows, [0, rows.length].concat(cols))
+  col_splice.apply(query.cols, [0, cols.length].concat(rows))
+
+  console.log(JSON.stringify(query.rows()) + ' <--> ' + JSON.stringify(query.cols()))
+}
+
 Query.render = function(modal_state, query_state, lang) {
 //  return h('div.query', [ String("Current query: " + JSON.stringify(state)) ])
   var all_dims = ([]).concat(query_state.rows).concat(query_state.cols)
@@ -151,6 +167,7 @@ Query.render = function(modal_state, query_state, lang) {
   return (
     h('div.query', {id: 'query_panel'}, [
       Axis.render(modal_state, query_state, 'rows', lang),
+      h('div.togglePivot', { 'ev-click': hg.send(query_state.channels.togglePivot, query_state) }),
       Axis.render(modal_state, query_state, 'cols', lang),
       Aggregate.render(modal_state, query_state, lang),
       h('div.selector', [

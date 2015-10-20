@@ -1,9 +1,10 @@
 TODO
 ====
 
+- [ ] crosstab re-rendering during pivot operation
 - [ ] minor legend problems
 - [ ] add second axis to legend in invert mode
-- [ ] swap rows & columns button
+- [x] swap rows & columns button
 - [ ] minor CSS problems
 - [ ] resizing headers not working
 - [ ] final column not sizing correctly

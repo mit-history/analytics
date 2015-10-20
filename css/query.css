@@ -246,6 +246,35 @@
   width: 350px;  /* TODO. size width automatically */
 }
 
+.query .togglePivot {
+  display: inline-block;
+  vertical-align: top;
+
+  top: 5px;
+  left: 5px;
+
+  padding: 0;
+
+  margin: 4px;
+  position: relative;
+
+  font-size: 0.75rem;
+  color: black;
+  cursor: pointer;
+
+  width:            24px;
+  height:           24px;
+
+  border: 1px dashed #fece3c;
+  border-radius: 10px;
+}
+
+.query .togglePivot:before {
+  padding: 0 0 0 5px;
+  content: ' ⇋ ';
+  vertical-align: middle;
+}
+
 .query .download {
   display: inline-block;
   vertical-align: top;
