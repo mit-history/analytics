@@ -1,13 +1,28 @@
 TODO
 ====
 
-- [ ] crosstab re-rendering during pivot operation
+Jeff:
+- [ ] different highlighting to suggest row/col categories
+- [ ] animation during pivot (?)
+
+General:
+- [ ] disable text select in crosstab
+- [ ] modals in wrong layer
+- [x] crosstab re-rendering during pivot operation
+- [ ] de-bounce queries while selecting a time range
+- [ ] loading spinners throughout
+- [ ] other aggregates in quantiles
 - [ ] minor legend problems
-- [ ] add second axis to legend in invert mode
 - [x] swap rows & columns button
 - [ ] minor CSS problems
 - [ ] resizing headers not working
 - [ ] final column not sizing correctly
+
+Christopher:
+- [ ] fine-tune memcached hits
+- [ ] test harness for aggregation web service
+- [ ] multiple categories in a single axis
+- [ ] mark fields aggregating over NA (= verifie mais incomplet)
 
 Agathe:
 - [ ] clear query entirely?
@@ -15,10 +30,10 @@ Agathe:
 - [ ] tous button sometimes takes too long
 - [ ] select more than one cell?
 - [ ] reveal scroll bars on Windows
-- [ ] download data in pivoted format
+- [ ] download data in pivoted format (LOW PRIORITY)
 
 Sara:
-- [ ] temporal dimensions only in rows (not columns) - two columns (UNCLEAR)
+- [ ] temporal dimensions only in rows (not columns) - two columns (CLARIFY)
 - [ ] require theater when seating category is selected
 
 - [ ] SEPARATE: 'verifie mais incomplet' status

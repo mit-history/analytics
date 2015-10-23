@@ -36,6 +36,43 @@ const VALUE_NAME = 'sum_receipts'
 
 const dateIndexFormat = d3.time.format('%Y-%m-%d')
 
+// cribbed from underscore: http://underscorejs.org/docs/underscore.html#section-69
+function debounce(func, wait, immediate) {
+  var timeout, args, context, timestamp, result;
+
+  var now = Date.now || function() {
+    return new Date().getTime();
+  }
+
+  var later = function() {
+    var last = now() - timestamp;
+
+    if (last < wait && last >= 0) {
+      timeout = setTimeout(later, wait - last);
+    } else {
+      timeout = null;
+      if (!immediate) {
+        result = func.apply(context, args);
+        if (!timeout) context = args = null;
+      }
+    }
+  };
+
+  return function() {
+    context = this;
+    args = arguments;
+    timestamp = now();
+    var callNow = immediate && !timeout;
+    if (!timeout) timeout = setTimeout(later, wait);
+    if (callNow) {
+      result = func.apply(context, args);
+      context = args = null;
+    }
+
+    return result;
+  };
+}
+
 function App(url, initial_query) {
   var api = datapoint(url)
   var state = hg.state({
@@ -49,17 +86,6 @@ function App(url, initial_query) {
 
 // global state
             query: Query(initial_query),
-
-/*
-//            query: hg.value(initial_query),
-            query: hg.varhash({
-              rows: hg.array(initial_query.rows),
-              cols: hg.array(initial_query.cols),
-              agg: hg.value(initial_query.agg),
-              order: hg.struct(initial_query.order),
-              filter: hg.varhash(initial_query.filter)
-            }),
-*/
             sel_dates: hg.value([]),
             focus_cell: hg.value({}),
             focus_day: hg.value(null),
@@ -67,7 +93,7 @@ function App(url, initial_query) {
 // data loaded from server
             calendar_data: hg.value([]),
             calendar_extent: hg.value(null),
-            cube_data: hg.varhash({}),
+            cube_data: hg.value({}),
             theater_data: hg.value([]), // should be initialized once, at load
 
 // global state transitions
@@ -79,7 +105,13 @@ function App(url, initial_query) {
               toggle_modal: App.toggle_modal
             }
           })
-    state.query(loadCube)
+
+    var debouncingLoadCube = debounce(loadCube, 500)
+
+    state.query(function() {
+      state.cube_data.set(hg.varhash({}))
+      debouncingLoadCube()
+    })
     state.cube_data(alignFocus)
     state.focus_cell(loadCalendar)
 
@@ -92,7 +124,6 @@ function App(url, initial_query) {
   return state
 
   function loadCube() {
-    state.cube_data.set([])
     var query = state.query()
     var first_row = query.rows.slice(0, 1)
     var first_col = query.cols.slice(0, 1)

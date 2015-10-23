@@ -4,7 +4,6 @@ body {
   margin: 0;
 }
 
-
 /* special case: suggest preferred categories for rows and cols */
 .axis.rows .group.performance,
 .axis.rows .group.performance li {

@@ -244,6 +244,7 @@
   background: #fece3c;
   opacity: 0.95;
   width: 350px;  /* TODO. size width automatically */
+  z-index: 1;
 }
 
 .query .togglePivot {
