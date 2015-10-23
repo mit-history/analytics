@@ -45,7 +45,7 @@ function update(graph, qscale, format, regular) {
 
   var g = qtile.enter().append('g')
     .attr('class', 'qtile')
-    .attr('dominant-baseline', 'hanging')
+    .attr('dominant-baseline', 'alphabetical')  // cross browser issues with 'hanging'
 
   g.append('rect')
     .attr('x', 0)
@@ -57,10 +57,12 @@ function update(graph, qscale, format, regular) {
     .attr('class', 'label')
     .attr('text-anchor', 'end')
     .attr('dx', -cellrect / 2.0)
+    .attr('dy', cellrect)
 
   g.append('text')
     .attr('class', 'cumulative')
     .attr('x', cellsize * 1.5)
+    .attr('dy', cellrect)
 
   qtile.attr('transform', (d, i) => 'translate(0,' + (colors.length - i - 1) * cellsize + ')')
 

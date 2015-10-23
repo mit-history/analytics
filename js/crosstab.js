@@ -131,15 +131,6 @@ function update(query, cube_data, focus_cell, lang) {
         var val = d[query.agg]
         return format(val)
       })
-/*
-    cell.on("click", (d0) => {
-      var d1 = Object.create({})
-      for(var k in d0) {
-        if(k !== query.agg) { d1[k] = d0[k] }
-      }
-      handleFocusCell(d1)
-    })
-*/
 
     function scrolled() {
       var master = elem.select(".content")[0][0]
@@ -217,8 +208,12 @@ function GraphWidget(query, cube_data, focus_cell, lang) {
 GraphWidget.prototype.type = 'Widget'
 
 GraphWidget.prototype.init = function() {
-  var marginLeft = 75
+  var marginLeft = 150
   var marginTop = 150
+
+  // TODO.  figure out a cleaner way to get size of query component into layout
+  var paddingTop = 135
+  var paddingLeft = 30
 
   var elem = document.createElement('div')
 
@@ -227,7 +222,7 @@ GraphWidget.prototype.init = function() {
 
   var header_top = graph.append('div')
     .classed({header: true, top: true})
-    .style({ height: marginTop + 'px', width:'100%', 'padding-left': marginLeft + 'px' })
+    .style({ height: marginTop + 'px', width: 'calc(100% - ' + (marginLeft + paddingLeft) +'px)', 'padding-left': marginLeft + 'px' })
 
   header_top.append('svg')
     .append('g')
@@ -236,7 +231,7 @@ GraphWidget.prototype.init = function() {
 
   var header_left = graph.append('div')
     .classed({header: true, left: true})
-    .style({ width: marginLeft + 'px', height: 'calc(100% - ' + (marginTop + 70) + 'px)' })
+    .style({ width: marginLeft + 'px', height: 'calc(100% - ' + (marginTop + paddingTop) + 'px)' })
 
   header_left.append('svg')
     .append('g')
@@ -245,7 +240,7 @@ GraphWidget.prototype.init = function() {
 
   var content = graph.append('div')
     .classed('content', true)
-    .style({ height: 'calc(100% - ' + (marginTop + 70) + 'px)', width: 'calc(100% - ' + marginLeft +'px)' })
+    .style({ height: 'calc(100% - ' + (marginTop + paddingTop) + 'px)', width: 'calc(100% - ' + (marginLeft + paddingLeft) +'px)' })
 
   var cells_svg = content.append('svg')
     .classed('cells', true)
