@@ -137,10 +137,10 @@ function App(url, initial_query) {
 
     // load the 4 fundamental combinations of cube dimensions;
     // remainder are accessible via drill-down in the UI
-    queue().defer(api.summarize, [], query.agg, query.filters, day_window)
-           .defer(api.summarize, first_row, query.agg, query.filters, day_window)
-           .defer(api.summarize, first_col, query.agg, query.filters, day_window)
-           .defer(api.summarize, [].concat(first_row).concat(first_col), query.agg, query.filters, day_window)
+    queue().defer(api.summarize, [], query.agg, query.filter, day_window)
+           .defer(api.summarize, first_row, query.agg, query.filter, day_window)
+           .defer(api.summarize, first_col, query.agg, query.filter, day_window)
+           .defer(api.summarize, [].concat(first_row).concat(first_col), query.agg, query.filter, day_window)
            .await( (err, d1, d2, d3, d4) => {
               if(err) { throw err }
               state.cube_data.set({

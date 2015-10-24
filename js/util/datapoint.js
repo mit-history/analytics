@@ -33,8 +33,8 @@ function datapoint(datapoint_url) {
 
     url: aggregate_url,
 
-    summarize: (dims, agg, filters, windows, fn) => {
-      var url = aggregate_url(dims, agg, filters, windows)
+    summarize: (dims, agg, filter, windows, fn) => {
+      var url = aggregate_url(dims, agg, filter, windows)
 
       d3.csv(url, (error, data) => {
         if(data) {
@@ -50,11 +50,11 @@ function datapoint(datapoint_url) {
     }
   }
 
-  function aggregate_url(dims, agg, filters, windows) {
-    var params = Object.create({});
-    params['axis[]'] = dims;
-    for(var dim in filters) {
-        params['filter.' + dim + '[]'] = filters[dim];
+  function aggregate_url(dims, agg, filter, windows) {
+    var params = Object.create({})
+    params['axis[]'] = dims
+    for(var dim in filter) {
+        params['filter.' + dim + '[]'] = filter[dim];
     }
 
     for(var dim in windows) {
