@@ -6,9 +6,13 @@
 *
 */
 
-require('../css/status.css')
 
 const schema = require('../cfrp-schema')
+
+require('../css/status.css')
+
+const query_msgs = require("json!../i18n/query.json")
+const i18n = require('./util/i18n')
 
 const hg = require('mercury')
 const h = require('mercury').h
@@ -137,18 +141,18 @@ Status.toggleRegular = function(state) {
 
 Status.render = function(state, lang, scale) {
 
+  var locale = i18n[lang]
   var format = schema.format(lang, state.query.agg)
+  var dateFormat = locale.timeFormat("%e %B %Y (%A)")
 
   return (
     h('div.titlebar', {
         'ev-click' : hg.send(state.status.channels.toggleRegular)
       }, [
-      /*
-      h('div.querystatus', [
-        state.sel_dates.map(format).join(' <--> '),
-        JSON.stringify(state.focus_cell)
-      ]),
-      */
+      h('div.querystatus', (state.sel_dates.length == 2) ? [
+        h('span.seldates', state.sel_dates.map(dateFormat).join(' - ') ),
+        h('span.close', { 'ev-click' : hg.send(state.channels.sel_dates) })
+      ] : []),
       new LegendWidget(scale, format, state.status.regular)
     ])
   )

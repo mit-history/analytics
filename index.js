@@ -11,7 +11,7 @@ const DEFAULT_QUERY = {
   rows: [ "decade" ],
   cols: [ "author_1" ],
   agg: "sum_receipts",
-  order: { "author_1": "asc",
+  order: { "author_1": "desc",
            "decade": "nat" },
   filter: { "author_1":
             ["Corneille (Pierre)",

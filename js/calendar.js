@@ -57,6 +57,11 @@ var yearRange = function(i0, i1) {
   return s0 + "-" + s1.slice(i+1)
 }
 
+var greyscale = function(c) {
+  // TODO.  genuine conversion to greyscale from a color
+  return 'lightgrey'
+}
+
 
 function GraphWidget(calendar_data, theater_data, calendar_extent, sel_dates, focus_day, mode, scale, lang) {
   this.calendar_data = calendar_data
@@ -218,7 +223,7 @@ GraphWidget.prototype.update = function(prev, elem) {
         ctx.strokeRect(rx, ry, cellSize, cellSize)
 
         var se = this.sel_dates
-        var sel = !se || (se[0] < d && d < se[1])
+        var sel = (se.length == 0) || (se[0] < d && d < se[1])
 
         var s = dateIndexFormat(d)
         var d = this.calendar_data[s]
@@ -226,8 +231,7 @@ GraphWidget.prototype.update = function(prev, elem) {
         ctx.fillStyle = "white"
         if(d) {
           var c = scale(d)
-          // TODO.  change to greyscale on blur
-          ctx.fillStyle = blur ? c : c
+          ctx.fillStyle = sel ? c : greyscale(c)
         }
         ctx.fillRect(rx, ry, cellSize, cellSize)
       })
@@ -256,7 +260,7 @@ GraphWidget.prototype.update = function(prev, elem) {
       })
 
     } else if (this.state.mode === 'context') {
-      console.log("drawing context")
+//      console.log("drawing context")
     } else {
 
       throw "Unkown mode " + mode;
@@ -377,41 +381,52 @@ function Calendar() {
   })
 }
 
+var dragging = false
+
 Calendar.render = function(state, lang) {
 
   var dragDateExtent = hg.BaseEvent(function (ev, broadcast) {
     // @see https://github.com/Raynos/mercury/blob/master/examples/geometry/lib/drag-handler.js
-    var data = this.data
     var del = hg.Delegator()
 
-    var startDate = pointToDate(ev, state.calendar_extent)
+    var startSelection = pointToDate(ev, state.calendar_extent)
 
     function onmove(ev2) {
-      var endDate = pointToDate(ev2, state.calendar_extent)
-      var msg = { startDate: startDate, endDate: endDate }
       ev2.preventDefault()
+      dragging = true
 
-      broadcast(assign(data, msg))
+      var endSelection = pointToDate(ev2, state.calendar_extent)
+
+      if(endSelection) {
+        var dates = [ startSelection, endSelection ].sort( d3.ascending )
+        var msg = { startDate: dates[0], endDate: dates[1] }
+
+        broadcast(msg)
+      }
     }
 
     function onup(ev2) {
+      // TODO.  find a better solution
+      setTimeout( () => { dragging = false }, 250)
+
       del.unlistenTo('mousemove')
       del.removeGlobalEventListener('mousemove', onmove)
       del.removeGlobalEventListener('mouseup', onup)
-
-      ev2.preventDefault()
     }
 
     ev.preventDefault()
 
-    del.listenTo('mousemove')
-    del.addGlobalEventListener('mousemove', onmove)
-    del.addGlobalEventListener('mouseup', onup)
+    if(startSelection) {
+      del.listenTo('mousemove')
+      del.addGlobalEventListener('mousemove', onmove)
+      del.addGlobalEventListener('mouseup', onup)
+    }
   })
 
   var sendDay = hg.BaseEvent(function(ev, broadcast) {
     var date = pointToDate(ev, state.calendar_extent)
-    if(date) {
+
+    if(date && !dragging) {
       broadcast(assign(this.data, { date: date }))
     }
   })
@@ -422,8 +437,8 @@ Calendar.render = function(state, lang) {
 
   return (
       h('div.calendar', {
-        'ev-click' : sendDay(state.channels.focus_day),
-        'ev-mousedown' : dragDateExtent(state.channels.sel_dates)
+        'ev-mousedown' : dragDateExtent(state.channels.sel_dates),
+        'ev-click' : sendDay(state.channels.focus_day)
       }, [
         Status.render(state, lang, scale, state.status),
         new GraphWidget(state.calendar_data, state.theater_data, state.calendar_extent, state.sel_dates, state.focus_day, 'focus', scale, lang)

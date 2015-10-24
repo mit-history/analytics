@@ -6,10 +6,19 @@
 }
 
 .titlebar .querystatus {
+  position: absolute;
   margin: 10px 5px 10px 20px;
   padding: 10px;
   border: 1px dashed #fece3c;
   border-radius: 10px;
+}
+
+
+.titlebar .close:after {
+  font-size: 0.65rem;
+  content: ' ✕ '; /* ' \2715'; */
+  vertical-align: super;
+  cursor: pointer;
 }
 
 .titlebar .legend {

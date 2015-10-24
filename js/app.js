@@ -112,6 +112,12 @@ function App(url, initial_query) {
       state.cube_data.set(hg.varhash({}))
       debouncingLoadCube()
     })
+
+    state.sel_dates(function() {
+      state.cube_data.set(hg.varhash({}))
+      debouncingLoadCube()
+    })
+
     state.cube_data(alignFocus)
     state.focus_cell(loadCalendar)
 
@@ -127,7 +133,7 @@ function App(url, initial_query) {
     var query = state.query()
     var first_row = query.rows.slice(0, 1)
     var first_col = query.cols.slice(0, 1)
-    var day_window = state.sel_dates ? { day : state.sel_dates } : {}
+    var day_window = state.sel_dates ? { day : state.sel_dates() } : {}
 
     // load the 4 fundamental combinations of cube dimensions;
     // remainder are accessible via drill-down in the UI
@@ -197,8 +203,14 @@ function App(url, initial_query) {
 
 App.sel_dates = function(state, data) {
   var { startDate, endDate } = data
-  console.log("Setting new date selection: " + startDate + ' - ' + endDate)
-  state.sel_dates.set([startDate, endDate])
+
+  if(startDate && endDate) {
+    console.log("Setting new date selection: " + startDate + ' - ' + endDate)
+    state.sel_dates.set([startDate, endDate])
+  } else {
+    console.log("Clearing date selection")
+    state.sel_dates.set([])
+  }
 }
 
 App.focus_cell = function(state, data) {
