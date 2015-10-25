@@ -32,7 +32,6 @@ var queue = require('queue-async')
 const msgs = require("json!../i18n/app.json")
 
 const DATE_NAME = 'day'
-const VALUE_NAME = 'sum_receipts'
 
 const dateIndexFormat = d3.time.format('%Y-%m-%d')
 
@@ -161,13 +160,15 @@ function App(url, initial_query) {
   function loadCalendar() {
     // presumes access to state... seems bad
     state.calendar_data.set([])
+
     var day_window = state.sel_dates ? { day : state.sel_dates } : {}
-    api.summarize([DATE_NAME], VALUE_NAME, state.focus_cell(), day_window, function(err, raw_data) {
+
+    api.summarize([DATE_NAME], state.query.agg(), state.focus_cell(), day_window, function(err, raw_data) {
       if (err) { throw err }
       var data = Object.create({})
       raw_data.forEach( (d) => {
         var day = d[DATE_NAME]
-        data[day] = d[VALUE_NAME]
+        data[day] = d[state.query.agg()]
       })
       state.calendar_data.set(data)
       // NB this works because the date format sorts alphanumerically
