@@ -85,9 +85,10 @@
 .query .axis,
 .query .aggregate {
   display: inline-block;
-  vertical-align: top;
+  vertical-align: middle;
+  height: 34px;
   margin: 0;
-  padding: 0 0 0 5px;
+  padding: 2px 2px 0 5px;
   border: 1px dashed #fece3c;
   border-radius: 10px;
 }
@@ -170,7 +171,7 @@
 .query .grouping li {
   position: relative;
   display: inline-block;
-/*  padding: 5px 10px 5px 10px; */
+  padding: 5px 10px 5px 10px;
   margin: 0;
   background: #fece3c;
   border-radius: 25px;
@@ -249,9 +250,9 @@
 
 .query .togglePivot {
   display: inline-block;
-  vertical-align: top;
+  vertical-align: middle;
 
-  top: 5px;
+  top: -32px;
   left: 5px;
 
   padding: 0;
@@ -263,8 +264,8 @@
   color: black;
   cursor: pointer;
 
-  width:            24px;
-  height:           24px;
+  width: 24px;
+  height: 24px;
 
   border: 1px dashed #fece3c;
   border-radius: 10px;
