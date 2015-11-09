@@ -1,11 +1,10 @@
 var webpack = require('webpack');
 module.exports = {
   devtool: 'source-map',
-  entry: [
-    "./index.js"
-  ],
+  entry: './index.js',
   output: {
-    path: './build',
+    path: __dirname + '/build',
+    publicPath: '/build',
     filename: 'bundle.js'
   },
   module: {
