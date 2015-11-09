@@ -79,7 +79,7 @@ function App(url, initial_query) {
 // component state
             route: Router(),
             modal: Modal(),
-            carousel: Carousel(),
+            carousel: Carousel(1),
             register: Register(),
             status: Status(),
 
@@ -125,6 +125,7 @@ function App(url, initial_query) {
 
     loadCube()
     loadTheaters()
+    loadCalendar()
 
   return state
 

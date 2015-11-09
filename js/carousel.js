@@ -12,9 +12,9 @@ require('../css/carousel.css')
 var hg = require('mercury')
 var h = require('mercury').h
 
-function Carousel() {
+function Carousel(n) {
   return hg.state({
-    active: hg.value(0),
+    active: hg.value(n || 0),
     channels: {
       setSlide: Carousel.setSlide
     }
