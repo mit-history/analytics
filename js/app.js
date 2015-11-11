@@ -248,10 +248,10 @@ App.toggle_modal = function(state, modal) {
 
 App.render = function(state) {
   return RouterComponent.render(state, {
-           '/': function() {
+           '/app': function() {
              return render_i18n('fr')
            },
-           '/:lang': function(params) {
+           '/:lang/app': function(params) {
              return render_i18n(lang(params))
            }
          })
@@ -269,9 +269,7 @@ App.render = function(state) {
     var panes = [ {start: 0, run: 1, title: i18n.dot1 },
                   {start: 0, run: 2, title: i18n.dot2 },
                   {start: 1, run: 2, title: i18n.dot3 }]
-    return h('div', [
-             h('div.lang', [ "Language is " + lang ]),
-             h('div.modal', [ String("Current modal: " + state.modal.modal || "none") ]),
+    return h('div',
              Carousel.render(state.carousel, panes, [
                h('div.crosstab', [
                  hg.partial(Query.render, state.modal, state.query, lang),
@@ -280,7 +278,7 @@ App.render = function(state) {
                hg.partial(Calendar.render, state, lang),
                hg.partial(Register.render, state.register)
              ])
-           ])
+          )
   }
 }
 
