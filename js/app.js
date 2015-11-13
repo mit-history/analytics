@@ -84,7 +84,7 @@ function App(url, initial_query) {
             status: Status(),
 
 // global state
-            query: Query(initial_query),
+            query: Query(initial_query, url),
             sel_dates: hg.value([]),
             focus_cell: hg.value({}),
             focus_day: hg.value(null),
@@ -94,6 +94,9 @@ function App(url, initial_query) {
             calendar_extent: hg.value(null),
             cube_data: hg.value({}),
             theater_data: hg.value([]), // should be initialized once, at load
+
+// reference data
+            url: url,
 
 // global state transitions
             channels: {

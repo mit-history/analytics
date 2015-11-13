@@ -6,9 +6,6 @@
 *
 */
 
-const url = 'http://localhost:3000/api/cfrp'
-
-
 require('../css/query.css')
 
 var hg = require('mercury')
@@ -23,11 +20,10 @@ var Filter = require('./query/filter')
 
 var datapoint = require('./util/datapoint')
 
-var api = datapoint(url)
 
 /** Query selector as a whole **/
 
-function Query(initial_query) {
+function Query(initial_query, url) {
   var state = hg.state({
     agg: Aggregate(initial_query.agg),
     rows: Axis(initial_query.rows),
@@ -37,6 +33,7 @@ function Query(initial_query) {
 // local data & server-loaded data
     filter_state: Filter(),
     domains_data: hg.varhash({}),
+    url: url,
 // actions
     channels: {
       setAggregate: Query.setAggregate,
@@ -57,6 +54,8 @@ function Query(initial_query) {
   return state
 
   function loadDomains() {
+    var api = datapoint(url)
+
     var active_dims = [].concat(state.rows()).concat(state.cols())
     active_dims.forEach( (dim) => {
       if(!state.domains_data()[dim]) {
@@ -160,6 +159,7 @@ Query.togglePivot = function(query) {
 }
 
 Query.render = function(modal_state, query_state, lang) {
+  var api = datapoint(query_state.url)
 //  return h('div.query', [ String("Current query: " + JSON.stringify(state)) ])
   var all_dims = ([]).concat(query_state.rows).concat(query_state.cols)
   var download_url = api.url(all_dims, query_state.agg, query_state.filter)
