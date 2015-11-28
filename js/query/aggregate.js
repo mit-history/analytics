@@ -19,6 +19,8 @@ var Modal = require('../modal')
 
 var schema = require('../../cfrp-schema')
 
+var i18n = require('../util/i18n')
+
 /** Aggregate selector **/
 
 function Aggregate(initial_agg) {
@@ -26,8 +28,6 @@ function Aggregate(initial_agg) {
 }
 
 Aggregate.render = function(modal_state, query_state, lang) {
-  var i18n = msgs[lang]
-
   var cur_agg = query_state.agg
   var aggregates = schema.aggregate()
 
@@ -37,7 +37,7 @@ Aggregate.render = function(modal_state, query_state, lang) {
           'ev-click': [ hg.send(query_state.channels.setAggregate, new_agg),
                         hg.send(modal_state.channels.setModal, null) ]
         }, [
-          i18n[new_agg] || new_agg
+          i18n.htmlize(msgs, new_agg, lang)
         ])
     )
   })
@@ -45,7 +45,7 @@ Aggregate.render = function(modal_state, query_state, lang) {
   return (
     h('div.selector', [
       h('div.aggregate', [
-        Modal.render(modal_state, 'aggregate', i18n[cur_agg] || cur_agg, [
+        Modal.render(modal_state, 'aggregate', i18n.htmlize(msgs, cur_agg, lang), [
           h('ul.panel', lis)
         ])
       ]),

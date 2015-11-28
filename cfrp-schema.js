@@ -53,7 +53,11 @@ const public_aggregates = [
   "sum_receipts",
   "performances_days",
   "mean_receipts_day",
-  "mean_price" ]
+  "mean_price",
+  "count_authors_1",
+  "count_authors_2",
+  "count_titles_1",
+  "count_titles_2" ]
 
 function group() {
   return schema
@@ -98,6 +102,10 @@ function parse(field) {
       return parseFloat
     case /mean_price/.test(field):
       return parseFloat
+    case /count_authors_(\d)/.test(field):
+      return parseInt
+    case /count_titles_(\d)/.test(field):
+      return parseInt
   }
   return (x) => x
 
@@ -148,6 +156,10 @@ function format(lang, field) {
       return fmt.numberFormat(",.2f")
     case /mean_price/.test(field):
       return fmt.numberFormat(",.2f")
+    case /count_authors_(\d)/.test(field):
+      return fmt.numberFormat(",.0f")
+    case /count_titles_(\d)/.test(field):
+      return fmt.numberFormat(",.0f")
   }
 
 //  return (x) => x ? ("*** " + x) : ""

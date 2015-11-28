@@ -41,7 +41,9 @@
     "sum_receipts": "Gross receipts",
     "performances_days": "Performances (= days)",
     "mean_receipts_day": "Average (receipts / day)",
-    "mean_price": "Average ticket price"
+    "mean_price": "Average ticket price",
+    "count_authors": "Count author",
+    "count_titles": "Count title"
   },
 
   "fr":
@@ -87,6 +89,8 @@
     "sum_receipts": "Somme(recette)",
     "performances_days": "Représentations(jours)",
     "mean_receipts_day": "Moyenne(recette/jour)",
-    "mean_price": "Moyenne(prix)"
+    "mean_price": "Moyenne(prix)",
+    "count_authors": "Somme Auteur",
+    "count_titles": "Somme Pièce"
   }
 }
