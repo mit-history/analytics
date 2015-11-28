@@ -134,6 +134,8 @@ Query.removeDimension = function(query, data) {
   if (j>-1) {
     dims.splice(j, 1)
   }
+
+  query.filter.delete(dim)
 }
 
 Query.toggleDimensionOrder = function(query, dim) {
