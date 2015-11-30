@@ -49,7 +49,7 @@ Aggregate.render = function(modal_state, query_state, lang) {
           h('ul.panel', lis)
         ])
       ]),
-      h('div.title', [ i18n.cells ])
+      h('div.title', [ msgs[lang].cells ])
     ])
   )
 }
