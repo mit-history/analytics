@@ -4,7 +4,7 @@ body {
   margin: 0;
 }
 
-/* special case: suggest preferred categories for rows and cols */
+/* special case: suggest preferred categories for rows and cols
 .axis.rows .group.performance,
 .axis.rows .group.performance li {
   color: #e5b523;
@@ -13,6 +13,7 @@ body {
 .axis.cols .group.time li {
   color: #e5b523;
 }
+*/
 
 .pivot {
   margin-top: 5px;
