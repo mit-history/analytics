@@ -31,7 +31,8 @@ const schema = {
       "title",
       "genre",
       "acts",
-      "prose_vers" ]),
+      "prose_vers",
+      "creation_season" ]),
   performance_addl:
     subscript(playbills,
     [ "prologue",

@@ -23,6 +23,7 @@
     "genre": "Genre",
     "acts": "Acts",
     "prose_vers": "Prose/Verse",
+    "creation_season": "Written in Season",
 
     "prologue": "Prolog",
     "musique_danse_machine": "Music/Dance/Machinery",
@@ -73,6 +74,7 @@
     "genre": "Genre",
     "acts": "Acte(s)",
     "prose_vers": "Prose/Vers",
+    "creation_season": "Saison d'Écriture",
 
     "prologue": "Prologue",
     "musique_danse_machine": "Musique/Danse/Machine",
