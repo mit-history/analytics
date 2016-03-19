@@ -1,73 +1,24 @@
+html {
+	height:100%;
+}
+
 body {
-  overflow: hidden;
-  padding: 0;
-  margin: 0;
+	height:100%;
 }
 
-/* special case: suggest preferred categories for rows and cols
-.axis.rows .group.performance,
-.axis.rows .group.performance li {
-  color: #e5b523;
-}
-.axis.cols .group.time,
-.axis.cols .group.time li {
-  color: #e5b523;
-}
-*/
-
-.pivot {
-  margin-top: 5px;
-  padding-top: 5px;
-  border-top: 1px gray dotted;
-  border-left: 1px gray dotted;
+.main-container {
+	height:100%;
+	width:100%;
+	max-width:100% !important;
 }
 
-.carousel {
-  height: 100%;
+.clearfix {
+	clear:both;
 }
 
-.carousel .panes {
-  height: calc(100vh - 40px);
-}
-
-.carousel .panes .pane {
-  height: 100%;
-}
-
-.crosstab {
-  height: 100%;
-}
-
-.navigation {
-  font-family: 'MuseoSans500', Helvetica, sans-serif;
-  font-size: .65em;
-  text-transform: uppercase;
-
-  display: block;
-  margin: 0;
-
-  background-color: white;
-  border-top: 1px gray dotted;
-  border-bottom: 1px gray dotted;
-  height: 40px;
-  line-height: 40px;
-}
-
-.dots {
-  width: 100%;
-}
-
-.dots li {
-  vertical-align: center;
-  padding: 0 15px;
-}
-
-.dots li a {
-  color: black;
-  text-decoration: none;
-}
-
-.carousel .pane {
-  border-right: 1px gray dotted;
-  padding: 5px;
+button {
+	background-color:#DADADA !important;
+	color:#5D5E60 !important;
+	padding:5px 10px !important;
+	font-size:12px !important;
 }

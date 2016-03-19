@@ -1,0 +1,339 @@
+.query {
+  position: relative;
+  width: 100%;
+  font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
+  font-size: 11px;
+}
+
+.query ul {
+  list-style-type: none;
+  margin-left: 0;
+}
+
+.query button {
+  border-width: 0;
+}
+
+.query input[type="text"] {
+  width: 100%;
+}
+
+.query label {
+  display: block;
+}
+
+.query sub {
+  font-size: 0.7em;
+}
+
+.query .axis:before,
+.query .aggregate:before {
+  font-size: 1.3rem;
+  padding-left: 5px;
+}
+
+/* TODO.  simplify positioning of i·cons */
+.query .axis.rows:before {
+  content: ' ═ ';  /* webpack mangles content: ' \2550 ' */
+  vertical-align: middle;
+}
+.query .axis.cols:before {
+  content: ' ‖ ';  /* ' \2016 '; */
+  vertical-align: middle;
+}
+.query .aggregate:before {
+  content: ' ☐ '; /* ' \2610 '; */
+}
+
+.query .grouping .order:before {
+  font-size: 1rem;
+  vertical-align: top;
+}
+
+.query .grouping .order.nat:before {
+  content: ' ○ ';
+}
+
+.query .grouping .order.asc:before {
+  content: ' ↑ ';
+}
+
+.query .grouping .order.desc:before {
+  content: ' ↓ ';
+}
+
+.query .grouping {
+  display: inline-block;
+  vertical-align: top;
+  margin: 0;
+  padding: 0;
+}
+
+.query .selector {
+  display:inline-block;
+  margin: 0 0 0 10px;
+  padding: 0;
+}
+
+.query .selector .title {
+  text-decoration: italic;
+  color: gray;
+  margin-left: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.query .axis,
+.query .aggregate {
+  display: inline-block;
+  vertical-align: middle;
+  height: 34px;
+  margin: 0;
+  padding: 2px 2px 0 5px;
+  border: 1px dashed #fece3c;
+  border-radius: 10px;
+}
+
+.query .dropdown button:after {
+  font-size: 0.5rem;
+  content:' ▼'; /* ' \25bc'; */
+}
+
+.query .dimensionSelectorInfo .footer {
+  margin: 5px 10px 5px 5px;
+  text-align: right;
+  visibility: hidden;
+}
+
+.query .dimensionSelector {
+  height: 340px;
+  margin: 0;
+}
+
+.query .dimensionSelector li {
+  display: inline-block;
+  margin-right: -4px;
+  vertical-align: top;
+}
+
+.query .dimensionSelector .group {
+  position: relative;
+  width: 160px;
+  height: 95%;
+  margin: 2px;
+  padding: 6px;
+  border: 2px solid;
+  border-radius: 10px;
+}
+
+.query .dimensionSelector .dimensionGroupLabel {
+  font-style: bold;
+  text-align: right;
+  border-bottom: 1px solid;
+}
+
+.query .dimensionSelector .group ul {
+  position: relative;
+  margin: 0; padding: 0;
+  top: 5px;
+  left: 0;
+  width: 100%;
+}
+
+.query .dimensionSelector .subscripts .dimension:not(:first-child) {
+  display: none;
+}
+
+.query .dimensionSelector .subscripts:hover .dimension:not(:first-child) {
+  display: block;
+  position: relative;
+  margin-left: 10px;
+}
+
+.query .dimensionSelector .dimension {
+  height: 1.5em;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.query .dimensionSelector .dimension:hover {
+  background: #f5b901;
+  width: 90%;
+  border-radius: 7.5px;
+}
+
+.query .dimension {
+  padding: 2px 10px 2px 10px !important;
+}
+
+.query .dropdown button,
+.query .grouping li {
+  position: relative;
+  display: inline-block;
+  padding: 5px 10px 5px 10px;
+  margin: 0;
+  background: #fece3c;
+  border-radius: 25px;
+}
+
+/*
+.query .grouping li:before {
+  font-size: 0.75rem;
+  content: '\2191  ';
+}
+*/
+
+.query .grouping .filtered .name:after {
+  font-size: 0.5rem;
+  content: ' ✓ '; /* ' \2713'; */
+  vertical-align: super;
+}
+
+.query .grouping .close:after {
+  font-size: 0.65rem;
+  content: ' ✕ '; /* ' \2715'; */
+  vertical-align: super;
+}
+
+.query .dropdown button,
+.query .grouping li,
+.query .dropdown li {
+  font-size: 0.75rem;
+  color: white;
+  cursor: pointer;
+}
+
+.query .dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.query .dropdown .panel {
+  position: absolute;
+  left: 10px;
+  top: 0;
+  margin-top: 3.6em;
+  padding: 5px 5px 8px 5px;
+  background: #fece3c;
+  border-radius:15px;
+  z-index: 1;
+}
+
+.query .aggregate li {
+  padding: 4px;
+}
+
+.query .aggregate li:hover {
+  background: #f5b901;
+  border-radius: 7.5px;
+}
+
+/* Specific to MacOS Chrome
+   remove unsightly focus borders on dropdowns */
+.query .dropdown *:focus {
+  outline: none !important;
+}
+
+.query .filter {
+  font-size: .8rem;
+  top: 10px;
+  position: absolute;
+  left: 10px;
+  margin-top: 2em;
+  padding: 0;
+  background: #fece3c;
+  opacity: 0.95;
+  width: 350px;  /* TODO. size width automatically */
+  z-index: 1;
+}
+
+.query .togglePivot {
+  display: inline-block;
+  vertical-align: middle;
+
+  top: -32px;
+  left: 5px;
+
+  padding: 0;
+
+  margin: 4px;
+  position: relative;
+
+  font-size: 0.75rem;
+  color: black;
+  cursor: pointer;
+
+  width: 24px;
+  height: 24px;
+
+  border: 1px dashed #fece3c;
+  border-radius: 10px;
+}
+
+.query .togglePivot:before {
+  padding: 0 0 0 5px;
+  content: ' ⇋ ';
+  vertical-align: middle;
+}
+
+.query .download {
+  display: inline-block;
+  vertical-align: top;
+  margin: 0;
+  padding: 0;
+  border: 1px dashed #fece3c;
+  border-radius: 10px;
+}
+
+.query .download a {
+  margin: 4px;
+  position: relative;
+  display: inline-block;
+  background: #fece3c;
+  border-radius: 25px;
+
+  font-size: 0.75rem;
+  color: white;
+  cursor: pointer;
+
+  width:            24px;
+  height:           24px;
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAt0lEQVQ4T+2TWw3CQBRE5zjAAZUADrCAAyRUAhJwABKQUAcgARzUwZBpmgboi8Av87PN3bkne2e76Ecx1W+7zD5wGPPNAfYtoFmH9AdIvQxsnyTVQGm7C9F2bmIB7J7DHAIUkq6ScoX5jm6SAiiA+gVgewNUz0XbK0mpXdr6WlJ8AXdqem0bGDpJjnps3Vvg/P4fNL1jgJhtN/MCyaWnWcDcM+kAmW/OPLJfZYQkvPwScJ98C59AH7d8ZBsL0nKGAAAAAElFTkSuQmCC');
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+.query .filter input[type='text'] {
+  height: 1.5rem;
+  margin: 0;
+}
+
+.query .filter .values {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.query .filter .actions {
+  background: white;
+}
+
+.query .filter input[type='checkbox'] {
+  margin: .25rem;
+}
+
+.query .filter button,
+.query .filter input[type='submit'] {
+  border: 1px lightgray solid;
+  padding: 0;
+  margin-top: 2px;
+  padding-bottom: 10px;
+  padding-top: 5px;
+  background: white;
+  color: black;
+  width: 33%;
+}
+
+.query .filter button::after {
+  content: '';
+}

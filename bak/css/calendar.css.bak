@@ -1,0 +1,24 @@
+.calendar {
+  font: 10px sans-serif;
+  height: 100%;
+}
+
+.calendar .graph {
+  position: relative;
+  height: calc(100% - 130px);  /* TODO.  find a better way to offset height of other components */
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.calendar canvas,
+.calendar svg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  margins: 0;
+  padding: 0;
+}
+
+.calendar .period {
+  cursor: pointer;
+}

@@ -1,0 +1,70 @@
+.carousel {
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.carousel .dots {
+  list-style: none;
+  position: relative;
+}
+
+.carousel .dots li {
+  float: left;
+}
+
+.carousel .dots .active {
+  text-decoration: underline;
+}
+
+.carousel .step {
+  position: fixed;
+  z-index: 100;
+  top: 50%;
+  width: 50;
+  height: 50;
+  background: white;
+  padding: 10px;
+  border: 1px dashed #fece3c;
+  cursor: pointer;
+}
+
+.carousel .step:hover {
+  background: #fece3c;
+}
+
+.carousel .step.previous {
+  left: 0;
+  border-radius: 0 10px 10px 0;
+  border-left: none;
+}
+
+.carousel .step.previous:after {
+  content: ' < ';
+}
+
+.carousel .step.next {
+  right: 0;
+  border-radius: 10px 0 0 10px;
+  border-right: none;
+}
+
+.carousel .step.next:after {
+  content: ' > ';
+}
+
+.carousel .panes {
+  list-style: none;
+  position: relative;
+  padding: 10px;
+  margin: 0;
+}
+
+.carousel .panes > li {
+  position: relative;
+  float: left;
+}
+
+.carousel .panes .pane {
+  overflow: hidden;
+}

@@ -167,15 +167,32 @@ Query.render = function(modal_state, query_state, lang) {
   var download_url = api.url(all_dims, query_state.agg, query_state.filter)
 
   return (
-    h('div.query', {id: 'query_panel'}, [
-      Axis.render(modal_state, query_state, 'rows', lang),
-      h('div.togglePivot', { 'ev-click': hg.send(query_state.channels.togglePivot, query_state) }),
-      Axis.render(modal_state, query_state, 'cols', lang),
-      Aggregate.render(modal_state, query_state, lang),
-      h('div.selector', [
-        h('div.download', h('a', { href: download_url })),
-        h('div.title', 'Data')
-      ])
+    h('div.query-container.small-3.columns', {id: 'query_panel'}, [
+      h('header.query-pane-section.header', [
+				h('h1', msgs[lang]['COMPARISON_TOOL_TITLE']),
+				h('button', msgs[lang]['NEW_SEARCH_BUTTON']),
+      ]),
+      h('header.query-pane-section', [
+				h('h2', msgs[lang]['COMPARISON_TOOL_SCOPE_TITLE']),
+				Aggregate.render(modal_state, query_state, lang),
+      ]),
+
+      h('header.query-pane-section', [
+				h('h2', msgs[lang]['COMPARISON_TOOL_X_TITLE']),
+				Axis.render(modal_state, query_state, 'rows', lang),
+      ]),
+
+      h('header.query-pane-section', [
+				h('h2', msgs[lang]['COMPARISON_TOOL_Y_TITLE']),
+				Axis.render(modal_state, query_state, 'cols', lang),
+      ]),
+      // h('div.togglePivot', { 'ev-click': hg.send(query_state.channels.togglePivot, query_state) }),
+//       Axis.render(modal_state, query_state, 'cols', lang),
+//       Aggregate.render(modal_state, query_state, lang),
+//       h('div.selector', [
+//         h('div.download', h('a', { href: download_url })),
+//         h('div.title', 'Data')
+//       ])
     ]))
 }
 
