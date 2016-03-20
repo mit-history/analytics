@@ -292,7 +292,7 @@ App.render = function(state) {
 					'style': 'display:none;',
       		'ev-click': showQueryContainer(),
       	}, [
-					h('p', 'Critères de recherche'),
+					h('p', msgs[lang]['COMPARISON_TOOL_OPEN_HANDLE']),
 					h('button.fa.fa-chevron-right.slide-pannel-button',  {
 	      		'ev-click': showQueryContainer()
 	      	})

@@ -1,12 +1,14 @@
 { "en":
   { "dot1" : "Crosstab",
     "dot2" : "Crosstab + Calendar",
-    "dot3" : "Calendar + Register"
+    "dot3" : "Calendar + Register",
+		"COMPARISON_TOOL_OPEN_HANDLE": "Search criterias"
   },
 
   "fr": 
   { "dot1" : "Tableau croisé",
     "dot2" : "Tableau croisé + Calendrier",
-    "dot3" : "Calendrier + Registre"
+    "dot3" : "Calendrier + Registre",
+		"COMPARISON_TOOL_OPEN_HANDLE": "Critères de recherche"
   }
 }
