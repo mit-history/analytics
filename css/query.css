@@ -6,6 +6,54 @@
 	border-top-right-radius: 6px;
 	border-bottom-right-radius: 6px;
 	box-sizing:border-box;
+	position:relative;
+}
+
+.query-container button {
+	background-color:#DADADA;
+	color:#5D5E60;
+	padding:5px 10px;
+	font-size:12px;
+}
+
+.slide-pannel-button {
+	position:absolute;
+	right:-25px !important;
+	top:50%;
+	background-color:#4382A0 !important;
+	padding:10px 5px !important;
+	border-top-right-radius: 6px;
+	border-bottom-right-radius: 6px;
+	color:#fff !important;
+}
+
+.query-show-handle {
+  position: absolute;
+  top: 0px;
+	z-index:999;
+	
+	width:50px;
+	height:100%;
+	background-color:#4382A0;
+	color:#fff;
+	border-right:solid 8px #4382A0;
+	border-top-right-radius: 6px;
+	border-bottom-right-radius: 6px;
+	text-align:center;
+	white-space:nowrap;
+	cursor:pointer;
+}
+
+.query-show-handle p {
+  position: relative;
+  top: 50%;
+	left: 7px;
+	text-transform:uppercase;
+	writing-mode: lr-bt; 
+	-webkit-transform:rotate(-90deg);
+	-moz-transform:rotate(-90deg);
+	-o-transform: rotate(-90deg);
+	transform: rotate(-90deg);
 }
 
 .query-pane-section {
@@ -27,4 +75,8 @@
 	font-size:16px;
 	margin-bottom:10px;
 	text-transform:uppercase;
+}
+
+.query-pane-section h2.axis-title::first-letter {
+	text-transform:lowercase;
 }

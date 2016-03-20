@@ -7,8 +7,11 @@
 */
 
 
+require('../css/third-party/foundation6/foundation-flex.css')
 require('../css/app.css')
-require('../css/foundation6/foundation-flex.css')
+
+require("font-awesome-webpack");
+require("jquery-ui");
 
 var hg = require('mercury')
 var h = require('mercury').h
@@ -273,21 +276,31 @@ App.render = function(state) {
     var panes = [ {start: 0, run: 1, title: i18n.dot1 },
                   {start: 0, run: 2, title: i18n.dot2 },
                   {start: 1, run: 2, title: i18n.dot3 }]
-    return h('div.row.main-container', [
-                 hg.partial(Query.render, state.modal, state.query, lang),
-                 hg.partial(Crosstab.render, state)
-               ]) 
 			
-					// h('div',
-//              Carousel.render(state.carousel, panes, [
-//                h('div.crosstab', [
-//                  hg.partial(Query.render, state.modal, state.query, lang),
-//                  hg.partial(Crosstab.render, state)
-//                ]),
-//                hg.partial(Calendar.render, state, lang),
-//                hg.partial(Register.render, state.register)
-//              ])
-          // )
+	  var showQueryContainer = hg.BaseEvent(function(ev) {
+			$('#query_panel_open').fadeOut(150, function () {
+				$('#query_panel').toggle( "slide", { direction: 'left'}, function() {
+					$('#query_panel .query-pane-content').fadeIn(150);
+				})
+			})
+	  })
+			
+    return h('div.row.main-container', [
+			h('div.query-show-handle', 
+				{
+					'id': 'query_panel_open',
+					'style': 'display:none;',
+      		'ev-click': showQueryContainer(),
+      	}, [
+					h('p', 'Critères de recherche'),
+					h('button.fa.fa-chevron-right.slide-pannel-button',  {
+	      		'ev-click': showQueryContainer()
+	      	})
+      	]
+			),
+			hg.partial(Query.render, state.modal, state.query, lang),
+			hg.partial(Crosstab.render, state)
+    ]) 
   }
 }
 

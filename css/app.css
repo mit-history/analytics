@@ -15,10 +15,3 @@ body {
 .clearfix {
 	clear:both;
 }
-
-button {
-	background-color:#DADADA !important;
-	color:#5D5E60 !important;
-	padding:5px 10px !important;
-	font-size:12px !important;
-}
