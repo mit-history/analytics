@@ -13,13 +13,22 @@ module.exports = {
       { test: /\.css$/, loader: "style!css" },
 			{ test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "url-loader?limit=10000&minetype=application/font-woff" },
       { test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "file-loader" },
-			{ test: /[\/\\]node_modules[\/\\]some-module[\/\\]index\.js$/, loader: "imports?this=>window" }
+      { test: /\.(jpe?g|png|gif)$/i, loader:"file" },
     ]
   },
+	resolve: {
+		alias: {
+			"jquery": 							"jquery/src/jquery",
+      "jquery.ui": 						"jquery-ui/ui/core",
+      "jquery.ui.selectmenu": "jquery-ui/ui/widgets/selectmenu",
+		}
+	},
   plugins: [
     new webpack.NoErrorsPlugin(),
 		new webpack.ProvidePlugin({
-		    $: "../node_modules/jquery/dist/jquery.js"
+		  "$": 							"jquery",
+      "jQuery": 				"jquery",
+      "window.jQuery": 	"jquery"
 		})
   ]
 };

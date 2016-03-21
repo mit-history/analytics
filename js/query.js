@@ -186,6 +186,7 @@ Query.render = function(modal_state, query_state, lang) {
 					h('h1', msgs[lang]['COMPARISON_TOOL_TITLE']),
 					h('button', msgs[lang]['NEW_SEARCH_BUTTON']),
 	      ]),
+				
 	      h('header.query-pane-section', [
 					h('h2', msgs[lang]['COMPARISON_TOOL_SCOPE_TITLE']),
 					Aggregate.render(modal_state, query_state, lang),

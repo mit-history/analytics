@@ -7,11 +7,7 @@
 */
 
 
-require('../css/third-party/foundation6/foundation-flex.css')
 require('../css/app.css')
-
-require("font-awesome-webpack");
-require("jquery-ui");
 
 var hg = require('mercury')
 var h = require('mercury').h
