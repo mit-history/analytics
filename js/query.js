@@ -25,7 +25,11 @@ var datapoint = require('./util/datapoint')
 
 function Query(initial_query, url) {
   var state = hg.state({
+// ui elements states
 		queryPanelOpen: hg.value(true),
+		aggregateDropdownOpen: hg.value(false),
+		
+// query data
     agg: Aggregate(initial_query.agg),
     rows: Axis(initial_query.rows),
     cols: Axis(initial_query.cols),
@@ -38,6 +42,7 @@ function Query(initial_query, url) {
 // actions
     channels: {
       setPanelOpen: Query.setPanelOpen,
+      setAggregateDropdownOpen: Query.setAggregateDropdownOpen,
       setAggregate: Query.setAggregate,
       addDimension: Query.addDimension,
       removeDimension: Query.removeDimension,
@@ -84,6 +89,10 @@ const ORDER_VALUES = ['nat', 'asc', 'desc']
 
 Query.setPanelOpen = function(state) {
   state.queryPanelOpen.set(!state.queryPanelOpen());
+}
+
+Query.setAggregateDropdownOpen = function(state) {
+  state.aggregateDropdownOpen.set(!state.aggregateDropdownOpen())
 }
 
 Query.setAggregate = function(query, new_agg) {
@@ -173,7 +182,7 @@ Query.render = function(modal_state, query_state, lang) {
   var download_url = api.url(all_dims, query_state.agg, query_state.filter)
 	
   return (
-		h('div.slide-pannel-container' + (query_state.queryPanelOpen ? '.small-3.columns.off-canvas' : ''), [
+		h('aside.slide-pannel-container' + (query_state.queryPanelOpen ? '.small-3.columns.off-canvas' : ''), [
 
 			h('div.query-show-handle' + (query_state.queryPanelOpen ? '.hidden-container' : '.visible-container'), 
 				{
@@ -187,7 +196,7 @@ Query.render = function(modal_state, query_state, lang) {
 	    	]
 			),
 			
-			h('div.query-container' + (query_state.queryPanelOpen ? '.visible-container' : '.hidden-container'), {id: 'query_panel'}, [
+			h('section.query-container' + (query_state.queryPanelOpen ? '.visible-container' : '.hidden-container'), {id: 'query_panel'}, [
 	      h('button.fa.fa-chevron-left.slide-pannel-button', {
 	      	'ev-click': hg.send(query_state.channels.setPanelOpen)
 	      }),

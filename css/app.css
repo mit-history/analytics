@@ -22,3 +22,7 @@ body {
 .visible-container {
 	display:block;
 }
+
+.right {
+	float:right;
+}
