@@ -189,7 +189,7 @@ Query.render = function(modal_state, query_state, lang) {
 					'id': 'query_panel_open',
 	    		'ev-click': hg.send(query_state.channels.setPanelOpen),
 	    	}, [
-					h('p', msgs[lang]['COMPARISON_TOOL_OPEN_HANDLE']),
+					h('p', msgs[lang]['comparison_tool_open_handle']),
 					h('button.fa.fa-chevron-right.slide-pannel-button',  {
 	      		'ev-click': hg.send(query_state.channels.setPanelOpen)
 	      	})
@@ -203,33 +203,26 @@ Query.render = function(modal_state, query_state, lang) {
 			
 				h('div.query-pane-content', [
 					h('header.query-pane-section.header', [
-						h('h1', msgs[lang]['COMPARISON_TOOL_TITLE']),
-						h('button', msgs[lang]['NEW_SEARCH_BUTTON']),
+						h('h1', msgs[lang]['comparison_tool_title']),
+						h('button', msgs[lang]['new_search_button']),
 		      ]),
 				
 		      h('header.query-pane-section', [
-						h('h2', msgs[lang]['COMPARISON_TOOL_SCOPE_TITLE']),
+						h('h2', msgs[lang]['comparison_tool_scope_title']),
 						Aggregate.render(modal_state, query_state, lang),
 		      ]),
 
 		      h('header.query-pane-section', [
-						h('h2.axis-title', msgs[lang]['COMPARISON_TOOL_X_TITLE']),
+						h('h2.axis-title', msgs[lang]['comparison_tool_x_title']),
 						Axis.render(modal_state, query_state, 'rows', lang),
 		      ]),
 
 		      h('header.query-pane-section', [
-						h('h2.axis-title', msgs[lang]['COMPARISON_TOOL_Y_TITLE']),
+						h('h2.axis-title', msgs[lang]['comparison_tool_y_title']),
 						Axis.render(modal_state, query_state, 'cols', lang),
 		      ]),
 				])
 			])
-      // h('div.togglePivot', { 'ev-click': hg.send(query_state.channels.togglePivot, query_state) }),
-//       Axis.render(modal_state, query_state, 'cols', lang),
-//       Aggregate.render(modal_state, query_state, lang),
-//       h('div.selector', [
-//         h('div.download', h('a', { href: download_url })),
-//         h('div.title', 'Data')
-//       ])
     ]))
 }
 

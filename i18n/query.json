@@ -1,11 +1,11 @@
 { "en":
   { 
-		"COMPARISON_TOOL_TITLE": "Comparison tool",
-		"NEW_SEARCH_BUTTON": "New search",
-		"COMPARISON_TOOL_SCOPE_TITLE": "What are you looking for ?",
-		"COMPARISON_TOOL_X_TITLE": "x. In function of what ?",
-		"COMPARISON_TOOL_Y_TITLE": "y. In function of what ?",
-		"COMPARISON_TOOL_OPEN_HANDLE": "Search criterias",
+		"comparison_tool_title": "Comparison tool",
+		"new_search_button": "New search",
+		"comparison_tool_scope_title": "What are you looking for ?",
+		"comparison_tool_x_title": "x. In function of what ?",
+		"comparison_tool_y_title": "y. In function of what ?",
+		"comparison_tool_open_handle": "Search criterias",
 
     "sum_receipts_weighted": "Gross receipts (weighted)",
     "sum_receipts_unweighted": "Gross receipts (unweighted)",
@@ -14,17 +14,56 @@
     "mean_receipts_day_unweighted": "Average receipts / day (unweighted)",
     "mean_price": "Average ticket price",
     "count_authors": "Count author",
-    "count_titles": "Count title"
+    "count_titles": "Count title",
+		
+		"rows": "Rows",
+    "cols": "Columns",
+    "cells": "Cells",
+
+    "find": "Search",
+    "all": "All",
+    "ok": "OK",
+
+    "time": "Time",
+    "performance": "Performance",
+    "performance_addl": "Performance (additional)",
+    "theater": "Theater",
+
+    "decade": "Decade",
+    "season": "Season",
+    "month": "Month",
+    "day" : "Day",
+    "weekday": "Weekday",
+
+    "author": "Author",
+    "title": "Title",
+    "genre": "Genre",
+    "acts": "Acts",
+    "prose_vers": "Prose/Verse",
+
+    "prologue": "Prolog",
+    "musique_danse_machine": "Music/Dance/Machinery",
+    "free_entry": "Free Entry",
+    "firstrun": "First Run",
+    "reprise": "Reprise",
+    "newactor": "New Actor",
+    "debut": "Debut",
+    "ex_attendance": "VIP",
+    "ex_representation": "Notable performance",
+    "ex_place": "Notable place",
+
+    "theater_period": "Theater + Period",
+    "seating_area": "Seat"
   },
 
   "fr":
   { 
-		"COMPARISON_TOOL_TITLE": "Outil de comparaison",
-		"NEW_SEARCH_BUTTON": "Nouvelle recherche",
-		"COMPARISON_TOOL_SCOPE_TITLE": "Que cherchez-vous ?",
-		"COMPARISON_TOOL_X_TITLE": "x. En fonction de quoi ?",
-		"COMPARISON_TOOL_Y_TITLE": "y. En fonction de quoi ?",
-		"COMPARISON_TOOL_OPEN_HANDLE": "Critères de recherche",
+		"comparison_tool_title": "Outil de comparaison",
+		"new_search_button": "Nouvelle recherche",
+		"comparison_tool_scope_title": "Que cherchez-vous ?",
+		"comparison_tool_x_title": "x. En fonction de quoi ?",
+		"comparison_tool_y_title": "y. En fonction de quoi ?",
+		"comparison_tool_open_handle": "Critères de recherche",
 		
     "sum_receipts_weighted": "Somme recette (pondérée)",
     "sum_receipts_unweighted": "Somme recette (non pondérée)",
@@ -33,7 +72,45 @@
     "mean_receipts_day_unweighted": "Moyenne recette/jour (non pondérée)",
     "mean_price": "Moyenne(prix)",
     "count_authors": "Compte Auteur",
-    "count_titles": "Compte Pièce"
+    "count_titles": "Compte Pièce",
 		
+		"rows": "Lignes",
+    "cols": "Colonnes",
+    "cells": "Cellules",
+
+    "find": "Chercher",
+    "all": "Tous",
+    "ok": "OK",
+
+    "time": "Temps",
+    "performance": "Soirée",
+    "performance_addl": "Soirée (supplémentaire)",
+    "theater": "Théâtre",
+
+    "decade": "Décennie",
+    "season": "Saison",
+    "month": "Mois",
+    "day" : "Jour",
+    "weekday": "Jour de la semaine",
+
+    "author": "Auteur",
+    "title": "Pièce",
+    "genre": "Genre",
+    "acts": "Acte(s)",
+    "prose_vers": "Prose/Vers",
+
+    "prologue": "Prologue",
+    "musique_danse_machine": "Musique/Danse/Machine",
+    "free_entry": "Gratuit",
+    "firstrun": "First Run",
+    "reprise": "Reprise",
+    "newactor": "Nouveau Acteur",
+    "debut": "Début",
+    "ex_attendance": "Présence exceptionelle",
+    "ex_representation": "Répresentation exceptionelles",
+    "ex_place": "ExPlace",
+
+    "theater_period": "Théâtre + Period",
+    "seating_area": "Place"
   }
 }
