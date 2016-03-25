@@ -35,21 +35,20 @@ Axis.render = function(modal_state, query_state, axis, lang) {
 
   var sel_lis = dims.map( (dim) => {
     var sel_values = query_state.filter[dim] || []
-    var classes = sel_values.length > 0 ? 'filtered' : 'unfiltered';
-    return h('li.dimension.' + classes, [
+    return h('li', [
       Order.render(query_state, dim),
-      h('span.name', [ Filter.render(modal_state, query_state, dim, lang) ]),
-      h('span.close', {
-        'ev-click': hg.send(query_state.channels.removeDimension, {axis: axis, dim: dim}) })
+      h('span', [ 
+				Filter.render(modal_state, query_state, dim, lang),
+      	h('span.fa.fa-close', {'ev-click': hg.send(query_state.channels.removeDimension, {axis: axis, dim: dim}) })
+			]),
     ])
   })
 
-  // TODO.  might need button.add
   return (
     h('div.selector', [
       h('div.axis.' + axis, [
         h('ul.grouping', sel_lis),
-          DimensionSelector.render(modal_state, query_state, axis, lang)
+          
         ]),
       h('div.title', msgs[lang][axis])
     ])

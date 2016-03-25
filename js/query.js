@@ -17,6 +17,7 @@ var Aggregate = require('./query/aggregate')
 var Axis = require('./query/axis')
 var Order = require('./query/order')
 var Filter = require('./query/filter')
+var DimensionSelector = require('./query/dimension_selector')
 
 var datapoint = require('./util/datapoint')
 
@@ -214,11 +215,13 @@ Query.render = function(modal_state, query_state, lang) {
 
 		      h('header.query-pane-section', [
 						h('h2.axis-title', msgs[lang]['comparison_tool_x_title']),
+						DimensionSelector.render(modal_state, query_state, 'rows', lang),
 						Axis.render(modal_state, query_state, 'rows', lang),
 		      ]),
 
 		      h('header.query-pane-section', [
 						h('h2.axis-title', msgs[lang]['comparison_tool_y_title']),
+						DimensionSelector.render(modal_state, query_state, 'cols', lang),
 						Axis.render(modal_state, query_state, 'cols', lang),
 		      ]),
 				])
