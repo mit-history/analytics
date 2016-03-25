@@ -33,7 +33,7 @@ Aggregate.render = function(modal_state, query_state, lang) {
 
   var lis = aggregates.map( (new_agg) => {
     return (
-      h('option', {
+      h('li', {
           'ev-click': [ hg.send(query_state.channels.setAggregate, new_agg),
                         hg.send(modal_state.channels.setModal, null) ]
         }, [
@@ -41,13 +41,12 @@ Aggregate.render = function(modal_state, query_state, lang) {
         ])
     )
   })
-	
-	$(function() {
-		$('#query-aggregate-selector').selectmenu(); 
-	})
 
   return (
-    h('select', {id: 'query-aggregate-selector'}, lis)
+		h('div', [
+			h('span', i18n.htmlize(msgs, cur_agg, lang)),
+			h('ul', lis)
+		])
   )
 }
 

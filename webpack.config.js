@@ -16,20 +16,8 @@ module.exports = {
       { test: /\.(jpe?g|png|gif)$/i, loader:"file" },
     ]
   },
-	resolve: {
-		alias: {
-			"jquery": 							"jquery/src/jquery",
-      "jquery.ui": 						"jquery-ui/ui/core",
-      "jquery.ui.selectmenu": "jquery-ui/ui/widgets/selectmenu",
-		}
-	},
   plugins: [
-    new webpack.NoErrorsPlugin(),
-		new webpack.ProvidePlugin({
-		  "$": 							"jquery",
-      "jQuery": 				"jquery",
-      "window.jQuery": 	"jquery"
-		})
+    new webpack.NoErrorsPlugin()
   ]
 };
 

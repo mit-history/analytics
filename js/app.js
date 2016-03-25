@@ -273,27 +273,7 @@ App.render = function(state) {
                   {start: 0, run: 2, title: i18n.dot2 },
                   {start: 1, run: 2, title: i18n.dot3 }]
 			
-	  var showQueryContainer = hg.BaseEvent(function(ev) {
-			$('#query_panel_open').fadeOut(150, function () {
-				$('#query_panel').toggle( "slide", { direction: 'left'}, function() {
-					$('#query_panel .query-pane-content').fadeIn(150);
-				})
-			})
-	  })
-			
     return h('div.row.main-container', [
-			h('div.query-show-handle', 
-				{
-					'id': 'query_panel_open',
-					'style': 'display:none;',
-      		'ev-click': showQueryContainer(),
-      	}, [
-					h('p', msgs[lang]['COMPARISON_TOOL_OPEN_HANDLE']),
-					h('button.fa.fa-chevron-right.slide-pannel-button',  {
-	      		'ev-click': showQueryContainer()
-	      	})
-      	]
-			),
 			hg.partial(Query.render, state.modal, state.query, lang),
 			hg.partial(Crosstab.render, state)
     ]) 

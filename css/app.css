@@ -15,3 +15,10 @@ body {
 .clearfix {
 	clear:both;
 }
+
+.hidden-container {
+	display:none;
+}
+.visible-container {
+	display:block;
+}

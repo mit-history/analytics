@@ -8,9 +8,6 @@ require("./node_modules/jquery-ui/themes/base/all.css");
 require("./node_modules/jquery-ui/themes/base/theme.css");
 
 require("font-awesome-webpack");
-require("jquery.ui");
-require("jquery.ui.selectmenu");
-
 
 var App = require('./js/app')
 

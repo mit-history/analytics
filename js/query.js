@@ -25,6 +25,7 @@ var datapoint = require('./util/datapoint')
 
 function Query(initial_query, url) {
   var state = hg.state({
+		queryPanelOpen: hg.value(true),
     agg: Aggregate(initial_query.agg),
     rows: Axis(initial_query.rows),
     cols: Axis(initial_query.cols),
@@ -36,6 +37,7 @@ function Query(initial_query, url) {
     url: url,
 // actions
     channels: {
+      setPanelOpen: Query.setPanelOpen,
       setAggregate: Query.setAggregate,
       addDimension: Query.addDimension,
       removeDimension: Query.removeDimension,
@@ -79,6 +81,10 @@ function Query(initial_query, url) {
 
 
 const ORDER_VALUES = ['nat', 'asc', 'desc']
+
+Query.setPanelOpen = function(state) {
+  state.queryPanelOpen.set(!state.queryPanelOpen());
+}
 
 Query.setAggregate = function(query, new_agg) {
   query.agg.set(new_agg)
@@ -166,41 +172,47 @@ Query.render = function(modal_state, query_state, lang) {
   var all_dims = ([]).concat(query_state.rows).concat(query_state.cols)
   var download_url = api.url(all_dims, query_state.agg, query_state.filter)
 	
-  var closeQueryContainer = hg.BaseEvent(function(ev) {
-		$('#query_panel .query-pane-content').fadeOut(150, function() {
-			$('#query_panel').toggle( "slide", { direction: 'left' }, function() {
-				$('#query_panel_open').fadeIn(150);
-			})
-		});
-		
-  })
-
   return (
-    h('div.query-container.small-3.columns.off-canvas', {id: 'query_panel'}, [
-      h('button.fa.fa-chevron-left.slide-pannel-button', {
-      	'ev-click': closeQueryContainer()
-      }),
+		h('div.slide-pannel-container' + (query_state.queryPanelOpen ? '.small-3.columns.off-canvas' : ''), [
+
+			h('div.query-show-handle' + (query_state.queryPanelOpen ? '.hidden-container' : '.visible-container'), 
+				{
+					'id': 'query_panel_open',
+	    		'ev-click': hg.send(query_state.channels.setPanelOpen),
+	    	}, [
+					h('p', msgs[lang]['COMPARISON_TOOL_OPEN_HANDLE']),
+					h('button.fa.fa-chevron-right.slide-pannel-button',  {
+	      		'ev-click': hg.send(query_state.channels.setPanelOpen)
+	      	})
+	    	]
+			),
 			
-			h('div.query-pane-content', [
-				h('header.query-pane-section.header', [
-					h('h1', msgs[lang]['COMPARISON_TOOL_TITLE']),
-					h('button', msgs[lang]['NEW_SEARCH_BUTTON']),
-	      ]),
+			h('div.query-container' + (query_state.queryPanelOpen ? '.visible-container' : '.hidden-container'), {id: 'query_panel'}, [
+	      h('button.fa.fa-chevron-left.slide-pannel-button', {
+	      	'ev-click': hg.send(query_state.channels.setPanelOpen)
+	      }),
+			
+				h('div.query-pane-content', [
+					h('header.query-pane-section.header', [
+						h('h1', msgs[lang]['COMPARISON_TOOL_TITLE']),
+						h('button', msgs[lang]['NEW_SEARCH_BUTTON']),
+		      ]),
 				
-	      h('header.query-pane-section', [
-					h('h2', msgs[lang]['COMPARISON_TOOL_SCOPE_TITLE']),
-					Aggregate.render(modal_state, query_state, lang),
-	      ]),
+		      h('header.query-pane-section', [
+						h('h2', msgs[lang]['COMPARISON_TOOL_SCOPE_TITLE']),
+						Aggregate.render(modal_state, query_state, lang),
+		      ]),
 
-	      h('header.query-pane-section', [
-					h('h2.axis-title', msgs[lang]['COMPARISON_TOOL_X_TITLE']),
-					Axis.render(modal_state, query_state, 'rows', lang),
-	      ]),
+		      h('header.query-pane-section', [
+						h('h2.axis-title', msgs[lang]['COMPARISON_TOOL_X_TITLE']),
+						Axis.render(modal_state, query_state, 'rows', lang),
+		      ]),
 
-	      h('header.query-pane-section', [
-					h('h2.axis-title', msgs[lang]['COMPARISON_TOOL_Y_TITLE']),
-					Axis.render(modal_state, query_state, 'cols', lang),
-	      ]),
+		      h('header.query-pane-section', [
+						h('h2.axis-title', msgs[lang]['COMPARISON_TOOL_Y_TITLE']),
+						Axis.render(modal_state, query_state, 'cols', lang),
+		      ]),
+				])
 			])
       // h('div.togglePivot', { 'ev-click': hg.send(query_state.channels.togglePivot, query_state) }),
 //       Axis.render(modal_state, query_state, 'cols', lang),

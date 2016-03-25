@@ -5,6 +5,7 @@
 		"COMPARISON_TOOL_SCOPE_TITLE": "What are you looking for ?",
 		"COMPARISON_TOOL_X_TITLE": "x. In function of what ?",
 		"COMPARISON_TOOL_Y_TITLE": "y. In function of what ?",
+		"COMPARISON_TOOL_OPEN_HANDLE": "Search criterias",
 
     "sum_receipts_weighted": "Gross receipts (weighted)",
     "sum_receipts_unweighted": "Gross receipts (unweighted)",
@@ -23,6 +24,7 @@
 		"COMPARISON_TOOL_SCOPE_TITLE": "Que cherchez-vous ?",
 		"COMPARISON_TOOL_X_TITLE": "x. En fonction de quoi ?",
 		"COMPARISON_TOOL_Y_TITLE": "y. En fonction de quoi ?",
+		"COMPARISON_TOOL_OPEN_HANDLE": "Critères de recherche",
 		
     "sum_receipts_weighted": "Somme recette (pondérée)",
     "sum_receipts_unweighted": "Somme recette (non pondérée)",
