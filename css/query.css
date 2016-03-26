@@ -171,3 +171,26 @@ ul.dropdown-list-content.axis-content {
 ul.dropdown-list-content.dropdown-inline {
 	position:static;
 }
+
+
+ul.axis-selected-dimensions {
+	list-style:none;
+	padding:0px;
+	margin-left:0px;
+}
+
+span.selected-dimension-bullet {
+	background-color:#DADADA;
+	color:#5D5E60;
+	padding:5px 10px;
+	font-size:12px;
+}
+
+span.selected-dimension-bullet label {
+	display:inline-block;
+	margin-right:10px;
+}
+
+span.selected-dimension-bullet .fa-close {
+	cursor:pointer;
+}

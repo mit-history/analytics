@@ -36,23 +36,16 @@ Axis.render = function(modal_state, query_state, axis, lang) {
   var sel_lis = dims.map( (dim) => {
     var sel_values = query_state.filter[dim] || []
     return h('li', [
-      Order.render(query_state, dim),
-      h('span', [ 
-				Filter.render(modal_state, query_state, dim, lang),
+      //Order.render(query_state, dim),
+      h('span.selected-dimension-bullet', [ 
+				//Filter.render(modal_state, query_state, dim, lang),
+				h('label', i18n.htmlize(msgs, dim, lang)),
       	h('span.fa.fa-close', {'ev-click': hg.send(query_state.channels.removeDimension, {axis: axis, dim: dim}) })
 			]),
     ])
   })
 
-  return (
-    h('div.selector', [
-      h('div.axis.' + axis, [
-        h('ul.grouping', sel_lis),
-          
-        ]),
-      h('div.title', msgs[lang][axis])
-    ])
-  )
+  return h('ul.axis-selected-dimensions', sel_lis)
 }
 
 export default Axis
