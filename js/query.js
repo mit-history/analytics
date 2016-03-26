@@ -240,14 +240,14 @@ Query.render = function(modal_state, query_state, lang) {
 
 		      h('header.query-pane-section', [
 						h('h2.axis-title', msgs[lang]['comparison_tool_x_title']),
+						Axis.render(modal_state, query_state, 'rows', lang),
 						DimensionSelector.render(modal_state, query_state, 'rows', lang),
-						// Axis.render(modal_state, query_state, 'rows', lang),
 		      ]),
 
 		      h('header.query-pane-section', [
 						h('h2.axis-title', msgs[lang]['comparison_tool_y_title']),
+						Axis.render(modal_state, query_state, 'cols', lang),
 						DimensionSelector.render(modal_state, query_state, 'cols', lang),
-						// Axis.render(modal_state, query_state, 'cols', lang),
 		      ]),
 				])
 			])

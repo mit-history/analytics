@@ -35,18 +35,36 @@ DimensionSelector.render = function(modal_state, query_state, axis, lang) {
 	var lAxisChannel = (axis == 'rows' ? 'setXAxisDropdownOpen': 'setYAxisDropdownOpen')
 	var lAxisDropdown = (axis == 'rows' ? 'xAxisDropdownOpen': 'yAxisDropdownOpen')
 	
-  var stem_lis = (dims) => {
-    var lis = dims.map( (dim) => {
+  var stem_lis = (dims, stem) => {
+    
+		var buildDimNodeFunc = function(dim) {
+			return [
+	      h('input', {type: 'radio', name: 'axis_dimension', checked: 'false'}),
+				h('label', [
+					h('span.radio', h('span.radio')),
+					h('span', { 'ev-click' : [ hg.send(query_state.channels.addDimension, { axis: axis, dim: dim }),
+			                        			 hg.send(query_state.channels[lAxisChannel]) ]
+			        },
+							i18n.htmlize(msgs, dim, lang)
+					)
+				])
+    	];
+		}
+		
+		var lis = dims.map( (dim) => {
       return (
-        h('div',
-          { 'ev-click' : [ hg.send(query_state.channels.addDimension, { axis: axis, dim: dim }),
-                           hg.send(query_state.channels[lAxisChannel]) ]
-          }, [
-            i18n.htmlize(msgs, dim, lang)
-          ])
+        h('li', buildDimNodeFunc(dim))
       )
     })
-    return lis
+		
+		if (lis.length > 1) {
+			return [
+				h('span', i18n.htmlize(msgs, stem, lang)),
+				h('ul.dropdown-list-content.dropdown-inline', lis)
+			];
+		} else {
+    	return buildDimNodeFunc(dims[0])
+		}
   }
 
   var dim_lis = (dims) => {
@@ -60,13 +78,7 @@ DimensionSelector.render = function(modal_state, query_state, axis, lang) {
 
     var stems = Object.keys(bins)
     var all_lis = stems.map( (stem) => {
-      return h('li', [
-	      h('input', {type: 'radio', name: 'axis_dimension', checked: 'false'}),
-				h('label', [
-					h('span.radio', h('span.radio')),
-					stem_lis(bins[stem])
-				])
-			])
+      return h('li', stem_lis(bins[stem], stem))
     })
     return all_lis
   }
