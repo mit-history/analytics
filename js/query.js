@@ -199,9 +199,6 @@ Query.togglePivot = function(query) {
 }
 
 Query.render = function(modal_state, query_state, lang) {
-  // TODO hardcoding 'lang' once the conflic problem is resolved
-	lang = 'fr';
-	
 	var api = datapoint(query_state.url)
 //  return h('div.query', [ String("Current query: " + JSON.stringify(state)) ])
   var all_dims = ([]).concat(query_state.rows).concat(query_state.cols)
