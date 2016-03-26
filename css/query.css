@@ -162,3 +162,12 @@ ul.dropdown-list-content li input[type=radio]:checked + label > span.radio > spa
   background-image : -webkit-linear-gradient(#4282A1,#4282A1);
   background-image :         linear-gradient(#4282A1,#4282A1);
 }
+
+ul.dropdown-list-content.axis-content {
+	max-height:250px;
+	overflow-y:scroll;
+}
+
+ul.dropdown-list-content.dropdown-inline {
+	position:static;
+}

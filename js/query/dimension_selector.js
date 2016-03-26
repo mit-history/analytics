@@ -22,19 +22,25 @@ var schema = require('../../cfrp-schema')
 
 var i18n = require('../util/i18n')
 
-
 function DimensionSelector() {
-  return null
+  return null;
+}
+
+DimensionSelector.setDimensionDropdownOpen = function (state, dimension) {
+  state.queryPanelOpen.set(dimension);
 }
 
 DimensionSelector.render = function(modal_state, query_state, axis, lang) {
 
+	var lAxisChannel = (axis == 'rows' ? 'setXAxisDropdownOpen': 'setYAxisDropdownOpen')
+	var lAxisDropdown = (axis == 'rows' ? 'xAxisDropdownOpen': 'yAxisDropdownOpen')
+	
   var stem_lis = (dims) => {
     var lis = dims.map( (dim) => {
       return (
-        h('li.dimension',
+        h('div',
           { 'ev-click' : [ hg.send(query_state.channels.addDimension, { axis: axis, dim: dim }),
-                           hg.send(modal_state.channels.setModal, null) ]
+                           hg.send(query_state.channels[lAxisChannel]) ]
           }, [
             i18n.htmlize(msgs, dim, lang)
           ])
@@ -54,7 +60,13 @@ DimensionSelector.render = function(modal_state, query_state, axis, lang) {
 
     var stems = Object.keys(bins)
     var all_lis = stems.map( (stem) => {
-      return h('ul.subscripts', stem_lis(bins[stem]))
+      return h('li', [
+	      h('input', {type: 'radio', name: 'axis_dimension', checked: 'false'}),
+				h('label', [
+					h('span.radio', h('span.radio')),
+					stem_lis(bins[stem])
+				])
+			])
     })
     return all_lis
   }
@@ -63,16 +75,19 @@ DimensionSelector.render = function(modal_state, query_state, axis, lang) {
     var names = Object.keys(groups)
     return names.map( (name) => {
       return (
-        h('li.group.' + name, [
-          h('div.dimensionGroupLabel', i18n.htmlize(msgs, name, lang)),
-          h('ul.dimensionGroup.' + name, dim_lis(groups[name]) )
+        h('li', [
+          h('button.dropdown-list', {
+						'ev-click': hg.send(query_state.channels.setAxisDimensionDropdown, name)
+					}, [
+						i18n.htmlize(msgs, name, lang),
+						h('span.fa.right' + (query_state.axisDimensionDropdown == name ? '.fa-chevron-up' : '.fa-chevron-down'))
+					]),
+          h('ul.dropdown-list-content.dropdown-inline' + (query_state.axisDimensionDropdown == name ? '.visible-container' : '.hidden-container'), 
+						dim_lis(groups[name]) )
         ])
       )
     })
   }
-	
-	var lAxisChannel = (axis == 'rows' ? 'setXAxisDropdownOpen': 'setYAxisDropdownOpen')
-	var lAxisDropdown = (axis == 'rows' ? 'xAxisDropdownOpen': 'yAxisDropdownOpen')
 
   return (
 		h('div.axis-selector.' + axis, [
@@ -81,7 +96,7 @@ DimensionSelector.render = function(modal_state, query_state, axis, lang) {
 			}, [
 				h('span.fa.right' + (query_state[lAxisDropdown] ? '.fa-chevron-up' : '.fa-chevron-down'))
 			]),
-			h('ul.dropdown-list-content' + (query_state[lAxisDropdown] ? '.visible-container' : '.hidden-container'), group_lis(schema.group()))
+			h('ul.dropdown-list-content.axis-content' + (query_state[lAxisDropdown] ? '.visible-container' : '.hidden-container'), group_lis(schema.group()))
 		])
   )
 }

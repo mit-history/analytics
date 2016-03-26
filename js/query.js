@@ -31,6 +31,7 @@ function Query(initial_query, url) {
 		aggregateDropdownOpen: hg.value(false),
 		xAxisDropdownOpen: hg.value(false),
 		yAxisDropdownOpen: hg.value(false),
+		axisDimensionDropdown: hg.value(null),
 		
 // query data
     agg: Aggregate(initial_query.agg),
@@ -48,6 +49,7 @@ function Query(initial_query, url) {
       setAggregateDropdownOpen: Query.setAggregateDropdownOpen,
       setXAxisDropdownOpen: Query.setXAxisDropdownOpen,
       setYAxisDropdownOpen: Query.setYAxisDropdownOpen,
+			setAxisDimensionDropdown: Query.setAxisDimensionDropdown,
       setAggregate: Query.setAggregate,
       addDimension: Query.addDimension,
       removeDimension: Query.removeDimension,
@@ -106,6 +108,14 @@ Query.setXAxisDropdownOpen = function(state, axis) {
 
 Query.setYAxisDropdownOpen = function(state, axis) {
   state.yAxisDropdownOpen.set(!state.yAxisDropdownOpen())
+}
+
+Query.setAxisDimensionDropdown = function (state, dimension_name) {
+	if (state.axisDimensionDropdown() == dimension_name) {
+		state.axisDimensionDropdown.set(null)
+	} else {
+		state.axisDimensionDropdown.set(dimension_name)	
+	}
 }
 
 Query.setAggregate = function(query, new_agg) {
