@@ -254,8 +254,7 @@ App.render = function(state) {
            '/:lang/app': function(params) {
              return render_i18n(lang(params))
            },
-           '/app': render_i18n.bind('fr'),
-           '/': render_i18n.bind('fr')
+           '/*': render_i18n.bind('fr')
          })
 
   function lang(params) {
