@@ -86,11 +86,11 @@
 	text-transform:lowercase;
 }
 
-.aggregate-selector {
+.aggregate-selector, .axis-selector {
 	position:relative;
 }
 
-.aggregate-selector button {
+button.dropdown-list {
 	width:100%;
 	text-align:left;
 	font-size:11pt;
@@ -98,11 +98,11 @@
 	background-color:#F1F1F2;
 }
 
-.aggregate-selector button .fa  {
+button.dropdown-list .fa  {
 	color:#3E7F9F;
 }
 
-.aggregate-selector ul {
+ul.dropdown-list-content {
 	width:100%;
 	background-color:#F1F1F2;
 	padding:5px 10px;
@@ -111,18 +111,19 @@
 	position:absolute;
 	top:100%;
 	left:0px;
+	z-index: 10;
 }
 
-.aggregate-selector li {
+ul.dropdown-list-content li {
 	padding-left:0px;
 	font-size:10pt;
 }
 
-.aggregate-selector li input[type=radio] + label {
+ul.dropdown-list-content li input[type=radio] + label {
 	cursor:pointer;
 }
 
-.aggregate-selector li input[type=radio] {
+ul.dropdown-list-content li input[type=radio] {
   width     : 2em;
   margin    : 0;
   padding   : 0;
@@ -130,13 +131,13 @@
   opacity   : 0;
 }
 
-.aggregate-selector li input[type=radio] + label { 
+ul.dropdown-list-content li input[type=radio] + label { 
   display      : inline-block;
   margin-left  : -2em;
   line-height  : 1.5em;
 }
 
-.aggregate-selector li input[type=radio]  + label > span.radio {
+ul.dropdown-list-content li input[type=radio]  + label > span.radio {
   display          : inline-block;
   width            : 0.84em;
   height           : 0.84em;
@@ -147,7 +148,7 @@
   vertical-align   : bottom;
 }
 
-.aggregate-selector li input[type=radio]:checked + label > span.radio > span {
+ul.dropdown-list-content li input[type=radio]:checked + label > span.radio > span {
   display          : block;
   width            : 0.5em;
   height           : 0.5em;
@@ -161,8 +162,3 @@
   background-image : -webkit-linear-gradient(#4282A1,#4282A1);
   background-image :         linear-gradient(#4282A1,#4282A1);
 }
-
-
-
-
-

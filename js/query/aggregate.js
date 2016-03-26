@@ -51,13 +51,13 @@ Aggregate.render = function(modal_state, query_state, lang) {
 
   return (
 		h('div.aggregate-selector', [
-			h('button', {
+			h('button.dropdown-list', {
 				'ev-click': hg.send(query_state.channels.setAggregateDropdownOpen)
 			}, [
 				h('span', i18n.htmlize(msgs, cur_agg, lang)),
 				h('span.fa.right' + (query_state.aggregateDropdownOpen ? '.fa-chevron-up' : '.fa-chevron-down'))
 			]),
-			h('ul' + (query_state.aggregateDropdownOpen ? '.visible-container' : '.hidden-container'), lis)
+			h('ul.dropdown-list-content' + (query_state.aggregateDropdownOpen ? '.visible-container' : '.hidden-container'), lis)
 		])
   )
 }

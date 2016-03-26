@@ -70,11 +70,19 @@ DimensionSelector.render = function(modal_state, query_state, axis, lang) {
       )
     })
   }
+	
+	var lAxisChannel = (axis == 'rows' ? 'setXAxisDropdownOpen': 'setYAxisDropdownOpen')
+	var lAxisDropdown = (axis == 'rows' ? 'xAxisDropdownOpen': 'yAxisDropdownOpen')
 
   return (
-    Modal.render(modal_state, axis, null, [
-      h('ul.dimensionSelector.panel', group_lis(schema.group()))
-    ])
+		h('div.axis-selector.' + axis, [
+			h('button.dropdown-list', {
+				'ev-click': hg.send(query_state.channels[lAxisChannel])
+			}, [
+				h('span.fa.right' + (query_state[lAxisDropdown] ? '.fa-chevron-up' : '.fa-chevron-down'))
+			]),
+			h('ul.dropdown-list-content' + (query_state[lAxisDropdown] ? '.visible-container' : '.hidden-container'), group_lis(schema.group()))
+		])
   )
 }
 

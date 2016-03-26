@@ -29,6 +29,8 @@ function Query(initial_query, url) {
 // ui elements states
 		queryPanelOpen: hg.value(true),
 		aggregateDropdownOpen: hg.value(false),
+		xAxisDropdownOpen: hg.value(false),
+		yAxisDropdownOpen: hg.value(false),
 		
 // query data
     agg: Aggregate(initial_query.agg),
@@ -44,6 +46,8 @@ function Query(initial_query, url) {
     channels: {
       setPanelOpen: Query.setPanelOpen,
       setAggregateDropdownOpen: Query.setAggregateDropdownOpen,
+      setXAxisDropdownOpen: Query.setXAxisDropdownOpen,
+      setYAxisDropdownOpen: Query.setYAxisDropdownOpen,
       setAggregate: Query.setAggregate,
       addDimension: Query.addDimension,
       removeDimension: Query.removeDimension,
@@ -94,6 +98,14 @@ Query.setPanelOpen = function(state) {
 
 Query.setAggregateDropdownOpen = function(state) {
   state.aggregateDropdownOpen.set(!state.aggregateDropdownOpen())
+}
+
+Query.setXAxisDropdownOpen = function(state, axis) {
+  state.xAxisDropdownOpen.set(!state.xAxisDropdownOpen())
+}
+
+Query.setYAxisDropdownOpen = function(state, axis) {
+  state.yAxisDropdownOpen.set(!state.yAxisDropdownOpen())
 }
 
 Query.setAggregate = function(query, new_agg) {
@@ -216,13 +228,13 @@ Query.render = function(modal_state, query_state, lang) {
 		      h('header.query-pane-section', [
 						h('h2.axis-title', msgs[lang]['comparison_tool_x_title']),
 						DimensionSelector.render(modal_state, query_state, 'rows', lang),
-						Axis.render(modal_state, query_state, 'rows', lang),
+						// Axis.render(modal_state, query_state, 'rows', lang),
 		      ]),
 
 		      h('header.query-pane-section', [
 						h('h2.axis-title', msgs[lang]['comparison_tool_y_title']),
 						DimensionSelector.render(modal_state, query_state, 'cols', lang),
-						Axis.render(modal_state, query_state, 'cols', lang),
+						// Axis.render(modal_state, query_state, 'cols', lang),
 		      ]),
 				])
 			])
