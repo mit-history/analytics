@@ -251,12 +251,11 @@ App.toggle_modal = function(state, modal) {
 
 App.render = function(state) {
   return RouterComponent.render(state, {
-           '/app': function() {
-             return render_i18n('fr')
-           },
            '/:lang/app': function(params) {
              return render_i18n(lang(params))
-           }
+           },
+           '/app': render_i18n.bind('fr'),
+           '/': render_i18n.bind('fr')
          })
 
   function lang(params) {
@@ -268,15 +267,10 @@ App.render = function(state) {
   }
 
   function render_i18n(lang) {
-    var i18n = msgs[lang]
-    var panes = [ {start: 0, run: 1, title: i18n.dot1 },
-                  {start: 0, run: 2, title: i18n.dot2 },
-                  {start: 1, run: 2, title: i18n.dot3 }]
-			
     return h('div.row.main-container', [
 			hg.partial(Query.render, state.modal, state.query, lang),
 			hg.partial(Crosstab.render, state)
-    ]) 
+    ])
   }
 }
 
