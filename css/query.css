@@ -189,8 +189,9 @@ ul.axis-selected-dimensions {
 }
 
 span.selected-dimension-bullet {
-	background-color:#DADADA;
-	color:#5D5E60;
+	background-color:#5A5B5D;
+	color:#fff;
+	border-radius:5px;
 	padding:5px 10px;
 	font-size:12px;
 }
