@@ -66,6 +66,10 @@
 	border-bottom:solid 2px #BACAD4;
 }
 
+.query-pane-section.interacted {
+	background-color:#DADBDB;
+}
+
 .query-pane-section:last-child {
 	border-bottom:none;
 }
