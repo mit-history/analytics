@@ -88,7 +88,7 @@ DimensionSelector.render = function(modal_state, query_state, axis, lang) {
     return names.map( (name) => {
       return (
         h('li', [
-          h('button.dropdown-list', {
+          h('button.dropdown-list.dimension-selector' + (query_state.axisDimensionDropdown == name ? '.selected' : ''), {
 						'ev-click': hg.send(query_state.channels.setAxisDimensionDropdown, name)
 					}, [
 						i18n.htmlize(msgs, name, lang),

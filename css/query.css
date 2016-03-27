@@ -102,6 +102,15 @@ button.dropdown-list .fa  {
 	color:#3E7F9F;
 }
 
+button.dropdown-list.dimension-selector:hover, button.dropdown-list.dimension-selector.selected {
+	background-color:#4382A0;
+	color:#fff;
+}
+
+button.dropdown-list.dimension-selector:hover span, button.dropdown-list.dimension-selector.selected span {
+	color:#fff;
+}
+
 ul.dropdown-list-content {
 	width:100%;
 	background-color:#F1F1F2;
