@@ -32,6 +32,7 @@ function Query(initial_query, url) {
 		xAxisDropdownOpen: hg.value(false),
 		yAxisDropdownOpen: hg.value(false),
 		axisDimensionDropdown: hg.value(null),
+		selectedDimension: hg.value(null),
 		
 // query data
     agg: Aggregate(initial_query.agg),
@@ -50,6 +51,7 @@ function Query(initial_query, url) {
       setXAxisDropdownOpen: Query.setXAxisDropdownOpen,
       setYAxisDropdownOpen: Query.setYAxisDropdownOpen,
 			setAxisDimensionDropdown: Query.setAxisDimensionDropdown,
+			setSelectedDimension: Query.setSelectedDimension,
       setAggregate: Query.setAggregate,
       addDimension: Query.addDimension,
       removeDimension: Query.removeDimension,
@@ -118,6 +120,10 @@ Query.setAxisDimensionDropdown = function (state, dimension_name) {
 	}
 }
 
+Query.setSelectedDimension = function(state, data) {
+  state.selectedDimension.set(data)
+}
+
 Query.setAggregate = function(query, new_agg) {
   query.agg.set(new_agg)
 }
@@ -162,6 +168,8 @@ Query.addDimension = function(query, data) {
   if (j === -1) {
     dims.push(dim)
   }
+	
+	query.selectedDimension.set({axis: axis, dim: dim})
  }
 
 Query.removeDimension = function(query, data) {
@@ -174,6 +182,12 @@ Query.removeDimension = function(query, data) {
   }
 
   query.filter.delete(dim)
+	
+	var selectedDimension = query.selectedDimension();
+	
+	if (selectedDimension && selectedDimension.axis == data.axis && selectedDimension.dim == data.dim ) {
+		query.selectedDimension.set(null)
+	}
 }
 
 Query.toggleDimensionOrder = function(query, dim) {
@@ -205,8 +219,12 @@ Query.render = function(modal_state, query_state, lang) {
   var download_url = api.url(all_dims, query_state.agg, query_state.filter)
 	
   return (
-		h('aside.slide-pannel-container' + (query_state.queryPanelOpen ? '.small-3.columns.off-canvas' : ''), [
+		h('aside.slide-pannel-container' + (query_state.queryPanelOpen ? '' : ''), [
 
+      h('button.fa.fa-chevron-left.slide-pannel-button', {
+      	'ev-click': hg.send(query_state.channels.setPanelOpen)
+      }),
+			
 			h('div.query-show-handle' + (query_state.queryPanelOpen ? '.hidden-container' : '.visible-container'), 
 				{
 					'id': 'query_panel_open',
@@ -220,11 +238,7 @@ Query.render = function(modal_state, query_state, lang) {
 			),
 			
 			h('section.query-container' + (query_state.queryPanelOpen ? '.visible-container' : '.hidden-container'), {id: 'query_panel'}, [
-	      h('button.fa.fa-chevron-left.slide-pannel-button', {
-	      	'ev-click': hg.send(query_state.channels.setPanelOpen)
-	      }),
-			
-				h('div.query-pane-content', [
+	      h('div.query-pane-content', [
 					h('header.query-pane-section.header', [
 						h('h1', msgs[lang]['comparison_tool_title']),
 						h('button', msgs[lang]['new_search_button']),
@@ -235,20 +249,27 @@ Query.render = function(modal_state, query_state, lang) {
 						Aggregate.render(modal_state, query_state, lang),
 		      ]),
 
-		      h('header.query-pane-section' + (query_state.xAxisDropdownOpen ? '.interacted': ''), [
+		      h('header.query-pane-section' + (query_state.xAxisDropdownOpen || (query_state.selectedDimension && query_state.selectedDimension.axis == 'rows') ? '.interacted': ''), [
 						h('h2.axis-title', msgs[lang]['comparison_tool_x_title']),
 						Axis.render(modal_state, query_state, 'rows', lang),
 						DimensionSelector.render(modal_state, query_state, 'rows', lang),
+						h('div.arrow-indicator' + (query_state.selectedDimension && query_state.selectedDimension.axis == 'rows' ? '.visible-container' : '.hidden-container'))
 		      ]),
 
-		      h('header.query-pane-section' + (query_state.yAxisDropdownOpen ? '.interacted': ''), [
+		      h('header.query-pane-section' + (query_state.yAxisDropdownOpen || (query_state.selectedDimension && query_state.selectedDimension.axis == 'cols') ? '.interacted': ''), [
 						h('h2.axis-title', msgs[lang]['comparison_tool_y_title']),
 						Axis.render(modal_state, query_state, 'cols', lang),
 						DimensionSelector.render(modal_state, query_state, 'cols', lang),
+						h('div.arrow-indicator' + (query_state.selectedDimension && query_state.selectedDimension.axis == 'cols' ? '.visible-container' : '.hidden-container'))
 		      ]),
 				])
+			]),
+			
+			h('section.filter-container' + (query_state.queryPanelOpen && query_state.selectedDimension ? '.visible-container' : '.hidden-container'), [
+				(query_state.selectedDimension ? Filter.render(modal_state, query_state, query_state.selectedDimension.dim, lang) : ''),
 			])
-    ]))
+    ])
+	)
 }
 
 export default Query

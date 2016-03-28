@@ -1,24 +1,26 @@
 .slide-pannel-container {
 	padding:0px !important;
 	height:100%;
+	border-right:solid 8px #4382A0;
+	border-top-right-radius: 6px;
+	border-bottom-right-radius: 6px;
+	position:relative;
+	display:flex;
+	flex-direction: row;
+}
+
+.slide-pannel-container button {
+	background-color:#DADADA;
+	color:#5D5E60;
+	padding:5px 10px;
+	font-size:12px;
 }
 
 .query-container {
 	height:100%;
 	background-color:#E7E8EA;
 	padding:0px !important;
-	border-right:solid 8px #4382A0;
-	border-top-right-radius: 6px;
-	border-bottom-right-radius: 6px;
 	box-sizing:border-box;
-	position:relative;
-}
-
-.query-container button {
-	background-color:#DADADA;
-	color:#5D5E60;
-	padding:5px 10px;
-	font-size:12px;
 }
 
 .slide-pannel-button {
@@ -61,10 +63,50 @@
 	transform: rotate(-90deg);
 }
 
+.query-pane-content {
+	height:100%;
+	display:flex;
+	flex-direction:column;
+}
+
 .query-pane-section {
 	padding:15px 40px;
 	border-bottom:solid 2px #BACAD4;
+	position:relative;
 }
+
+.query-pane-section .arrow-indicator {
+	position:absolute;
+	top:50%;
+	right:-15px;
+}
+
+/* Arrow fill and stroke from http://jhaurawachsman.com/2013/css-triangles-border-stroke/ */
+.query-pane-section .arrow-indicator:before, .query-pane-section .arrow-indicator:after {
+	content:"";
+	width: 0; 
+	height: 0;
+  border-color: transparent;
+  position: absolute;
+}
+	
+.query-pane-section .arrow-indicator:before {
+	border-top: 16px solid transparent;
+	border-left: 17px solid #BACAD4;
+	border-bottom: 17px solid transparent;
+	right: -2px;
+	top: -13px;
+}
+
+/* Fill */
+.query-pane-section .arrow-indicator:after {
+	border-top: 15px solid transparent; 
+	border-left: 15px solid #DADBDB; 
+	border-bottom: 15px solid transparent;
+	right: 0px;
+	top: -12px;
+}
+
 
 .query-pane-section.interacted {
 	background-color:#DADBDB;
@@ -72,6 +114,7 @@
 
 .query-pane-section:last-child {
 	border-bottom:none;
+	flex-grow:1;
 }
 
 .query-pane-section.header h1 {
@@ -200,6 +243,15 @@ span.selected-dimension-bullet {
 	font-size:12px;
 }
 
+span.selected-dimension-bullet.selected {
+	background-color:#88C4C6;
+	color:#000;
+}
+
+span.selected-dimension-bullet label {
+	cursor:pointer;
+}
+
 span.selected-dimension-bullet label {
 	display:inline-block;
 	margin-right:10px;
@@ -207,4 +259,12 @@ span.selected-dimension-bullet label {
 
 span.selected-dimension-bullet .fa-close {
 	cursor:pointer;
+}
+
+.filter-container {
+	height: 100%;
+	background-color: #DADBDB;
+	box-sizing: border-box;
+	border-left:solid 2px #BACAD4;
+	padding:10px 30px;
 }

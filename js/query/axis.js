@@ -37,9 +37,8 @@ Axis.render = function(modal_state, query_state, axis, lang) {
     var sel_values = query_state.filter[dim] || []
     return h('li', [
       //Order.render(query_state, dim),
-      h('span.selected-dimension-bullet', [ 
-				//Filter.render(modal_state, query_state, dim, lang),
-				h('label', i18n.htmlize(msgs, dim, lang)),
+      h('span.selected-dimension-bullet' + (query_state.selectedDimension && query_state.selectedDimension.axis == axis && query_state.selectedDimension.dim == dim ? '.selected': ''), [ 
+				h('label', {'ev-click': hg.send(query_state.channels.setSelectedDimension, {axis: axis, dim: dim}) }, i18n.htmlize(msgs, dim, lang)),
       	h('span.fa.fa-close', {'ev-click': hg.send(query_state.channels.removeDimension, {axis: axis, dim: dim}) })
 			]),
     ])

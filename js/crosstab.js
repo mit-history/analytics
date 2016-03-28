@@ -286,7 +286,7 @@ Crosstab.render = function(state) {
   })
 
   return (
-    h('div.crosstab-container.small-9.columns', {
+    h('div.crosstab-container.columns', {
       'ev-click' : sendFocus(state.channels.focus_cell),
     }, [
       new GraphWidget(state.query, state.cube_data, state.focus_cell, 'fr')
