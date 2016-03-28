@@ -60,39 +60,38 @@ Filter.render = function(modal_state, query_state, dim, lang) {
   values.forEach( (d, i) => {
     if (strMatch(d, query_state.filter_state.search)) {
       var attrs = { type: 'checkbox',
-                          name: d,
-                          'ev-event': hg.sendChange(query_state.channels.toggleFilterValue, { dim: dim, value: d } ) }
+										id: d,
+                    name: d,
+                    'ev-event': hg.sendChange(query_state.channels.toggleFilterValue, { dim: dim, value: d } ) }
       if(sel_values.length == 0 || sel_values.indexOf(d) > -1) {
-        attrs.checked = true
+        attrs.checked = true;
       }
       cbs.push(
         // TODO.  virtual-dom doesn't match changes in <input checked ... /> properly
         //        a parallel issue for Mithril: https://github.com/lhorie/mithril.js/issues/691
         //        one workaround is to cache-bust the entire list with a key:
-        h('label', { key: unique_key++ }, [
+        h('li.custom-checkbox', { key: unique_key++ }, [
           h('input', attrs),
-          formatter(d)
+					h('label' + (attrs.checked ? '.selected-filter': ''), [
+						h('span.custom-input', h('span.custom-input')),
+						h('span', {
+							'ev-click': hg.send(query_state.channels.toggleFilterValue, { dim: dim, value: d } )
+						}, formatter(d))
+					])
         ])
       )
     }
   })
 
-  return (
-    // TODO.  might need span.name
-    Modal.render(modal_state, dim, i18n.htmlize(msgs, dim, lang), [
-      h('div.filter', [
-        h('input', { 'ev-event': hg.sendChange(query_state.filter_state.channels.updateSearch),
-                     value: query_state.filter_state.search,
-                     type: 'text',
-                     name: 'search' } ),
-        h('div.values', cbs),
-        h('div.actions', [
-          h('button', { 'ev-click': hg.send(modal_state.channels.setModal, null) }, [ msgs_i18n.ok ]),
-          h('button', { 'ev-click': hg.send(query_state.channels.clearFilter, dim) }, [ msgs_i18n.all ])
-        ])
-      ])
-    ])
-  )
+  return [
+	  h('button', { 'ev-click': hg.send(query_state.channels.clearFilter, dim) }, [ msgs_i18n.all ]),
+	  h('input', { 'ev-event': hg.sendChange(query_state.filter_state.channels.updateSearch),
+	               value: query_state.filter_state.search,
+	               type: 'text',
+	               name: 'search' } ),
+	  h('ul.filter-list', cbs),
+	  h('button', { 'ev-click': hg.send(modal_state.channels.setModal, null) }, [ msgs_i18n.ok ]),
+	]
 
 }
 

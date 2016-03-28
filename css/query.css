@@ -9,13 +9,6 @@
 	flex-direction: row;
 }
 
-.slide-pannel-container button {
-	background-color:#DADADA;
-	color:#5D5E60;
-	padding:5px 10px;
-	font-size:12px;
-}
-
 .query-container {
 	height:100%;
 	background-color:#E7E8EA;
@@ -67,6 +60,7 @@
 	height:100%;
 	display:flex;
 	flex-direction:column;
+	max-width: 350px;
 }
 
 .query-pane-section {
@@ -103,7 +97,7 @@
 	border-top: 15px solid transparent; 
 	border-left: 15px solid #DADBDB; 
 	border-bottom: 15px solid transparent;
-	right: 0px;
+	right: 1px;
 	top: -12px;
 }
 
@@ -121,6 +115,11 @@
 	font-size:20px;
 	margin-bottom:20px;
 	text-transform:uppercase;
+}
+
+.query-pane-section.header button {
+	background-color:#88C4C6;
+	color:#000;
 }
 
 .query-pane-section h2 {
@@ -235,8 +234,13 @@ ul.axis-selected-dimensions {
 	margin-left:0px;
 }
 
+ul.axis-selected-dimensions li {
+	display:inline-block;
+	margin-right:5px;
+}
+
 span.selected-dimension-bullet {
-	background-color:#5A5B5D;
+	background-color:#808284;
 	color:#fff;
 	border-radius:5px;
 	padding:5px 10px;
@@ -244,8 +248,7 @@ span.selected-dimension-bullet {
 }
 
 span.selected-dimension-bullet.selected {
-	background-color:#88C4C6;
-	color:#000;
+	background-color:#5A5B5D;
 }
 
 span.selected-dimension-bullet label {
@@ -267,4 +270,53 @@ span.selected-dimension-bullet .fa-close {
 	box-sizing: border-box;
 	border-left:solid 2px #BACAD4;
 	padding:10px 30px;
+	max-width:250px;
+	display:flex;
+	flex-direction:column;
+	height:100%;
+	max-height:100%;
+}
+
+.filter-container > input, .filter-container > button, .filter-container > ul {
+	margin-top:10px;
+}
+
+.filter-container .filter-list {
+	flex-grow:1;
+	list-style:none;
+	padding:0px;
+	margin-left:0px;
+	overflow:scroll;
+}
+
+.filter-container .filter-list li {
+	line-height:14pt;
+	margin-left:20px;
+	margin-bottom:5px;
+	position:relative;
+}
+
+.filter-container .filter-list label.selected-filter {
+	color:#3E94A6;
+}
+
+.filter-container .filter-list li input[type=checkbox] {
+	position:absolute;
+	left: -17px;
+	top: 4px;
+}
+
+
+.filter-container button {
+	background-color:#EFF0F0;
+	color:#000;
+	padding:5px 10px;
+	font-size:12px;
+}
+
+.filter-container button:hover {
+	background-color:#2488A5;
+	color:#fff;
+	padding:5px 10px;
+	font-size:12px;
 }

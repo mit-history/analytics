@@ -265,7 +265,7 @@ Query.render = function(modal_state, query_state, lang) {
 				])
 			]),
 			
-			h('section.filter-container' + (query_state.queryPanelOpen && query_state.selectedDimension ? '.visible-container' : '.hidden-container'), [
+			h('section.filter-container' + (query_state.queryPanelOpen && query_state.selectedDimension ? '.visible-flex-container' : '.hidden-container'), [
 				(query_state.selectedDimension ? Filter.render(modal_state, query_state, query_state.selectedDimension.dim, lang) : ''),
 			])
     ])

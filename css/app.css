@@ -6,6 +6,11 @@ body {
 	height:100%;
 }
 
+button {
+	padding:5px 10px;
+	font-size:12px;
+}
+
 .main-container {
 	height:100%;
 	width:100%;
@@ -19,12 +24,60 @@ body {
 }
 
 .hidden-container {
-	display:none;
+	display:none !important;
 }
+
 .visible-container {
-	display:block;
+	display:block !important;
+}
+
+.visible-flex-container {
+	display:flex !important;
 }
 
 .right {
 	float:right;
+}
+
+.custom-checkbox input[type=checkbox] + label {
+	cursor:pointer;
+}
+
+.custom-checkbox input[type=checkbox] {
+  width     : 2em;
+  margin    : 0;
+  padding   : 0;
+  font-size : 1em;
+  opacity   : 0;
+}
+
+.custom-checkbox input[type=checkbox] + label { 
+  display      : inline-block;
+  margin-left  : -1em;
+  line-height  : 1.5em;
+}
+
+.custom-checkbox input[type=checkbox]  + label > span.custom-input {
+  display          : inline-block;
+	width						 : 0.5em;
+	height					 : 0.55em;
+  margin           : 0.25em 0.5em 0.25em 0.25em;
+	margin-bottom		 : 7px;
+  border           : 0.0625em solid #CBDAE3;
+  background       : #fff;
+  vertical-align   : bottom;
+}
+
+.custom-checkbox input[type=checkbox]:checked + label > span.custom-input > span {
+  display          : block;
+	width						 : 0.33em;
+	height					 : 0.33em;
+	margin           : 0.06em;
+  border           : none;
+  background       : #fff;
+  background-image :    -moz-linear-gradient(#4282A1,#4282A1);
+  background-image :     -ms-linear-gradient(#4282A1,#4282A1);
+  background-image :      -o-linear-gradient(#4282A1,#4282A1);
+  background-image : -webkit-linear-gradient(#4282A1,#4282A1);
+  background-image :         linear-gradient(#4282A1,#4282A1);
 }
