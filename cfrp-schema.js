@@ -155,21 +155,21 @@ function format(lang, field) {
 
     // aggregates
     case /sum_receipts_weighted/.test(field):
-      return fmt.numberFormat(",.2f")
+      return fmt.numberFormat(",f")
     case /sum_receipts_unweighted/.test(field):
-      return fmt.numberFormat(",.2f")
+      return fmt.numberFormat(",f")
     case /performances_days/.test(field):
-      return fmt.numberFormat(",.0f")
+      return fmt.numberFormat(",f")
     case /mean_receipts_day_weighted/.test(field):
-      return fmt.numberFormat(",.2f")
+      return fmt.numberFormat(",f")
     case /mean_receipts_day_unweighted/.test(field):
-      return fmt.numberFormat(",.2f")
+      return fmt.numberFormat(",f")
     case /mean_price/.test(field):
-      return fmt.numberFormat(",.2f")
+      return fmt.numberFormat(",f")
     case /count_authors_(\d)/.test(field):
-      return fmt.numberFormat(",.0f")
+      return fmt.numberFormat(",f")
     case /count_titles_(\d)/.test(field):
-      return fmt.numberFormat(",.0f")
+      return fmt.numberFormat(",f")
   }
 
 //  return (x) => x ? ("*** " + x) : ""
