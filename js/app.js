@@ -268,7 +268,7 @@ App.render = function(state) {
   function render_i18n(lang) {
     return h('div.row.main-container', [
 			hg.partial(Query.render, state.modal, state.query, lang),
-			hg.partial(Crosstab.render, state)
+			hg.partial(Crosstab.render, state, lang)
     ])
   }
 }
