@@ -8,6 +8,7 @@
 
 
 require('../css/app.css')
+require('../css/chart.css')
 
 var hg = require('mercury')
 var h = require('mercury').h
@@ -268,7 +269,11 @@ App.render = function(state) {
   function render_i18n(lang) {
     return h('div.row.main-container', [
 			hg.partial(Query.render, state.modal, state.query, lang),
-			hg.partial(Crosstab.render, state, lang)
+			h('section.columns', [
+				h('section.crosstab-container', hg.partial(Crosstab.render, state, lang)),
+				h('section.chart-containter', 'super bla')
+			])
+			
     ])
   }
 }

@@ -1,7 +1,101 @@
 .crosstab-container {
-	height:100%;
-	width: 100%;
+	height:50%;
+	width:100%;
+	border-bottom:solid 2px #BACAD4;
 }
+
+.crosstab-container .content-container {
+	width:900px;
+	max-width:900px;
+	margin:0px auto;
+	margin-top: 20px;
+	overflow-x:hidden;
+	overflow-y:scroll;
+	max-height:90%;
+	position:relative;
+	border:solid 2px #BACAD4;
+}
+
+.crosstab-container table {
+	table-layout:fixed;
+}
+
+.crosstab-container table th, .crosstab-container table td {
+
+	overflow:hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	border:1px solid #CACACA;
+	font-weight: 200;
+	line-height:12pt;
+	padding: 5px 10px;
+	text-align:center;
+}
+
+.crosstab-container .cross-cell {
+	color:#fff;
+}
+
+.crosstab-container .row-headers-col {
+	float:left;
+	width:10%;
+	max-width:10%;
+}
+
+.crosstab-container .row-headers-col table {
+	width:100%;
+	max-width:100%;
+}
+
+.crosstab-container .data-content {
+	float:left;
+	width:80%;
+	max-width:80%;
+	overflow-x:scroll;
+}
+
+.crosstab-container .data-content table {
+	width:100%;
+}
+
+.crosstab-container table tr.heading-row {
+	position:relative;
+}
+
+.crosstab-container .sum-col {
+	float:left;
+	width:10%;
+	max-width:10%;
+}
+
+.crosstab-container .sum-col, .crosstab-container .sum-row {
+	background-color:#DCDCDC;
+}
+
+.crosstab-container .sum-table {
+	background-color:#C5C8C9;
+}
+
+
+.crosstab-container .sum-col table {
+	width:100%;
+	max-width:100%;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -1,0 +1,10 @@
+.chart-containter {
+	height:50%;
+	width:100%;
+}
+
+.chart-container .content-container {
+	width:80%;
+	margin:10px auto;
+	
+}

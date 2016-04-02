@@ -4,8 +4,6 @@ var h = require('mercury').h
 
 
 require('./css/third-party/foundation6/foundation-flex.css')
-require("./node_modules/jquery-ui/themes/base/all.css");
-require("./node_modules/jquery-ui/themes/base/theme.css");
 
 require("font-awesome-webpack");
 
