@@ -227,43 +227,6 @@ ul.dropdown-list-content.dropdown-inline {
 	position:static;
 }
 
-
-ul.axis-selected-dimensions {
-	list-style:none;
-	padding:0px;
-	margin-left:0px;
-}
-
-ul.axis-selected-dimensions li {
-	display:inline-block;
-	margin-right:5px;
-}
-
-span.selected-dimension-bullet {
-	background-color:#808284;
-	color:#fff;
-	border-radius:5px;
-	padding:5px 10px;
-	font-size:12px;
-}
-
-span.selected-dimension-bullet.selected {
-	background-color:#5A5B5D;
-}
-
-span.selected-dimension-bullet label {
-	cursor:pointer;
-}
-
-span.selected-dimension-bullet label {
-	display:inline-block;
-	margin-right:10px;
-}
-
-span.selected-dimension-bullet .fa-close {
-	cursor:pointer;
-}
-
 .filter-container {
 	height: 100%;
 	background-color: #DADBDB;

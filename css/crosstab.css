@@ -2,18 +2,46 @@
 	height:50%;
 	width:100%;
 	border-bottom:solid 2px #BACAD4;
+	position:relative;
 }
 
 .crosstab-container .content-container {
-	width:900px;
-	max-width:900px;
-	margin:0px auto;
-	margin-top: 20px;
+	width:80%;
+	max-width:800px;
+	max-height:70%;
+  margin: auto;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+}
+
+.y-axis-dimensions-container {
+	float:left;
+	width:15%;
+	padding-top:8%;
+	overflow:hidden;
+	white-space:nowrap;
+}
+
+.x-axis-data-container {
+	float:left;
+	width:85%;
+	height:100%;
+	overflow:hidden;
+}
+
+.x-axis-dimensions-container {
+	height:10%;
+	padding-left:16%;
+	padding-right:16%;
+	overflow:hidden;
+}
+
+.crosstab-container .data-table-container {
+	height:90%;
 	overflow-x:hidden;
 	overflow-y:scroll;
-	max-height:90%;
 	position:relative;
-	border:solid 2px #BACAD4;
+	border:1px solid #CACACA;
 }
 
 .crosstab-container table {
@@ -21,7 +49,6 @@
 }
 
 .crosstab-container table th, .crosstab-container table td {
-
 	overflow:hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -33,13 +60,15 @@
 }
 
 .crosstab-container .cross-cell {
-	color:#fff;
+	color:#CACACA;
+	background-color:#CACACA;
 }
 
 .crosstab-container .row-headers-col {
 	float:left;
-	width:10%;
-	max-width:10%;
+	width:15%;
+	max-width:15%;
+	position:relative;
 }
 
 .crosstab-container .row-headers-col table {
@@ -49,8 +78,8 @@
 
 .crosstab-container .data-content {
 	float:left;
-	width:80%;
-	max-width:80%;
+	width:70%;
+	max-width:70%;
 	overflow-x:scroll;
 }
 
@@ -64,8 +93,8 @@
 
 .crosstab-container .sum-col {
 	float:left;
-	width:10%;
-	max-width:10%;
+	width:15%;
+	max-width:15%;
 }
 
 .crosstab-container .sum-col, .crosstab-container .sum-row {
@@ -82,6 +111,11 @@
 	max-width:100%;
 }
 
+
+.crosstab-container .half-column {
+	width:50%;
+	max-width:50%;
+}
 
 
 

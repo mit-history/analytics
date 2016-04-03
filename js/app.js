@@ -269,9 +269,9 @@ App.render = function(state) {
   function render_i18n(lang) {
     return h('div.row.main-container', [
 			hg.partial(Query.render, state.modal, state.query, lang),
-			h('section.columns', [
+			h('section.columns.data-display-container', [
 				h('section.crosstab-container', hg.partial(Crosstab.render, state, lang)),
-				h('section.chart-containter', 'super bla')
+				h('section.chart-containter', 'This section will contain the chart')
 			])
 			
     ])
