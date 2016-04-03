@@ -6,6 +6,8 @@
 		"comparison_tool_x_title": "x. In function of what ?",
 		"comparison_tool_y_title": "y. In function of what ?",
 		"comparison_tool_open_handle": "Search criterias",
+		
+		"filter_button_all": "Use all filters",
 
     "sum_receipts_weighted": "Gross receipts (weighted)",
     "sum_receipts_unweighted": "Gross receipts (unweighted)",
@@ -65,6 +67,8 @@
 		"comparison_tool_y_title": "y. En fonction de quoi ?",
 		"comparison_tool_open_handle": "Critères de recherche",
 		
+		"filter_button_all": "Utiliser tous les filtres",
+		
     "sum_receipts_weighted": "Somme recette (pondérée)",
     "sum_receipts_unweighted": "Somme recette (non pondérée)",
     "performances_days": "Représentations(jours)",
@@ -78,7 +82,7 @@
     "cols": "Colonnes",
     "cells": "Cellules",
 
-    "find": "Chercher",
+    "find": "Rechercher",
     "all": "Tous",
     "ok": "OK",
 

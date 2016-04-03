@@ -44,10 +44,14 @@
 	cursor:pointer;
 }
 
-.query-show-handle p {
+.query-show-handle div {
   position: relative;
   top: 50%;
-	left: 7px;
+}
+
+.query-show-handle div p {
+  position: absolute;
+	left: -200%;
 	text-transform:uppercase;
 	writing-mode: lr-bt; 
 	-webkit-transform:rotate(-90deg);
@@ -64,7 +68,7 @@
 }
 
 .query-pane-section {
-	padding:15px 40px;
+	padding:20px 40px;
 	border-bottom:solid 2px #BACAD4;
 	position:relative;
 }
@@ -73,6 +77,24 @@
 	position:absolute;
 	top:50%;
 	right:-15px;
+}
+
+.interchange-axis-button {
+	position:absolute;
+	background-color:#DFDFDC;
+	background-image:url('../image/invert_activ.png');
+	background-repeat:no-repeat;
+	background-position:center;
+	width:30px;
+	height:30px;
+	bottom:-16px;
+	right:30px;
+	border:1px solid #2888A5;
+}
+
+.interchange-axis-button:hover {
+	background-color:#2888A5;
+	background-image:url('../image/invert_hover.png');
 }
 
 /* Arrow fill and stroke from http://jhaurawachsman.com/2013/css-triangles-border-stroke/ */
@@ -113,7 +135,7 @@
 
 .query-pane-section.header h1 {
 	font-size:20px;
-	margin-bottom:20px;
+	margin-bottom:5px;
 	text-transform:uppercase;
 }
 
@@ -255,7 +277,7 @@ ul.dropdown-list-content.dropdown-inline {
 .filter-container .filter-list li {
 	line-height:14pt;
 	margin-left:20px;
-	margin-bottom:5px;
+	margin-bottom:15px;
 	position:relative;
 }
 

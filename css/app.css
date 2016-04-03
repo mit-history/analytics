@@ -17,6 +17,23 @@ body {
     -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
 }
 
+::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+	font-style:italic;
+	font-size:smaller;
+}
+::-moz-placeholder { /* Firefox 19+ */
+	font-style:italic;
+	font-size:smaller;
+}
+:-ms-input-placeholder { /* IE 10+ */
+	font-style:italic;
+	font-size:smaller;
+}
+:-moz-placeholder { /* Firefox 18- */
+	font-style:italic;
+	font-size:smaller;
+}
+
 button {
 	padding:5px 10px;
 	font-size:12px;
@@ -54,6 +71,10 @@ button {
 	float:right;
 }
 
+.custom-checkbox {
+	padding-left: 20px;
+}
+
 .custom-checkbox input[type=checkbox] + label {
 	cursor:pointer;
 }
@@ -69,7 +90,7 @@ button {
 .custom-checkbox input[type=checkbox] + label { 
   display      : inline-block;
   margin-left  : -1em;
-  line-height  : 1.5em;
+  line-height  : 1.2em;
 }
 
 .custom-checkbox input[type=checkbox]  + label > span.custom-input {
@@ -81,6 +102,9 @@ button {
   border           : 0.0625em solid #CBDAE3;
   background       : #fff;
   vertical-align   : bottom;
+	position 				 : absolute;
+	left 						 : -15px;
+	top 						 : 2px;
 }
 
 .custom-checkbox input[type=checkbox]:checked + label > span.custom-input > span {

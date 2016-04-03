@@ -46,6 +46,7 @@ function Query(initial_query, url) {
     url: url,
 // actions
     channels: {
+      resetSearch: Query.resetSearch,
       setPanelOpen: Query.setPanelOpen,
       setAggregateDropdownOpen: Query.setAggregateDropdownOpen,
       setXAxisDropdownOpen: Query.setXAxisDropdownOpen,
@@ -55,6 +56,9 @@ function Query(initial_query, url) {
       setAggregate: Query.setAggregate,
       addDimension: Query.addDimension,
       removeDimension: Query.removeDimension,
+      interchangeAxis: Query.interchangeAxis,
+			
+			
       clearFilter: Query.clearFilter,
       toggleFilterValue: Query.toggleFilterValue,
       toggleDimensionOrder: Query.toggleDimensionOrder,
@@ -96,6 +100,14 @@ function Query(initial_query, url) {
 
 const ORDER_VALUES = ['nat', 'asc', 'desc']
 
+Query.resetSearch = function(state) {
+  state.agg.set('');
+  state.rows.set([]);
+  state.cols.set([]);
+	state.filter.set({});
+	state.selectedDimension.set('');
+}
+
 Query.setPanelOpen = function(state) {
   state.queryPanelOpen.set(!state.queryPanelOpen());
 }
@@ -106,10 +118,12 @@ Query.setAggregateDropdownOpen = function(state) {
 
 Query.setXAxisDropdownOpen = function(state, axis) {
   state.xAxisDropdownOpen.set(!state.xAxisDropdownOpen())
+  state.yAxisDropdownOpen.set(false)
 }
 
 Query.setYAxisDropdownOpen = function(state, axis) {
   state.yAxisDropdownOpen.set(!state.yAxisDropdownOpen())
+  state.xAxisDropdownOpen.set(false)
 }
 
 Query.setAxisDimensionDropdown = function (state, dimension_name) {
@@ -190,6 +204,14 @@ Query.removeDimension = function(query, data) {
 	}
 }
 
+Query.interchangeAxis = function(state) {
+	var lRows = state.rows();
+	var lCols = state.cols();
+	
+  state.rows.set(lCols);
+  state.cols.set(lRows);
+}
+
 Query.toggleDimensionOrder = function(query, dim) {
   var order = query.order.get(dim)
   var k = ORDER_VALUES.indexOf(order)
@@ -230,7 +252,7 @@ Query.render = function(modal_state, query_state, lang) {
 					'id': 'query_panel_open',
 	    		'ev-click': hg.send(query_state.channels.setPanelOpen),
 	    	}, [
-					h('p', msgs[lang]['comparison_tool_open_handle']),
+					h('div', h('p', msgs[lang]['comparison_tool_open_handle'])),
 					h('button.fa.fa-chevron-right.slide-pannel-button',  {
 	      		'ev-click': hg.send(query_state.channels.setPanelOpen)
 	      	})
@@ -241,7 +263,7 @@ Query.render = function(modal_state, query_state, lang) {
 	      h('div.query-pane-content', [
 					h('header.query-pane-section.header', [
 						h('h1', msgs[lang]['comparison_tool_title']),
-						h('button', msgs[lang]['new_search_button']),
+						h('button', {'ev-click': hg.send(query_state.channels.resetSearch)}, msgs[lang]['new_search_button']),
 		      ]),
 				
 		      h('header.query-pane-section', [
@@ -253,8 +275,9 @@ Query.render = function(modal_state, query_state, lang) {
 						h('h2.axis-title', msgs[lang]['comparison_tool_x_title']),
 						Axis.render(modal_state, query_state, 'rows', lang),
 						DimensionSelector.render(modal_state, query_state, 'rows', lang),
-						h('div.arrow-indicator' + (query_state.selectedDimension && query_state.selectedDimension.axis == 'rows' ? '.visible-container' : '.hidden-container'))
-		      ]),
+						h('div.arrow-indicator' + (query_state.selectedDimension && query_state.selectedDimension.axis == 'rows' ? '.visible-container' : '.hidden-container')),
+		      	h('button.interchange-axis-button', { 'ev-click': hg.send(query_state.channels.interchangeAxis) })
+					]),
 
 		      h('header.query-pane-section' + (query_state.yAxisDropdownOpen || (query_state.selectedDimension && query_state.selectedDimension.axis == 'cols') ? '.interacted': ''), [
 						h('h2.axis-title', msgs[lang]['comparison_tool_y_title']),

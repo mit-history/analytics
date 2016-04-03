@@ -7,7 +7,7 @@
 
 .crosstab-container .content-container {
 	width:80%;
-	max-width:800px;
+	max-width:1200px;
 	max-height:70%;
   margin: auto;
   position: absolute;
@@ -18,9 +18,16 @@
 	float:left;
 	width:15%;
 	padding-top:8%;
+	padding-right:5px;
 	overflow:hidden;
 	white-space:nowrap;
 }
+
+.y-axis-dimensions-container li {
+	float:right;
+	clear:both;
+}
+
 
 .x-axis-data-container {
 	float:left;

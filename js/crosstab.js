@@ -184,32 +184,40 @@ Crosstab.render = function(state, lang) {
 		return lResult;
 	}
 	
-	// Count data items to be displayed in center column
-	var lDataItems = 0;
-	for (var i in state.cube_data['0x1']) {
-		lDataItems ++;
-	}
-	var lSizingClass = lDataItems <= 1 ? '.half-column' : '';
+	// Check if user selected anything yet
 	
-	// Construct Table display
-	var lTableDisplay = [];
-	// Add Y Axis headers column
-	lTableDisplay.push(h('div.row-headers-col' + lSizingClass, h('table', Crosstab.generateRowHeadersColumn(state.query, state.cube_data, lang))));
-	// Add X axis and data columns
-	if (lDataItems > 1) {
-		lTableDisplay.push(h('div.data-content', h('table', Crosstab.generateTableData(state.query, state.cube_data, lang))));
-	}
-	// Add results column
-	lTableDisplay.push(h('div.sum-col' + lSizingClass, h('table', Crosstab.generateSumColumn(state.query, state.cube_data, lang))),);
+	if (state.query.agg.length > 0 || (state.query.rows.length > 0 || state.query.cols.length > 0)) {
+		// Count data items to be displayed in center column
+		var lColItems = 0;
+		for (var i in state.cube_data['0x1']) {
+			lColItems ++;
+		}
+		var lSizingClass = lColItems <= 1 ? '.half-column' : '';
 	
-  return h('div.content-container', [
-  	h('div.y-axis-dimensions-container', h('ul.axis-selected-dimensions', renderDimentionList('rows'))),
+		// Construct Table display
+		var lTableDisplay = [];
+		// Add Y Axis headers column
+		lTableDisplay.push(h('div.row-headers-col' + lSizingClass, h('table', Crosstab.generateRowHeadersColumn(state.query, state.cube_data, lang))));
+		// Add X axis and data columns
+		if (lColItems > 1) {
+			lTableDisplay.push(h('div.data-content', h('table', Crosstab.generateTableData(state.query, state.cube_data, lang))));
+		}
+		// Add results column
+		lTableDisplay.push(h('div.sum-col' + lSizingClass, h('table', Crosstab.generateSumColumn(state.query, state.cube_data, lang))),);
+	
+	  return h('div.content-container', [
+	  	h('div.y-axis-dimensions-container', h('ul.axis-selected-dimensions', renderDimentionList('rows'))),
 
-  	h('div.x-axis-data-container', [
-			h('div.x-axis-dimensions-container', h('ul.axis-selected-dimensions', renderDimentionList('cols'))),
-			h('div.data-table-container', lTableDisplay),
-  	]),
-  ]);
+	  	h('div.x-axis-data-container', [
+				h('div.x-axis-dimensions-container', h('ul.axis-selected-dimensions', renderDimentionList('cols'))),
+				h('div.data-table-container', lTableDisplay),
+	  	]),
+	  ]);
+	} else {
+		return h('div.content-container');
+	}
+	
+	
 }
 
 export default Crosstab
