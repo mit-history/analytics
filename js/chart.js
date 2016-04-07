@@ -71,7 +71,7 @@ Chart.render = function(query, data, lang) {
 
   return svg('svg', { width: width + margins.left + margins.right, height: height + margins.top + margins.bottom },
     svg('g', {transform: 'translate(' + margins.left + ',' + margins.top + ')'}, [
-      svg('g', {class: 'x axis', transform: 'translate(' + margins.left + ',' + height + ')'},
+      svg('g', {class: 'x axis', transform: 'translate(0,' + height + ')'},
         x.ticks().map( (d) => svg('g', {class: 'tick', transform: 'translate(' + x(d) + ',0)'}, [
           svg('line', {x1: 0, y1:0, x2: 0, y2: 5}),
           svg('text', {y:5, dy:'1em', 'text-anchor': 'middle'}, fmt(d))
