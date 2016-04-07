@@ -17,8 +17,8 @@ const colorbrewer = require('colorbrewer')
 const datapoint = require('./util/datapoint')
 
 
-const width = 800
-const height = 250
+const width = 700
+const height = 220
 const margins = { top: 0, right: 50, bottom: 30, left: 50 }
 
 function Chart() {
