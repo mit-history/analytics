@@ -20,6 +20,7 @@ var Modal = require('./modal')
 var Carousel = require('./carousel')
 var Query = require('./query')
 var Crosstab = require('./crosstab')
+var Chart = require('./chart')
 var Calendar = require('./calendar')
 var Register = require('./register')
 var Status = require('./status')
@@ -271,7 +272,7 @@ App.render = function(state) {
 			hg.partial(Query.render, state.modal, state.query, lang),
 			h('section.columns.data-display-container', [
 				h('section.crosstab-container', hg.partial(Crosstab.render, state, lang)),
-				h('section.chart-containter', 'This section will contain the chart')
+				h('section.chart-containter', hg.partial(Chart.render, state.query, state.cube_data["1x1"], state.lang)),
 			])
 			
     ])

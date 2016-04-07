@@ -7,5 +7,17 @@
 .chart-container .content-container {
 	width:80%;
 	margin:10px auto;
-	
+}
+
+.chart-container .marks path {
+  fill: none;
+}
+
+text {
+  font-size: 10px;
+}
+
+.tick line {
+  stroke: black;
+  fill: none;
 }
