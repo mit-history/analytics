@@ -28,10 +28,10 @@ function Crosstab() {
 
 Crosstab.generateRowHeadersColumn = function (query_state, cube_data, lang) {
 	var lResult  = [];
-	
+
 	var lAggKey = query_state.agg;
 	var lRowKey = query_state.rows[0];
-	
+
 	// Generate header row
 	var lDataSet = cube_data['1x0'];
 	var lRows = [h('tr', h('th.cross-cell', 'X'))];
@@ -43,16 +43,16 @@ Crosstab.generateRowHeadersColumn = function (query_state, cube_data, lang) {
 	}
 	// Add sum row
 	lRows.push(h('tr', h('th.sum-row', {title: msgs[lang][lAggKey]}, msgs[lang][lAggKey])));
-	
+
 	lResult.push(lRows);
-	
+
 	return lResult;
 };
 
 
 Crosstab.generateTableData = function (query_state, cube_data, lang) {
 	var lResult  = [];
-	
+
 	var lAggKey = query_state.agg;
 	var lRowKey = query_state.rows[0];
 	var lColKey = query_state.cols[0];
@@ -77,62 +77,62 @@ Crosstab.generateTableData = function (query_state, cube_data, lang) {
 	}
 	lResult.push(lTableCols);
 	lResult.push(h('tr.heading-row', {id: 'data-heading-row'}, lHeaderRow));
-	
+
 	// Calculate row count as the .lenght attribute seems to cause obscur error
 	var lRowCount = 0;
 	for (var i in cube_data['1x0']) {
 		lRowCount++;
 	}
-	
+
 	// Generate result rows
 	var lColDataSet 	= cube_data['0x1'];
 	var lRowDataSet 	= cube_data['1x0'];
 	var lFullDataSet 	= cube_data['1x1'];
-	
+
 	for (var i in cube_data['1x0']) {
 		var lRowCubeData = cube_data['1x0'][i];
 		var lDataRow = [];
-		
+
 		for (var j in cube_data['0x1']) {
 			var lColCubeData = cube_data['0x1'][j];
-			
+
 			if (lRowCubeData[lRowKey] && lColCubeData[lColKey]) {
 
 				var lFullCubeData = lFullDataSet.filter(function(fullCubeData) {
-					return fullCubeData[lRowKey] == lRowCubeData[lRowKey] && fullCubeData[lColKey] == lColCubeData[lColKey] 
+					return fullCubeData[lRowKey] == lRowCubeData[lRowKey] && fullCubeData[lColKey] == lColCubeData[lColKey]
 				});
-				
+
 				var lCellData = lFullCubeData.length > 0 ? lFullCubeData[0][lAggKey].toFixed(0).toString() : '';
 				var lCellDataTitle = lRowCubeData[lRowKey].toString() + ', ' + lColCubeData[lColKey] + ' : ' + lCellData;
-			
+
 				lDataRow.push(h('td', {title: lCellDataTitle}, lCellData));
-				
+
 			}
 		}
-		
+
 		lResult.push(h('tr', lDataRow));
 	}
-	
+
 	// Add row with all sums
 	var lSumRow = [];
-	for (var i in lColDataSet) {	
+	for (var i in lColDataSet) {
 		var lCellData = lColDataSet[i][lAggKey].toFixed(0).toString();
 		var lCellDataTitle = lColDataSet[lColKey] + ' : ' + lCellData;
-			
+
 		lSumRow.push(h('td.sum-row', {title: lCellDataTitle}, lCellData));
 	}
 	lResult.push(h('tr', lSumRow));
-	
+
 	return lResult;
 };
 
 
 Crosstab.generateSumColumn = function (query_state, cube_data, lang) {
 	var lResult  = [];
-	
+
 	var lAggKey = query_state.agg;
 	var lRowKey = query_state.rows[0];
-	
+
 	// Generate header row
 	var lDataSet = cube_data['1x0'];
 	var lRows = [h('tr', h('th', {title: msgs[lang][lAggKey]}, msgs[lang][lAggKey]))];
@@ -142,14 +142,14 @@ Crosstab.generateSumColumn = function (query_state, cube_data, lang) {
 			lRows.push(h('tr', h('td', {title: lData}, lData)));
 		}
 	}
-	
+
 	// Add sum
 	for (var i in cube_data['0x0']) {
 		var lData = cube_data['0x0'][i][lAggKey].toFixed(0).toString();
 		lRows.push(h('tr', h('td.sum-table', {title: lData}, lData)));
 	}
 	lResult.push(lRows);
-	
+
 	return lResult;
 };
 
@@ -169,23 +169,23 @@ Crosstab.render = function(state, lang) {
 
     broadcast(assign(this.data, { focus: cell }))
   })
-	
+
 	console.log(state.cube_data);
-	
+
 	var renderDimentionList = function (axis) {
 		var lResult = [];
-		
+
 		for (var i in state.query[axis]) {
 			var lAxisName = i18n.htmlize(msgs, state.query[axis][i], lang);
 			var lPrefix = (axis == 'cols' ? 'x' : 'y') + (parseInt(i) + 1) + '. ';
-			
+
 			lResult.push(h('li', h('span.selected-dimension-bullet' + (i == 0 ? '.first-axis' : ''), [lPrefix, lAxisName])));
 		}
 		return lResult;
 	}
-	
+
 	// Check if user selected anything yet
-	
+
 	if (state.query.agg.length > 0 || (state.query.rows.length > 0 || state.query.cols.length > 0)) {
 		// Count data items to be displayed in center column
 		var lColItems = 0;
@@ -193,7 +193,7 @@ Crosstab.render = function(state, lang) {
 			lColItems ++;
 		}
 		var lSizingClass = lColItems <= 1 ? '.half-column' : '';
-	
+
 		// Construct Table display
 		var lTableDisplay = [];
 		// Add Y Axis headers column
@@ -203,8 +203,8 @@ Crosstab.render = function(state, lang) {
 			lTableDisplay.push(h('div.data-content', h('table', Crosstab.generateTableData(state.query, state.cube_data, lang))));
 		}
 		// Add results column
-		lTableDisplay.push(h('div.sum-col' + lSizingClass, h('table', Crosstab.generateSumColumn(state.query, state.cube_data, lang))),);
-	
+		lTableDisplay.push(h('div.sum-col' + lSizingClass, h('table', Crosstab.generateSumColumn(state.query, state.cube_data, lang))));
+
 	  return h('div.content-container', [
 	  	h('div.y-axis-dimensions-container', h('ul.axis-selected-dimensions', renderDimentionList('rows'))),
 
@@ -216,8 +216,8 @@ Crosstab.render = function(state, lang) {
 	} else {
 		return h('div.content-container');
 	}
-	
-	
+
+
 }
 
 export default Crosstab
