@@ -9,15 +9,23 @@
 	margin:10px auto;
 }
 
-.chart-container .marks path {
-  fill: none;
-}
+/* TODO.  svg rules below should be prefixed by .chart-container
+         - not clear why not working */
 
-text {
+.axis text {
   font-size: 10px;
 }
 
-.tick line {
-  stroke: black;
+.axis line,
+.axis path {
+  stroke: gray;
+  fill: gray;
+}
+
+.marks path {
   fill: none;
+}
+
+.legend text {
+  font-size: 10px;
 }
