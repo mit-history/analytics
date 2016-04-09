@@ -22,8 +22,8 @@
   fill: gray;
 }
 
-.marks path {
-  fill: none;
+.ordinal circle {
+  visibility: hidden;
 }
 
 .legend text {
