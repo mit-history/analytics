@@ -81,6 +81,7 @@
 
 .interchange-axis-button {
 	position:absolute;
+	z-index:9;
 	background-color:#DFDFDC;
 	background-image:url('../image/invert_activ.png');
 	background-repeat:no-repeat;
@@ -166,6 +167,15 @@ button.dropdown-list {
 	background-color:#F1F1F2;
 }
 
+button.dropdown-list span.title{
+	max-width:80%;
+	display:inline-block;
+	overflow:hidden;
+	white-space:nowrap;
+	text-overflow: ellipsis;
+	text-transform:uppercase;
+}
+
 button.dropdown-list .fa  {
 	color:#3E7F9F;
 }
@@ -185,9 +195,9 @@ ul.dropdown-list-content {
 	padding:5px 10px;
 	margin:0px;
 	list-style:none;
-	position:absolute;
+	/*position:absolute;
 	top:100%;
-	left:0px;
+	left:0px;*/
 	z-index: 10;
 }
 

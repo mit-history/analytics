@@ -58,16 +58,16 @@ DimensionSelector.render = function(modal_state, query_state, axis, lang) {
     })
 		
 		if (lis.length > 1) {
-			return [
-				h('span', i18n.htmlize(msgs, stem, lang)),
-				h('ul.dropdown-list-content.dropdown-inline', lis)
-			];
+			return h('ul.dropdown-list-content.dropdown-inline', lis)
 		} else {
     	return buildDimNodeFunc(dims[0])
 		}
+
+		return lResult
   }
 
   var dim_lis = (dims) => {
+		
     var bins = Object.create({})
     dims.forEach( (dim) => {
       var match = /^([^_]+)/.exec(dim),
@@ -91,7 +91,7 @@ DimensionSelector.render = function(modal_state, query_state, axis, lang) {
           h('button.dropdown-list.dimension-selector' + (query_state.axisDimensionDropdown == name ? '.selected' : ''), {
 						'ev-click': hg.send(query_state.channels.setAxisDimensionDropdown, name)
 					}, [
-						i18n.htmlize(msgs, name, lang),
+						h('span.title', i18n.htmlize(msgs, name, lang)),
 						h('span.fa.right' + (query_state.axisDimensionDropdown == name ? '.fa-chevron-up' : '.fa-chevron-down'))
 					]),
           h('ul.dropdown-list-content.dropdown-inline' + (query_state.axisDimensionDropdown == name ? '.visible-container' : '.hidden-container'), 

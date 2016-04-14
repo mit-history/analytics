@@ -25,41 +25,54 @@ const schema = {
 // TODO.  day yields 40,000 results -- query latency unacceptable
 //      "day",
       "weekday" ],
-  performance:
+  author:
     subscript(playbills,
-    [ "author",
-      "title",
-      "genre",
-      "acts",
-      "prose_vers" ]),
-  performance_addl:
+    [ "author"]),
+  genre:
     subscript(playbills,
-    [ "prologue",
-      "musique_danse_machine",
-      "free_entry",
-      "reprise",
-      "firstrun",
-      "newactor",
-      "debut" /*,
-      "ex_attendance",
-      "ex_representation",
-      "ex_place" */ ]) /*
+    [ "genre"]),
   theater:
     [ "theater_period",
-      "seating_area" ] */
+      "seating_area" ],
+  acts:
+    subscript(playbills,
+    [ "acts"]),
+  prose_vers:
+    subscript(playbills,
+    [ "prose_vers" ]),
+			
+
+		  /*performance_addl:
+		    subscript(playbills,
+		    [ "prologue",
+		      "musique_danse_machine",
+		      "free_entry",
+		      "reprise",
+		      "firstrun",
+		      "newactor",
+		      "debut" ,
+		      "ex_attendance",
+		      "ex_representation",
+		      "ex_place"  ]) */
 }
 
 const public_aggregates = [
   "sum_receipts_weighted",
-  "sum_receipts_unweighted",
   "performances_days",
   "mean_receipts_day_weighted",
-  "mean_receipts_day_unweighted",
-  "mean_price",
-  "count_authors_1",
-  "count_authors_2",
-  "count_titles_1",
-  "count_titles_2" ]
+  "mean_price" ]
+
+// const public_aggregates = [
+//   "sum_receipts_weighted",
+//   "sum_receipts_unweighted",
+//   "performances_days",
+//   "mean_receipts_day_weighted",
+//   "mean_receipts_day_unweighted",
+//   "mean_price",
+//   "count_authors_1",
+//   "count_authors_2",
+//   "count_titles_1",
+//   "count_titles_2" ]
 
 function group() {
   return schema

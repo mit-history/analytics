@@ -69,12 +69,12 @@
 		
 		"filter_button_all": "Utiliser tous les filtres",
 		
-    "sum_receipts_weighted": "Somme recette (pondérée)",
+    "sum_receipts_weighted": "Somme des recettes",
     "sum_receipts_unweighted": "Somme recette (non pondérée)",
-    "performances_days": "Représentations(jours)",
-    "mean_receipts_day_weighted": "Moyenne recette/jour (pondérée)",
+    "performances_days": "Représentations / jour",
+    "mean_receipts_day_weighted": "Moyenne des recettes / jour",
     "mean_receipts_day_unweighted": "Moyenne recette/jour (non pondérée)",
-    "mean_price": "Moyenne(prix)",
+    "mean_price": "Moyenne du prix des places",
     "count_authors": "Compte Auteur",
     "count_titles": "Compte Pièce",
 		
@@ -86,10 +86,10 @@
     "all": "Tous",
     "ok": "OK",
 
-    "time": "Temps",
+    "time": "Période",
     "performance": "Soirée",
     "performance_addl": "Soirée (supplémentaire)",
-    "theater": "Théâtre",
+    "theater": "Salle",
 
     "decade": "Décennie",
     "season": "Saison",
