@@ -32,9 +32,9 @@ const datapoint = require('./util/datapoint')
 const schema = require('../cfrp-schema.js')
 
 
-const width = 700
-const height = 220
-const margins = { top: 20, right: 80, bottom: 80, left: 50 }
+const width = 670
+const height = 200
+const margins = { top: 10, right: 80, bottom: 40, left: 50 }
 const legend_margins = { top: 5, right: 0, bottom: 0, left: 5 }
 
 function Chart() {

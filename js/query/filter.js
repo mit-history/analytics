@@ -84,14 +84,14 @@ Filter.render = function(modal_state, query_state, dim, lang) {
   })
 
   return [
-	  h('button', { 'ev-click': hg.send(query_state.channels.clearFilter, dim) }, [ msgs_i18n.filter_button_all ]),
-	  h('input', { 'ev-event': hg.sendChange(query_state.filter_state.channels.updateSearch),
+	  h('div', h('button', { 'ev-click': hg.send(query_state.channels.clearFilter, dim) }, [ msgs_i18n.filter_button_all ])),
+	  h('div', h('input', { 'ev-event': hg.sendChange(query_state.filter_state.channels.updateSearch),
 	               value: query_state.filter_state.search,
 	               type: 'text',
 	               name: 'search',
-		 						 placeholder: msgs_i18n.find} ),
+		 						 placeholder: msgs_i18n.find} )),
 	  h('ul.filter-list', cbs),
-	  h('button', { 'ev-click': hg.send(modal_state.channels.setModal, null) }, [ msgs_i18n.ok ]),
+	  h('div', h('button', { 'ev-click': hg.send(modal_state.channels.setModal, null) }, [ msgs_i18n.ok ])),
 	]
 
 }

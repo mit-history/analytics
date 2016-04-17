@@ -272,9 +272,9 @@ App.render = function(state) {
 			hg.partial(Query.render, state.modal, state.query, lang),
 			h('section.columns.data-display-container', [
 				h('section.crosstab-container', hg.partial(Crosstab.render, state, lang)),
-				h('section.chart-containter', /*hg.partial(Chart.render, state.query, state.cube_data["1x1"], state.lang)*/),
+				h('section.chart-containter' /*, hg.partial(Chart.render, state.query, state.cube_data["1x1"], lang)*/),
 			])
-			
+
     ])
   }
 }
