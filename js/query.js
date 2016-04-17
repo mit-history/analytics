@@ -40,9 +40,12 @@ function Query(initial_query, url) {
     cols: Axis(initial_query.cols),
     order: Order(initial_query.order),
     filter: hg.varhash(initial_query.filter),
+    filter: hg.varhash(initial_query.filter),
+    filter_selection: hg.varhash(initial_query.filter),
 // local data & server-loaded data
     filter_state: Filter(),
     domains_data: hg.varhash({}),
+    domains_data_selection: hg.varhash({}),
     url: url,
 // actions
     channels: {
@@ -135,7 +138,22 @@ Query.setAxisDimensionDropdown = function (state, dimension_name) {
 }
 
 Query.setSelectedDimension = function(state, data) {
-  state.selectedDimension.set(data)
+	// Set selected dimension
+	state.selectedDimension.set(data)
+
+	// Get filter values for selected dimension
+  var api = datapoint(state.url)
+	var { axis, dim } = data
+	
+	api.domain(dim, (vals) => {
+    vals.sort()
+    state.domains_data_selection.put(dim, vals)
+  })
+	
+	// Set selected filter values if applcable
+	if (state.filter[dim]) {
+		state.filter_selection.put(dim, state.filter[dim])
+	}
 }
 
 Query.setAggregate = function(query, new_agg) {
@@ -148,7 +166,7 @@ Query.clearFilter = function(query, dim) {
 
 Query.toggleFilterValue = function(query, data) {
   var { dim, value } = data
-  var sv = query.filter()[dim] || []
+  var sv = query.filter_selection()[dim] || []
 
   var start_count = sv.length
 
@@ -158,11 +176,11 @@ Query.toggleFilterValue = function(query, data) {
   else { sv.push(value) }
   sv.sort()
 
-  console.log('toggled ' + dim + '.' + value + ' (' + sv.length + ')')
+  console.log('toggled selection ' + dim + '.' + value + ' (' + sv.length + ')')
 
   if (sv.length < 5) { console.log(JSON.stringify(sv)) }
 
-  query.filter.put(dim, sv)
+  query.filter_selection.put(dim, sv)
 }
 
 // return a *live* version of the observ_struct axis value
@@ -183,7 +201,15 @@ Query.addDimension = function(query, data) {
     dims.push(dim)
   }
 	
-	query.selectedDimension.set({axis: axis, dim: dim})
+	// Add selected dimension and filter values into
+	query.domains_data.put(dim, query.domains_data_selection[dim])
+	query.filter.put(dim, query.filter_selection[dim])
+	
+	
+	// Clear dimension and filter selection
+	query.selectedDimension.set('')
+	query.domains_data_selection.put(dim, null)
+	query.filter_selection.put(dim, null)
  }
 
 Query.removeDimension = function(query, data) {
@@ -196,12 +222,6 @@ Query.removeDimension = function(query, data) {
   }
 
   query.filter.delete(dim)
-	
-	var selectedDimension = query.selectedDimension();
-	
-	if (selectedDimension && selectedDimension.axis == data.axis && selectedDimension.dim == data.dim ) {
-		query.selectedDimension.set(null)
-	}
 }
 
 Query.interchangeAxis = function(state) {
@@ -289,7 +309,7 @@ Query.render = function(modal_state, query_state, lang) {
 			]),
 			
 			h('section.filter-container' + (query_state.queryPanelOpen && query_state.selectedDimension ? '.visible-flex-container' : '.hidden-container'), [
-				(query_state.selectedDimension ? Filter.render(modal_state, query_state, query_state.selectedDimension.dim, lang) : ''),
+				(query_state.selectedDimension ? Filter.render(modal_state, query_state, query_state.selectedDimension.dim, query_state.selectedDimension.axis, lang) : ''),
 			])
     ])
 	)

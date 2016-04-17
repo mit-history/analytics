@@ -177,7 +177,7 @@ Crosstab.render = function(state, lang) {
 
 		for (var i in state.query[axis]) {
 			var lAxisName = i18n.htmlize(msgs, state.query[axis][i], lang);
-			var lPrefix = (axis == 'cols' ? 'x' : 'y') + (parseInt(i) + 1) + '. ';
+			var lPrefix = (axis == 'cols' ? 'y' : 'x') + (parseInt(i) + 1) + '. ';
 
 			lResult.push(h('li', h('span.selected-dimension-bullet' + (i == 0 ? '.first-axis' : ''), [lPrefix, lAxisName])));
 		}

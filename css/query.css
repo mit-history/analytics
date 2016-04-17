@@ -280,6 +280,13 @@ ul.dropdown-list-content.dropdown-inline {
 	width:100%;
 }
 
+.filter-container > div > h4 {
+	color:#636363;
+	font-size: 13pt;
+	text-transform: uppercase;
+	margin-bottom: 0px;
+}
+
 .filter-container .filter-list {
 	flex-grow:1;
 	list-style:none;

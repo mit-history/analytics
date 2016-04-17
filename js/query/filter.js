@@ -48,14 +48,14 @@ function updateSearch(state, data) {
 var unique_key = 0
 
 //Filter.render = function(state, channels, dim, values, query, formatter, lang) {
-Filter.render = function(modal_state, query_state, dim, lang) {
+Filter.render = function(modal_state, query_state, dim, axis, lang) {
   var msgs_i18n = msgs[lang]
   var formatter = schema.format(lang, dim)
 
   var cbs = []
 
-  var values = query_state.domains_data[dim] || []
-  var sel_values = query_state.filter[dim] || []
+  var values = query_state.domains_data_selection[dim] || []
+  var sel_values = query_state.filter_selection[dim] || []
 
   values.forEach( (d, i) => {
     if (strMatch(d, query_state.filter_state.search)) {
@@ -85,13 +85,14 @@ Filter.render = function(modal_state, query_state, dim, lang) {
 
   return [
 	  h('div', h('button', { 'ev-click': hg.send(query_state.channels.clearFilter, dim) }, [ msgs_i18n.filter_button_all ])),
+	  h('div', h('h4', [ msgs_i18n[dim] ])),
 	  h('div', h('input', { 'ev-event': hg.sendChange(query_state.filter_state.channels.updateSearch),
 	               value: query_state.filter_state.search,
 	               type: 'text',
 	               name: 'search',
 		 						 placeholder: msgs_i18n.find} )),
 	  h('ul.filter-list', cbs),
-	  h('div', h('button', { 'ev-click': hg.send(modal_state.channels.setModal, null) }, [ msgs_i18n.ok ])),
+	  h('div', h('button', { 'ev-click': hg.send(query_state.channels.addDimension, { axis: axis, dim: dim }) }, [ msgs_i18n.ok ])),
 	]
 
 }
