@@ -42,7 +42,7 @@ DimensionSelector.render = function(modal_state, query_state, axis, lang) {
 	      h('input', {type: 'radio', name: 'axis_dimension', checked: 'false'}),
 				h('label', [
 					h('span.radio', h('span.radio')),
-					h('span', { 'ev-click' : [ hg.send(query_state.channels.addDimension, { axis: axis, dim: dim }),
+					h('span', { 'ev-click' : [ hg.send(query_state.channels.setSelectedDimension, { axis: axis, dim: dim }),
 			                        			 hg.send(query_state.channels[lAxisChannel]) ]
 			        },
 							i18n.htmlize(msgs, dim, lang)

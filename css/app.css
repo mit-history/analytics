@@ -144,6 +144,12 @@ span.selected-dimension-bullet.first-axis {
 	background-color:#5A5B5D;
 }
 
+span.selected-dimension-bullet.selected {
+	-webkit-box-shadow: 0px 0px 5px 0px rgba(5,135,235,1);
+	-moz-box-shadow: 0px 0px 5px 0px rgba(5,135,235,1);
+	box-shadow: 0px 0px 5px 0px rgba(5,135,235,1);
+}
+
 span.selected-dimension-bullet label {
 	cursor:pointer;
 }
