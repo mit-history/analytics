@@ -147,6 +147,8 @@ function format(lang, field) {
   switch(true) {
 
     // dimensions
+		case /^decade(_.*)?/.test(field):
+	    return (i) => [i, i+9].join(' - ')
     case /^month(_.*)?/.test(field):
     // NB. months and weekdays are kept in 1-indexed format (like postgresql; unlike javascript)
       return (i) => (i === null) ? "" : spec.months[+i-1]

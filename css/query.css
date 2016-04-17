@@ -272,8 +272,12 @@ ul.dropdown-list-content.dropdown-inline {
 	max-height:100%;
 }
 
-.filter-container > input, .filter-container > button, .filter-container > ul {
+.filter-container > div, .filter-container > ul {
 	margin-top:10px;
+}
+
+.filter-container > div > button, .filter-container > div > input {
+	width:100%;
 }
 
 .filter-container .filter-list {
