@@ -1,4 +1,6 @@
 var document = require('global/document');
+var window = require("global/window");
+
 var hg = require('mercury')
 var h = require('mercury').h
 
@@ -37,6 +39,27 @@ const DEFAULT_QUERY = {
 const elem = document.getElementById("app") || document.body
 const datapoint_url = elem.getAttribute("data-analytics")
 
+var window_size = hg.value([window.innerWidth, window.innerHeight])
+
 // install in web page
 
-hg.app(elem, App(datapoint_url, DEFAULT_QUERY), App.render)
+hg.app(elem, App(datapoint_url, window_size, DEFAULT_QUERY), App.render)
+
+// utility functions
+
+throttle("resize", "throttledResize")
+window.addEventListener("throttledResize", function() { window_size.set([window.innerWidth, window.innerHeight]) }, false)
+
+function throttle(type, name, obj) {
+  obj = obj || window
+  var running = false
+  var func = function() {
+    if (running) { return }
+    running = true
+    requestAnimationFrame(function() {
+      obj.dispatchEvent(new CustomEvent(name))
+      running = false
+    })
+  }
+  obj.addEventListener(type, func)
+}

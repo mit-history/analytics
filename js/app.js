@@ -74,7 +74,7 @@ function debounce(func, wait, immediate) {
   };
 }
 
-function App(url, initial_query) {
+function App(url, window_size, initial_query) {
   var api = datapoint(url)
   var state = hg.state({
 
@@ -99,6 +99,7 @@ function App(url, initial_query) {
 
 // reference data
             url: url,
+            window_size: window_size,
 
 // global state transitions
             channels: {
@@ -268,13 +269,14 @@ App.render = function(state) {
   }
 
   function render_i18n(lang) {
+    console.log('window size: ' + state.window_size)
+
     return h('div.row.main-container', [
 			hg.partial(Query.render, state.modal, state.query, lang),
 			h('section.columns.data-display-container', [
 				h('section.crosstab-container', hg.partial(Crosstab.render, state, lang)),
-				h('section.chart-containter', /*hg.partial(Chart.render, state.query, state.cube_data["1x1"], state.lang)*/),
+				h('section.chart-containter', hg.partial(Chart.render, state.query, state.cube_data["1x1"], lang /*, state.window_size */))
 			])
-			
     ])
   }
 }
