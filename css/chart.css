@@ -26,6 +26,12 @@
   visibility: hidden;
 }
 
+.legend rect {
+  stroke: none;
+  fill: black;
+  opacity: 0.05;
+}
+
 .legend text {
   font-size: 10px;
 }

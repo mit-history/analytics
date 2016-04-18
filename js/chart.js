@@ -6,6 +6,20 @@
 *
 */
 
+/*
+ * TODO.
+ * [ ] salle data field
+ * [x] tilt labels
+ * [x] colors for lines
+ * [ ] scrolling (?)
+ * [x] decades etc formatted
+ * [x] grey legend background
+ * [ ] clean up
+ * [ ] think through ordinal/linear & nesting
+ * [ ] bugs on unusual combinations of axes
+ * [ ] "and 20 more"
+ */
+
 require('../css/chart.css')
 
 const hg = require('mercury')
@@ -15,11 +29,13 @@ const d3 = require('d3')
 const colorbrewer = require('colorbrewer')
 
 const datapoint = require('./util/datapoint')
+const schema = require('../cfrp-schema.js')
 
 
 const width = 700
 const height = 220
-const margins = { top: 20, right: 80, bottom: 30, left: 50 }
+const margins = { top: 20, right: 80, bottom: 80, left: 50 }
+const legend_margins = { top: 5, right: 0, bottom: 0, left: 5 }
 
 function Chart() {
   return null
@@ -42,6 +58,9 @@ Chart.render = function(query, data, lang) {
   let f_y = (d) => d && query.agg ? d[query.agg] : null
   let f_color = (d) => d && query.cols.length ? d[ query.cols[query.cols.length-1] ] : null
 
+  let fmt_x = schema.format(lang, query.rows[query.rows.length-1])
+  let fmt_y = schema.format(lang, query.agg)
+
   let ordinal = ordinal_domain(data, f_x)
 
   let vectors = {}
@@ -53,8 +72,12 @@ Chart.render = function(query, data, lang) {
 
   let num_vectors = d3.keys(vectors).length
 
-  let color = (num_vectors < 10) ? d3.scale.category10() : d3.scale.category20()
-  color.domain(d3.keys(vectors))
+  let color = d3.scale.ordinal()
+    .range(['#2379b4', '#f7941e', '#2ba048', '#d62930',
+            '#f8b6c0', '#006838', '#662d91', '#d7df23', '#ec008c', '#0c0c54',
+            '#a8e0f9', '#da1c5c', '#726658', '#603913', '#231f20', '#2b3990',
+            '#9fc59a', '#819cd1', '#92278f', '#00a79d', '#27aae1', '#f04b44'])
+    .domain(d3.keys(vectors))
 
   let y = d3.scale.linear()
     .range([height, 0])
@@ -81,8 +104,6 @@ Chart.render = function(query, data, lang) {
   plot.x( (d) => x(f_x(d)) )
       .y( (d) => y(f_y(d)) )
 
-  let fmt = (v) => '' + v
-
   return svg('svg', { width: width + margins.left + margins.right, height: height + margins.top + margins.bottom }, [
     svg('g', {class: ordinal ? 'ordinal' : 'linear', transform: 'translate(' + margins.left + ',' + margins.top + ')'}, [
 
@@ -103,8 +124,8 @@ Chart.render = function(query, data, lang) {
 
       svg('g', {class: 'x axis', transform: 'translate(0,' + height + ')'},
         ticks.map( (d) => svg('g', {class: 'tick', transform: 'translate(' + (x(d) + bar_width * num_vectors / 2) + ',0)'}, [
-          svg('line', {x1: 0, y1:3, x2: 0, y2: 8}),
-          svg('text', {y:8, dy:'1em', 'text-anchor': 'middle'}, fmt(d))
+          svg('line', {y1:3, y2: 8}),
+          svg('text', {y:8, dy:8, dx:8, transform: 'rotate(35)', 'text-anchor': 'start'}, fmt_x(d))
         ])).concat([
           svg('path', {d: 'M0 0 H' + (width + 10) + (ordinal ? '' : 'V1.5 L' + (width + 15) + ' 0 L' + (width + 10) + ' -1.5V0')})
         ])
@@ -112,7 +133,7 @@ Chart.render = function(query, data, lang) {
       svg('g', {class: 'y axis'},
         y.ticks().map( (d) => svg('g', {class: 'tick', transform: 'translate(0,' + y(d) + ')'}, [
           svg('line', {x1:-8, y1:0, x2:-3, y2: 0}),
-          svg('text', {x:-10, dy:'.3em', 'text-anchor': 'end'}, fmt(d))
+          svg('text', {x:-10, dy:'.3em', 'text-anchor': 'end'}, fmt_y(d))
       ])).concat([
         svg('path', {d: 'M0 ' + height + ' V-10 H1.5 L0 -15 L-1.5 -10 H 0'})
       ])),
@@ -120,12 +141,16 @@ Chart.render = function(query, data, lang) {
       // legend
 
       svg('g', {class: 'legend', transform: 'translate(' + [width+15, height-30] + ')'},
-        d3.keys(vectors).map( (d,i) => svg('g', {class: 'line', transform: 'translate(0,' + (-num_vectors*15 + i*15) + ')'}, [
-          svg('text', {x:32, dy: '.3em'}, d),
-          svg('path', {d: (ordinal ? 'M20 -5 h10 v10 h-10 z' : 'M0 0 H30'), stroke: color(d), fill: color(d)}),
-          svg('circle', {cx:15, r:2, fill: color(d)})
-        ])
-      ))
+        [
+          svg('rect', {class: 'background', x: 0, y: -(num_vectors*15 + 5 + legend_margins.top), width: margins.right-15, height: num_vectors*15 + legend_margins.top})
+        ].concat(
+          d3.keys(vectors).map( (d,i) => svg('g', {class: 'line', transform: 'translate(' + legend_margins.left + ',' + (-num_vectors*15 + i*15) + ')'}, [
+            svg('text', {x:32, dy: '.3em'}, d),
+            svg('path', {d: (ordinal ? 'M20 -5 h10 v10 h-10 z' : 'M0 0 H30'), stroke: color(d), fill: color(d)}),
+            svg('circle', {cx:15, r:2, fill: color(d)})
+          ]))
+        )
+      )
     ])
   ])
 
