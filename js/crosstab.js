@@ -170,8 +170,6 @@ Crosstab.render = function(state, lang) {
     broadcast(assign(this.data, { focus: cell }))
   })
 
-	console.log(state.cube_data);
-
 	var renderDimentionList = function (axis) {
 		var lResult = [];
 

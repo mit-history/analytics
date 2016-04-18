@@ -13,9 +13,9 @@ var App = require('./js/app')
 // application defaults
 
 const DEFAULT_QUERY = {
-  rows: [],
-  cols: [],
-  agg: "",
+  rows: [ "decade" ],
+  cols: [ "author_1" ],
+  agg: "sum_receipts_weighted",
   order: { },
   filter: { }
 }
