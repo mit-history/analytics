@@ -40,7 +40,7 @@ const schema = {
   prose_vers:
     subscript(playbills,
     [ "prose_vers" ]),
-			
+
 
 		  /*performance_addl:
 		    subscript(playbills,
@@ -137,7 +137,7 @@ function parse(field) {
   }
 }
 
-function format(lang, field) {
+function format(lang, field, len=Infinity) {
   // TODO logic could be clearer... some much easier in ruby
   //      lets us use the same logic for both languages
 
@@ -148,7 +148,7 @@ function format(lang, field) {
 
     // dimensions
 		case /^decade(_.*)?/.test(field):
-	    return (i) => [i, i+9].join(' - ')
+	    return (i) => [i, +i+9].join(' - ')
     case /^month(_.*)?/.test(field):
     // NB. months and weekdays are kept in 1-indexed format (like postgresql; unlike javascript)
       return (i) => (i === null) ? "" : spec.months[+i-1]
@@ -187,8 +187,9 @@ function format(lang, field) {
       return fmt.numberFormat(",f")
   }
 
-//  return (x) => x ? ("*** " + x) : ""
-  return (x) => x ? ("" + x) : ""
+  return (x) => {
+    return !x ? "" : (x.length < len) ?  "" + x : x.slice(0,len-3) + "..."
+  }
 
   function formatBool(b) {
     if (b === true) { return lang === 'en' ? 'yes' : 'oui' }

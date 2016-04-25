@@ -84,6 +84,7 @@ function App(url, initial_query) {
             carousel: Carousel(1),
             register: Register(),
             status: Status(),
+            chart: Chart(),
 
 // global state
             query: Query(initial_query, url),
@@ -272,7 +273,7 @@ App.render = function(state) {
 			hg.partial(Query.render, state.modal, state.query, lang),
 			h('section.columns.data-display-container', [
 				h('section.crosstab-container', hg.partial(Crosstab.render, state, lang)),
-				h('section.chart-containter' /*, hg.partial(Chart.render, state.query, state.cube_data["1x1"], lang)*/),
+				h('section.chart-containter', hg.partial(Chart.render, state.chart, state.query, state.cube_data["1x1"], [800, 250], lang)),
 			])
 
     ])

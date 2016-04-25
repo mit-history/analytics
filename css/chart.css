@@ -12,6 +12,10 @@
 /* TODO.  svg rules below should be prefixed by .chart-container
          - not clear why not working */
 
+.chart {
+  cursor: crosshair;
+}
+
 .axis text {
   font-size: 10px;
 }
