@@ -15,7 +15,7 @@ var App = require('./js/app')
 const DEFAULT_QUERY = {
   rows: [],
   cols: [],
-  agg: "",
+  agg: "performances_days",
   order: { },
   filter: { }
 }

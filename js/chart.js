@@ -9,7 +9,7 @@
 require('../css/chart.css')
 
 const hg = require('mercury')
-const svg = require('virtual-hyperscript/svg');
+const svg = require('mercury/svg')
 
 const d3 = require('d3')
 const colorbrewer = require('colorbrewer')
@@ -17,8 +17,8 @@ const colorbrewer = require('colorbrewer')
 const datapoint = require('./util/datapoint')
 
 
-const width = 700
-const height = 220
+const width = 570
+const height = 200
 const margins = { top: 20, right: 80, bottom: 30, left: 50 }
 
 function Chart() {
@@ -38,9 +38,9 @@ Chart.render = function(query, data, lang) {
   // TODO.  define semantics of empty query
   data = data || []
 
-  let f_x = (d) => d && query.rows.length ? d[ query.rows[query.rows.length-1] ] : null
-  let f_y = (d) => d && query.agg ? d[query.agg] : null
-  let f_color = (d) => d && query.cols.length ? d[ query.cols[query.cols.length-1] ] : null
+  let f_x = (d) => d && query.rows.length ? d[ query.rows[query.rows.length-1] ] : 'tous'
+  let f_y = (d) => d[query.agg]
+  let f_color = (d) => d && query.cols.length ? d[ query.cols[query.cols.length-1] ] : 'tous'
 
   let ordinal = ordinal_domain(data, f_x)
 
@@ -58,7 +58,7 @@ Chart.render = function(query, data, lang) {
 
   let y = d3.scale.linear()
     .range([height, 0])
-    .domain(d3.extent(data, f_y))
+    .domain([0, d3.max(data, f_y)])
 
   let x, plot, ticks, bar_width
   if(ordinal) {
