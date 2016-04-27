@@ -45,6 +45,8 @@ const margins = { top: 10, right: 120, bottom: 50, left: 50 }
 const legend_margins = { top: 5, right: 0, bottom: 0, left: 5 }  /* TODO.  remove */
 
 const max_legend = 10
+const max_group = 10
+
 const min_spacing = 20
 
 const vector_palette = ['#2379b4', '#f7941e', '#2ba048', '#d62930',
@@ -86,7 +88,9 @@ Chart.render = function(state, query, data, size, lang) {
    *   c.f. wilkinson, grammar of graphics, ch 11.3.2 "Multi-Way Tables"
    */
 
-  data = data || []
+  let origdata = data
+
+  data = data ? (data["1x1"] || []) : []
   size = size || [800, 250]
 
   let width = size[0] - margins.left - margins.right
@@ -102,14 +106,39 @@ Chart.render = function(state, query, data, size, lang) {
 
   let ordinal = ordinal_domain(data, f_x)
 
+  /* interlude to find top 10 by color and group */
+
+  let sums
+  sums = (origdata ? (origdata["0x1"] || []) : []).slice()
+  sums.sort((a,b) => d3.descending(f_y(a), f_y(b)))
+  let sel_vectors = sums.slice(0, max_legend).map(f_color)
+
+  sums = (origdata ? (origdata["1x0"] || []) : []).slice()
+  sums.sort((a,b) => d3.descending(f_y(a), f_y(b)))
+  console.log(sums)
+
+  let sel_groups = sums.slice(0, max_group).map(f_x)
+
+  console.log('vectors: ' + JSON.stringify(sel_vectors))
+  console.log('groups: ' + JSON.stringify(sel_groups))
+
+  /* rearrange data */
+
   let vectors = {}
   data.forEach( (d) => {
     var c = f_color(d)
-    vectors[c] = vectors[c] || []
-    vectors[c].push(d)
+    var x = f_x(d)
+
+    if((!ordinal && sel_vectors.indexOf(c) !== -1) ||
+        (ordinal && sel_groups.indexOf(x) !== -1 && sel_vectors.indexOf(c) !== -1)) {
+      vectors[c] = vectors[c] || []
+      vectors[c].push(d)
+    }
   })
 
-  let sel_vectors = d3.keys(vectors)
+  /* end of interlude */
+
+  // let sel_vectors = d3.keys(vectors)
   let num_vectors = sel_vectors.length
 
   let y = d3.scale.linear()
@@ -120,7 +149,7 @@ Chart.render = function(state, query, data, size, lang) {
   if(ordinal) {
     x = d3.scale.ordinal()
       .rangeRoundBands([0,width], .1)
-      .domain( d3.set(data.map(f_x)).values() )
+      .domain( sel_groups )
     plot = bars()
     ticks = x.domain()
     bar_width = x.rangeBand() / num_vectors
