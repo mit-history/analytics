@@ -270,10 +270,10 @@ App.render = function(state) {
 
   function render_i18n(lang) {
     return h('div.row.main-container', [
-			hg.partial(Query.render, state.modal, state.query, lang),
+			Query.render(state.modal, state.query, lang),
 			h('section.columns.data-display-container', [
-				h('section.crosstab-container', hg.partial(Crosstab.render, state, lang)),
-				h('section.chart-containter', hg.partial(Chart.render, state.chart, state.query, state.cube_data, [800, 250], lang)),
+				h('section.crosstab-container', Crosstab.render(state, lang)),
+				h('section.chart-containter', Chart.render(state.query, state.cube_data, [700, 250], lang)),
 			])
 
     ])

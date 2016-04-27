@@ -96,9 +96,9 @@ Chart.render = function(state, query, data, size, lang) {
   let width = size[0] - margins.left - margins.right
   let height = size[1] - margins.top - margins.bottom
 
-  let f_x = (d) => d && query.rows.length ? d[ query.rows[query.rows.length-1] ] : null
-  let f_y = (d) => d && query.agg ? d[query.agg] : null
-  let f_color = (d) => d && query.cols.length ? d[ query.cols[query.cols.length-1] ] : null
+  let f_x = (d) => d && query.rows.length ? d[ query.rows[query.rows.length-1] ] : 'tous'
+  let f_y = (d) => d[query.agg]
+  let f_color = (d) => d && query.cols.length ? d[ query.cols[query.cols.length-1] ] : 'tous'
 
   let fmt_x = schema.format(lang, query.rows[query.rows.length-1], 10)
   let fmt_y = schema.format(lang, query.agg)
@@ -143,7 +143,7 @@ Chart.render = function(state, query, data, size, lang) {
 
   let y = d3.scale.linear()
     .range([height, 0])
-    .domain(d3.extent(data, f_y))
+    .domain([0, d3.max(data, f_y)])
 
   let x, plot, ticks, bar_width, distortion
   if(ordinal) {
