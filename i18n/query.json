@@ -38,8 +38,14 @@
     "weekday": "Weekday",
 
     "author": "Author",
+    "author_1": "Author (overture)",
+    "author_2": "Author (2nd part)",
+    "author_3": "Author (3rd part)",
     "title": "Title",
     "genre": "Genre",
+    "genre_1": "Genre (overture)",
+    "genre_2": "Genre (2nd part)",
+    "genre_3": "Genre (3rd part)",
     "acts": "Acts",
     "prose_vers": "Prose/Verse",
 
@@ -98,8 +104,14 @@
     "weekday": "Jour de la semaine",
 
     "author": "Auteur",
+    "author_1": "Author de la pièce d'ouverture",
+    "author_2": "Author de la pièce de clôture",
+    "author_3": "Author de la troisème pièce",
     "title": "Pièce",
     "genre": "Genre",
+    "genre_1": "Genre de la pièce d'ouverture",
+    "genre_2": "Genre de la pièce de clôture",
+    "genre_3": "Genre de la troisème pièce",
     "acts": "Acte(s)",
     "prose_vers": "Prose/Vers",
 

@@ -47,8 +47,14 @@ function htmlize(msgs, s, lang) {
 
   var m = /(.*?)_?(\d+)?$/.exec(s)
   var stem = m[1]
-  stem = msgs[lang][stem] || stem
   var sub = m[2]
+  
+  if (stem == 'author' || stem == 'genre') {
+    stem = msgs[lang][s];
+    sub = null;
+  } else {
+    stem = msgs[lang][stem] || stem
+  }
 
   return h('span', [ stem, sub ? h('sub', [ sub ]) : null ])
 }
