@@ -33,7 +33,9 @@ function Query(initial_query, url) {
 		yAxisDropdownOpen: hg.value(false),
 		axisDimensionDropdown: hg.value(null),
 		selectedDimension: hg.value(null),
-		
+		selectAll: hg.varhash({}),
+
+
 // query data
     agg: Aggregate(initial_query.agg),
     rows: Axis(initial_query.rows),
@@ -59,7 +61,7 @@ function Query(initial_query, url) {
       addDimension: Query.addDimension,
       removeDimension: Query.removeDimension,
       interchangeAxis: Query.interchangeAxis,
-			
+
 			toggleAllFilterValues: Query.toggleAllFilterValues,
       clearFilter: Query.clearFilter,
       toggleFilterValue: Query.toggleFilterValue,
@@ -132,7 +134,7 @@ Query.setAxisDimensionDropdown = function (state, dimension_name) {
 	if (state.axisDimensionDropdown() == dimension_name) {
 		state.axisDimensionDropdown.set(null)
 	} else {
-		state.axisDimensionDropdown.set(dimension_name)	
+		state.axisDimensionDropdown.set(dimension_name)
 	}
 }
 
@@ -143,12 +145,12 @@ Query.setSelectedDimension = function(state, data) {
 	// Get filter values for selected dimension
   var api = datapoint(state.url)
 	var { axis, dim } = data
-	
+
 	api.domain(dim, (vals) => {
     vals.sort()
     state.domains_data_selection.put(dim, vals)
   })
-	
+
 	// Set selected filter values if applcable
 	if (state.filter[dim]) {
 		state.filter_selection.put(dim, state.filter[dim])
@@ -162,10 +164,12 @@ Query.setAggregate = function(query, new_agg) {
 Query.clearFilter = function(query, dim) {
   query.filter.put(dim, [])
 }
- 
+
 Query.toggleAllFilterValues = function(query, dim) {
-  
-  query.filter_selection.put(dim, query.domains_data_selection[dim]);
+  if (!query.selectAll[dim]) {
+    query.selectAll.put(dim, true);
+    query.filter_selection.put(dim, []);
+  }
 }
 
 Query.toggleFilterValue = function(query, data) {
@@ -184,6 +188,7 @@ Query.toggleFilterValue = function(query, data) {
   if (sv.length < 5) { console.log(JSON.stringify(sv)) }
 
   query.filter_selection.put(dim, sv)
+  query.selectAll.put(dim, false);
 }
 
 // return a *live* version of the observ_struct axis value
@@ -203,12 +208,12 @@ Query.addDimension = function(query, data) {
   if (j === -1) {
     dims.push(dim)
   }
-	
+
 	// Add selected dimension and filter values into
 	query.domains_data.put(dim, query.domains_data_selection[dim])
 	query.filter.put(dim, query.filter_selection[dim])
-	
-	
+
+
 	// Clear dimension and filter selection
 	query.selectedDimension.set('')
 	query.domains_data_selection.put(dim, null)
@@ -230,7 +235,7 @@ Query.removeDimension = function(query, data) {
 Query.interchangeAxis = function(state) {
 	var lRows = state.rows();
 	var lCols = state.cols();
-	
+
   state.rows.set(lCols);
   state.cols.set(lRows);
 }
@@ -262,15 +267,15 @@ Query.render = function(modal_state, query_state, lang) {
 //  return h('div.query', [ String("Current query: " + JSON.stringify(state)) ])
   var all_dims = ([]).concat(query_state.rows).concat(query_state.cols)
   var download_url = api.url(all_dims, query_state.agg, query_state.filter)
-	
+
   return (
 		h('aside.slide-pannel-container' + (query_state.queryPanelOpen ? '' : ''), [
 
       h('button.fa.fa-chevron-left.slide-pannel-button', {
       	'ev-click': hg.send(query_state.channels.setPanelOpen)
       }),
-			
-			h('div.query-show-handle' + (query_state.queryPanelOpen ? '.hidden-container' : '.visible-container'), 
+
+			h('div.query-show-handle' + (query_state.queryPanelOpen ? '.hidden-container' : '.visible-container'),
 				{
 					'id': 'query_panel_open',
 	    		'ev-click': hg.send(query_state.channels.setPanelOpen),
@@ -281,14 +286,14 @@ Query.render = function(modal_state, query_state, lang) {
 	      	})
 	    	]
 			),
-			
+
 			h('section.query-container' + (query_state.queryPanelOpen ? '.visible-container' : '.hidden-container'), {id: 'query_panel'}, [
 	      h('div.query-pane-content', [
 					h('header.query-pane-section.header', [
 						h('h1', msgs[lang]['comparison_tool_title']),
 						h('button', {'ev-click': hg.send(query_state.channels.resetSearch)}, msgs[lang]['new_search_button']),
 		      ]),
-				
+
 		      h('header.query-pane-section', [
 						h('h2', msgs[lang]['comparison_tool_scope_title']),
 						Aggregate.render(modal_state, query_state, lang),
@@ -310,7 +315,7 @@ Query.render = function(modal_state, query_state, lang) {
 		      ]),
 				])
 			]),
-			
+
 			h('section.filter-container' + (query_state.queryPanelOpen && query_state.selectedDimension ? '.visible-flex-container' : '.hidden-container'), [
 				(query_state.selectedDimension ? Filter.render(modal_state, query_state, query_state.selectedDimension.dim, query_state.selectedDimension.axis, lang) : ''),
 			])

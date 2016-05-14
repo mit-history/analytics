@@ -63,7 +63,8 @@ Filter.render = function(modal_state, query_state, dim, axis, lang) {
 										id: d,
                     name: d,
                     'ev-event': hg.sendChange(query_state.channels.toggleFilterValue, { dim: dim, value: d } ) }
-      if(sel_values.indexOf(d) > -1) {
+
+      if(sel_values.indexOf(d) > -1 || query_state.selectAll[dim]) {
         attrs.checked = true;
       }
       cbs.push(
