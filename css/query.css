@@ -7,6 +7,7 @@
 	position:relative;
 	display:flex;
 	flex-direction: row;
+	margin-right:4em;
 }
 
 .query-container {
@@ -32,7 +33,7 @@
   position: absolute;
   top: 0px;
 	z-index:999;
-	
+
 	width:50px;
 	height:100%;
 	background-color:#4382A0;
@@ -54,7 +55,7 @@
   position: absolute;
 	left: -200%;
 	text-transform:uppercase;
-	writing-mode: lr-bt; 
+	writing-mode: lr-bt;
 	-webkit-transform:rotate(-90deg);
 	-moz-transform:rotate(-90deg);
 	-o-transform: rotate(-90deg);
@@ -102,12 +103,12 @@
 /* Arrow fill and stroke from http://jhaurawachsman.com/2013/css-triangles-border-stroke/ */
 .query-pane-section .arrow-indicator:before, .query-pane-section .arrow-indicator:after {
 	content:"";
-	width: 0; 
+	width: 0;
 	height: 0;
   border-color: transparent;
   position: absolute;
 }
-	
+
 .query-pane-section .arrow-indicator:before {
 	border-top: 16px solid transparent;
 	border-left: 17px solid #BACAD4;
@@ -118,8 +119,8 @@
 
 /* Fill */
 .query-pane-section .arrow-indicator:after {
-	border-top: 15px solid transparent; 
-	border-left: 15px solid #DADBDB; 
+	border-top: 15px solid transparent;
+	border-left: 15px solid #DADBDB;
 	border-bottom: 15px solid transparent;
 	right: 1px;
 	top: -12px;
@@ -219,7 +220,7 @@ ul.dropdown-list-content li input[type=radio] {
   opacity   : 0;
 }
 
-ul.dropdown-list-content li input[type=radio] + label { 
+ul.dropdown-list-content li input[type=radio] + label {
   display      : inline-block;
   margin-left  : -2em;
   line-height  : 1.5em;

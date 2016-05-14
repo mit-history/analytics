@@ -1,9 +1,14 @@
+register-container {
+  width: 50%;
+  height: 100%;
+  float:left;
+}
+
 .register {
   font: 10px sans-serif;
-  position: absolute;
+  /*position: absolute;
   left: 0;
-  top: 0;
+  top: 0;*/
   height: 100%;
-  width: 100%;
   overflow: hidden;
 }

@@ -1,12 +1,12 @@
 { "en":
-  { 
+  {
 		"comparison_tool_title": "Comparison tool",
 		"new_search_button": "New search",
 		"comparison_tool_scope_title": "What are you looking for ?",
 		"comparison_tool_x_title": "x. In function of what ?",
 		"comparison_tool_y_title": "y. In function of what ?",
 		"comparison_tool_open_handle": "Search criterias",
-		
+
 		"filter_button_all": "Use all filters",
 
     "sum_receipts_weighted": "Gross receipts (weighted)",
@@ -17,7 +17,7 @@
     "mean_price": "Average ticket price",
     "count_authors": "Count author",
     "count_titles": "Count title",
-		
+
 		"rows": "Rows",
     "cols": "Columns",
     "cells": "Cells",
@@ -65,16 +65,16 @@
   },
 
   "fr":
-  { 
+  {
 		"comparison_tool_title": "Outil de comparaison",
 		"new_search_button": "Nouvelle recherche",
 		"comparison_tool_scope_title": "Que cherchez-vous ?",
 		"comparison_tool_x_title": "x. En fonction de quoi ?",
 		"comparison_tool_y_title": "y. En fonction de quoi ?",
 		"comparison_tool_open_handle": "Critères de recherche",
-		
+
 		"filter_button_all": "Utiliser tous les filtres",
-		
+
     "sum_receipts_weighted": "Somme des recettes",
     "sum_receipts_unweighted": "Somme recette (non pondérée)",
     "performances_days": "Représentations / jour",
@@ -83,7 +83,7 @@
     "mean_price": "Moyenne du prix des places",
     "count_authors": "Compte Auteur",
     "count_titles": "Compte Pièce",
-		
+
 		"rows": "Lignes",
     "cols": "Colonnes",
     "cells": "Cellules",
@@ -104,9 +104,9 @@
     "weekday": "Jour de la semaine",
 
     "author": "Auteur",
-    "author_1": "Author de la pièce d'ouverture",
-    "author_2": "Author de la pièce de clôture",
-    "author_3": "Author de la troisème pièce",
+    "author_1": "Auteur de la pièce d'ouverture",
+    "author_2": "Auteur de la pièce de clôture",
+    "author_3": "Auteur de la troisème pièce",
     "title": "Pièce",
     "genre": "Genre",
     "genre_1": "Genre de la pièce d'ouverture",

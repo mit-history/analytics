@@ -1,6 +1,9 @@
 .calendar {
   font: 10px sans-serif;
   height: 100%;
+  width:50%;
+  float:left;
+  margin-right:1em
 }
 
 .calendar .graph {

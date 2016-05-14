@@ -54,6 +54,13 @@ button {
 	position:relative;
 }
 
+.data-container-pane {
+	height:100%;
+	width:100%;
+	overflow: hidden;
+	position:relative;
+}
+
 .clearfix {
 	clear:both;
 }
@@ -90,7 +97,7 @@ button {
   opacity   : 0;
 }
 
-.custom-checkbox input[type=checkbox] + label { 
+.custom-checkbox input[type=checkbox] + label {
   display      : inline-block;
   margin-left  : -1em;
   line-height  : 1.2em;
@@ -182,8 +189,27 @@ span.selected-dimension-bullet .fa-close {
 
 .show {
 	visibility: visible;
+	display:block;
 }
 
 .hide {
 	visibility: hidden;
+	display:none;
+}
+
+.pane_selector {
+	float:right;
+	margin:0.5em;
+}
+
+.pane_selector button {
+	padding:0.5em;
+	margin-left:1em;
+	background-color:#EFF0F0;
+	color:#000;
+}
+
+.pane_selector button:hover, .pane_selector button.selected {
+	background-color:#4382A0;
+	color:white;
 }

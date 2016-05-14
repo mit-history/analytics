@@ -1,12 +1,20 @@
 { "en":
   { "dot1" : "Crosstab",
     "dot2" : "Crosstab + Calendar",
-    "dot3" : "Calendar + Register"
+    "dot3" : "Calendar + Register",
+
+    "pane_selector_button_1" : "Crosstab",
+    "pane_selector_button_2" : "Calendar",
+    "pane_selector_button_3" : "Resgistry"
   },
 
-  "fr": 
+  "fr":
   { "dot1" : "Tableau croisé",
     "dot2" : "Tableau croisé + Calendrier",
-    "dot3" : "Calendrier + Registre"
+    "dot3" : "Calendrier + Registre",
+
+    "pane_selector_button_1" : "Tableau Croisé",
+    "pane_selector_button_2" : "Calendrier",
+    "pane_selector_button_3" : "Registre"
   }
 }

@@ -90,8 +90,10 @@ function App(url, initial_query) {
             sel_dates: hg.value([]),
             focus_cell: hg.value({}),
             focus_day: hg.value(null),
-            
+
             loading: hg.value(false),
+            pane_display: hg.value(1),
+            show_registry: hg.value(false),
 
 // data loaded from server
             calendar_data: hg.value([]),
@@ -108,7 +110,8 @@ function App(url, initial_query) {
               focus_cell: App.focus_cell,
               focus_day: App.focus_day,
               focus_theater: App.focus_theater,
-              toggle_modal: App.toggle_modal
+              toggle_modal: App.toggle_modal,
+              set_pane: App.set_pane
             }
           })
 
@@ -141,9 +144,9 @@ function App(url, initial_query) {
     var first_row = query.rows.slice(0, 1)
     var first_col = query.cols.slice(0, 1)
     var day_window = state.sel_dates ? { day : state.sel_dates() } : {}
-    
+
     state.loading.set(true);
-    
+
     // load the 4 fundamental combinations of cube dimensions;
     // remainder are accessible via drill-down in the UI
     queue().defer(api.summarize, [], query.agg, query.filter, day_window)
@@ -237,6 +240,7 @@ App.focus_day = function(state, data) {
   console.log("Setting focus day: " + new_day)
   state.focus_day.set(new_day)
   Carousel.setSlide(state.carousel, 2)
+  state.show_registry.set(true)
 }
 
 App.focus_theater = function(state, new_theater) {
@@ -252,6 +256,10 @@ App.toggle_modal = function(state, modal) {
   var next = (modal !== prev) ? modal : null
 
   state.modal.set(next)
+}
+
+App.set_pane = function(state, data) {
+  state.pane_display.set(data)
 }
 
 // rendering
@@ -277,8 +285,18 @@ App.render = function(state) {
 			Query.render(state.modal, state.query, lang),
 			h('section.columns.data-display-container', [
         h('div.loading-indicator' + (state.loading ? '.show' : '.hide'), h('img.loading-icon', { 'src': '/image/ajax-loader.gif' })),
-				h('section.crosstab-container', Crosstab.render(state, lang)),
-				h('section.chart-containter', Chart.render(state.query, state.cube_data["1x1"], state.lang)),
+				h('div.pane_selector', h('nav', [
+          h('button' + (state.pane_display == 1 ? '.selected' : ''), { 'ev-click': hg.send(state.channels.set_pane, 1) }, msgs[lang]['pane_selector_button_1']),
+          h('button' + (state.pane_display == 2 ? '.selected' : ''), { 'ev-click': hg.send(state.channels.set_pane, 2) }, msgs[lang]['pane_selector_button_2']),
+        ])),
+				h('div.data-container-pane' + (state.pane_display == 1 ? '.show' : '.hide'), [
+          h('section.crosstab-container', Crosstab.render(state, lang)),
+				  h('section.chart-containter', Chart.render(state.query, state.cube_data["1x1"], state.lang)),
+        ]),
+        h('div.data-container-pane' + (state.pane_display == 2 ? '.show' : '.hide'), [
+          hg.partial(Calendar.render, state, lang),
+          h('div.register-container' + (state.show_registry  ? '.show' :'.hide'), hg.partial(Register.render, state.register))
+        ]),
 			])
 
     ])
