@@ -284,7 +284,7 @@ App.render = function(state) {
     return h('div.row.main-container', [
 			Query.render(state.modal, state.query, lang),
 			h('section.columns.data-display-container', [
-        h('div.loading-indicator' + (state.loading ? '.show' : '.hide'), h('img.loading-icon', { 'src': '/image/ajax-loader.gif' })),
+        h('div.loading-indicator' + (state.loading ? '.show' : '.hide'), h('img.loading-icon', { 'src': 'image/ajax-loader.gif' })),
 				h('div.pane_selector', h('nav', [
           h('button' + (state.pane_display == 1 ? '.selected' : ''), { 'ev-click': hg.send(state.channels.set_pane, 1) }, msgs[lang]['pane_selector_button_1']),
           h('button' + (state.pane_display == 2 ? '.selected' : ''), { 'ev-click': hg.send(state.channels.set_pane, 2) }, msgs[lang]['pane_selector_button_2']),
