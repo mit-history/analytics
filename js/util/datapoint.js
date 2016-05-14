@@ -35,7 +35,7 @@ function datapoint(datapoint_url) {
 
     summarize: (dims, agg, filter, windows, fn) => {
       var url = aggregate_url(dims, agg, filter, windows)
-
+      
       d3.csv(url, (error, data) => {
         if(data) {
           data = data.map( (d) => {

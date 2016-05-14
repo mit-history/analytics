@@ -40,7 +40,6 @@ function Query(initial_query, url) {
     cols: Axis(initial_query.cols),
     order: Order(initial_query.order),
     filter: hg.varhash(initial_query.filter),
-    filter: hg.varhash(initial_query.filter),
     filter_selection: hg.varhash(initial_query.filter),
 // local data & server-loaded data
     filter_state: Filter(),
@@ -61,7 +60,7 @@ function Query(initial_query, url) {
       removeDimension: Query.removeDimension,
       interchangeAxis: Query.interchangeAxis,
 			
-			
+			toggleAllFilterValues: Query.toggleAllFilterValues,
       clearFilter: Query.clearFilter,
       toggleFilterValue: Query.toggleFilterValue,
       toggleDimensionOrder: Query.toggleDimensionOrder,
@@ -162,12 +161,16 @@ Query.setAggregate = function(query, new_agg) {
 
 Query.clearFilter = function(query, dim) {
   query.filter.put(dim, [])
- }
+}
+ 
+Query.toggleAllFilterValues = function(query, dim) {
+  
+  query.filter_selection.put(dim, query.domains_data_selection[dim]);
+}
 
 Query.toggleFilterValue = function(query, data) {
   var { dim, value } = data
   var sv = query.filter_selection()[dim] || []
-
   var start_count = sv.length
 
   var j = sv.indexOf(value)

@@ -90,6 +90,8 @@ function App(url, initial_query) {
             sel_dates: hg.value([]),
             focus_cell: hg.value({}),
             focus_day: hg.value(null),
+            
+            loading: hg.value(false),
 
 // data loaded from server
             calendar_data: hg.value([]),
@@ -139,7 +141,9 @@ function App(url, initial_query) {
     var first_row = query.rows.slice(0, 1)
     var first_col = query.cols.slice(0, 1)
     var day_window = state.sel_dates ? { day : state.sel_dates() } : {}
-
+    
+    state.loading.set(true);
+    
     // load the 4 fundamental combinations of cube dimensions;
     // remainder are accessible via drill-down in the UI
     queue().defer(api.summarize, [], query.agg, query.filter, day_window)
@@ -154,6 +158,7 @@ function App(url, initial_query) {
                 '0x1': d3,
                 '1x1': d4
               })
+              state.loading.set(false);
           })
   }
 
@@ -271,6 +276,7 @@ App.render = function(state) {
     return h('div.row.main-container', [
 			Query.render(state.modal, state.query, lang),
 			h('section.columns.data-display-container', [
+        h('div.loading-indicator' + (state.loading ? '.show' : '.hide'), h('img.loading-icon', { 'src': '/image/ajax-loader.gif' })),
 				h('section.crosstab-container', Crosstab.render(state, lang)),
 				h('section.chart-containter', Chart.render(state.query, state.cube_data["1x1"], state.lang)),
 			])

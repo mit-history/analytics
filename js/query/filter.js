@@ -84,7 +84,7 @@ Filter.render = function(modal_state, query_state, dim, axis, lang) {
   })
 
   return [
-	  h('div', h('button', { 'ev-click': hg.send(query_state.channels.clearFilter, dim) }, [ msgs_i18n.filter_button_all ])),
+	  h('div', h('button', { 'ev-click': hg.send(query_state.channels.toggleAllFilterValues, dim) }, [ msgs_i18n.filter_button_all ])),
 	  h('div', h('h4', [ msgs_i18n[dim] ])),
 	  h('div', h('input', { 'ev-event': hg.sendChange(query_state.filter_state.channels.updateSearch),
 	               value: query_state.filter_state.search,
