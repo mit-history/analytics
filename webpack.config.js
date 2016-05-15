@@ -4,7 +4,7 @@ module.exports = {
   entry: './index.js',
   output: {
     path: __dirname + '/build/',
-    publicPath: '/build/',
+    publicPath: '/cfrp-analytics/build/',
     filename: 'bundle.js'
   },
   module: {
