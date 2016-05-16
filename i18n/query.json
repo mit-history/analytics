@@ -93,7 +93,8 @@
     "ok": "OK",
 
     "time": "Période",
-    "performance": "Soirée",
+    "performance": "Pièce",
+
     "performance_addl": "Soirée (supplémentaire)",
     "theater": "Salle",
 
@@ -106,12 +107,15 @@
     "author": "Auteur",
     "author_1": "Auteur de la pièce d'ouverture",
     "author_2": "Auteur de la pièce de clôture",
-    "author_3": "Auteur de la troisème pièce",
+    "author_3": "Auteur de la troisième pièce",
     "title": "Pièce",
+    "title_1": "Pièce d'ouverture",
+    "title_2": "Pièce de clôture",
+    "title_3": "Troisième pièce",
     "genre": "Genre",
     "genre_1": "Genre de la pièce d'ouverture",
     "genre_2": "Genre de la pièce de clôture",
-    "genre_3": "Genre de la troisème pièce",
+    "genre_3": "Genre de la troisième pièce",
     "acts": "Acte(s)",
     "prose_vers": "Prose/Vers",
 

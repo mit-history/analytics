@@ -48,8 +48,10 @@ function htmlize(msgs, s, lang) {
   var m = /(.*?)_?(\d+)?$/.exec(s)
   var stem = m[1]
   var sub = m[2]
-  
-  if (stem == 'author' || stem == 'genre') {
+
+  console.log(stem);
+
+  if (stem == 'author' || stem == 'genre' || stem == 'title') {
     stem = msgs[lang][s];
     sub = null;
   } else {
