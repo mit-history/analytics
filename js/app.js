@@ -293,10 +293,10 @@ App.render = function(state) {
           h('section.crosstab-container', Crosstab.render(state, lang)),
 				  h('section.chart-containter', Chart.render(state.query, state.cube_data["1x1"], state.lang)),
         ]),
-        h('div.data-container-pane' + (state.pane_display == 2 ? '.show' : '.hide'), [
-          hg.partial(Calendar.render, state, lang),
-          h('div.register-container' + (state.show_registry  ? '.show' :'.hide'), hg.partial(Register.render, state.register))
-        ]),
+        // h('div.data-container-pane' + (state.pane_display == 2 ? '.show' : '.hide'), [
+        //   hg.partial(Calendar.render, state, lang),
+        //   h('div.register-container' + (state.show_registry  ? '.show' :'.hide'), hg.partial(Register.render, state.register))
+        // ]),
 			])
 
     ])

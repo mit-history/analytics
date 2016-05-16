@@ -17,7 +17,13 @@ const subscript = (range, items) => {
 
 const playbills = d3.range(1,4)
 
+
 const schema = {
+
+  performance:
+    subscript(playbills,
+    [ "title"]),
+
   time:
     [ "decade",
       "season",
