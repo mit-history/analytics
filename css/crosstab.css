@@ -67,6 +67,10 @@
 	text-align:center;
 }
 
+.crosstab-container table td.selected {
+	border:2px solid blue;
+}
+
 .crosstab-container .cross-cell {
 	color:#CACACA;
 	background-color:#CACACA;
