@@ -50,7 +50,7 @@ Crosstab.generateRowHeadersColumn = function (query_state, cube_data, lang) {
 };
 
 
-Crosstab.generateTableData = function (query_state, cube_data, lang) {
+Crosstab.generateTableData = function (app_state, query_state, cube_data, lang) {
 	var lResult  = [];
 
 	var lAggKey = query_state.agg;
@@ -105,7 +105,20 @@ Crosstab.generateTableData = function (query_state, cube_data, lang) {
 				var lCellData = lFullCubeData.length > 0 ? lFullCubeData[0][lAggKey].toFixed(0).toString() : '';
 				var lCellDataTitle = lRowCubeData[lRowKey].toString() + ', ' + lColCubeData[lColKey] + ' : ' + lCellData;
 
-				lDataRow.push(h('td', {title: lCellDataTitle}, lCellData));
+				var lClickEvntObject = {focus: {}};
+				lClickEvntObject.focus[lRowKey] = lRowCubeData[lRowKey];
+				lClickEvntObject.focus[lColKey] = lColCubeData[lColKey];
+
+				var lClass= '';
+				if (app_state.focus_cell[lRowKey] == lRowCubeData[lRowKey]
+						&& app_state.focus_cell[lColKey] == lColCubeData[lColKey]) {
+					lClass = ".selected";
+				}
+
+				lDataRow.push(h('td' + lClass, {
+					title: lCellDataTitle,
+					'ev-click': hg.send(app_state.channels.focus_cell, lClickEvntObject)
+				}, lCellData));
 
 			}
 		}
@@ -119,7 +132,7 @@ Crosstab.generateTableData = function (query_state, cube_data, lang) {
 		var lCellData = lColDataSet[i][lAggKey].toFixed(0).toString();
 		var lCellDataTitle = lColDataSet[lColKey] + ' : ' + lCellData;
 
-		lSumRow.push(h('td.sum-row', {title: lCellDataTitle}, lCellData));
+		lSumRow.push(h('td.sum-row', { title: lCellDataTitle, }, lCellData));
 	}
 	lResult.push(h('tr', lSumRow));
 
@@ -200,7 +213,7 @@ Crosstab.render = function(state, lang) {
 		lTableDisplay.push(h('div.row-headers-col' + lSizingClass, h('table', Crosstab.generateRowHeadersColumn(state.query, state.cube_data, lang))));
 		// Add X axis and data columns
 		if (lColItems > 1) {
-			lTableDisplay.push(h('div.data-content', h('table', Crosstab.generateTableData(state.query, state.cube_data, lang))));
+			lTableDisplay.push(h('div.data-content', h('table', Crosstab.generateTableData(state, state.query, state.cube_data, lang))));
 		}
 		// Add results column
 		lTableDisplay.push(h('div.sum-col' + lSizingClass, h('table', Crosstab.generateSumColumn(state.query, state.cube_data, lang))));
