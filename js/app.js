@@ -128,6 +128,7 @@ function App(url, initial_query) {
     })
 
     state.cube_data(alignFocus)
+    state.query.agg(loadCalendar)
     state.focus_cell(loadCalendar)
 
     // this might be bad form... how to send a message to a component?
