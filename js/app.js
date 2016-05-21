@@ -285,19 +285,24 @@ App.render = function(state) {
     return h('div.row.main-container', [
 			Query.render(state.modal, state.query, lang),
 			h('section.columns.data-display-container', [
-        h('div.loading-indicator' + (state.loading ? '.show' : '.hide'), h('img.loading-icon', { 'src': 'image/ajax-loader.gif' })),
-				h('div.pane_selector', h('nav', [
-          h('button' + (state.pane_display == 1 ? '.selected' : ''), { 'ev-click': hg.send(state.channels.set_pane, 1) }, msgs[lang]['pane_selector_button_1']),
-          h('button' + (state.pane_display == 2 ? '.selected' : ''), { 'ev-click': hg.send(state.channels.set_pane, 2) }, msgs[lang]['pane_selector_button_2']),
-        ])),
+				// h('div.pane_selector', h('nav', [
+        //   h('button' + (state.pane_display == 1 ? '.selected' : ''), { 'ev-click': hg.send(state.channels.set_pane, 1) }, msgs[lang]['pane_selector_button_1']),
+        //   h('button' + (state.pane_display == 2 ? '.selected' : ''), { 'ev-click': hg.send(state.channels.set_pane, 2) }, msgs[lang]['pane_selector_button_2']),
+        // ])),
 				h('div.data-container-pane' + (state.pane_display == 1 ? '.show' : '.hide'), [
-          h('section.crosstab-container', Crosstab.render(state, lang)),
-				  h('section.chart-containter', Chart.render(state.query, state.cube_data["1x1"], state.lang)),
+          h('section.crosstab-container', [
+            h('div.loading-indicator' + (state.loading ? '.show' : '.hide'), h('img.loading-icon', { 'src': 'image/ajax-loader.gif' })),
+            Crosstab.render(state, lang)
+          ]),
+				  h('section.chart-containter', [
+            h('div.loading-indicator' + (state.loading ? '.show' : '.hide'), h('img.loading-icon', { 'src': 'image/ajax-loader.gif' })),
+            Chart.render(state.query, state.cube_data["1x1"], state.lang)
+          ]),
         ]),
-        h('div.data-container-pane' + (state.pane_display == 2 ? '.show' : '.hide'), [
-          hg.partial(Calendar.render, state, lang),
-          h('div.register-container' + (state.show_registry  ? '.show' :'.hide'), hg.partial(Register.render, state.register))
-        ]),
+        // h('div.data-container-pane' + (state.pane_display == 2 ? '.show' : '.hide'), [
+        //   hg.partial(Calendar.render, state, lang),
+        //   h('div.register-container' + (state.show_registry  ? '.show' :'.hide'), hg.partial(Register.render, state.register))
+        // ]),
 			])
 
     ])

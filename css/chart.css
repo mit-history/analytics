@@ -2,6 +2,12 @@
 	height:50%;
 	width:100%;
 	text-align:center;
+  position:relative;
+}
+
+/* TODO : the following rule is not working, but dunno why */
+.chart-container .loading-icon {
+  top:5em;
 }
 
 .chart-container .content-container {
