@@ -14,6 +14,7 @@ var h = require('mercury').h
 const msgs = require("json!../i18n/query.json")
 
 var Aggregate = require('./query/aggregate')
+var TimePeriod = require('./query/time_period')
 var Axis = require('./query/axis')
 var Order = require('./query/order')
 var Filter = require('./query/filter')
@@ -218,6 +219,7 @@ Query.addDimension = function(query, data) {
 	query.selectedDimension.set('')
 	query.domains_data_selection.put(dim, null)
 	query.filter_selection.put(dim, null)
+  query.filter_state.search.set('')
  }
 
 Query.removeDimension = function(query, data) {
@@ -262,7 +264,7 @@ Query.togglePivot = function(query) {
   console.log(JSON.stringify(query.rows()) + ' <--> ' + JSON.stringify(query.cols()))
 }
 
-Query.render = function(modal_state, query_state, lang) {
+Query.render = function(app_state, modal_state, query_state, lang) {
 	var api = datapoint(query_state.url)
 //  return h('div.query', [ String("Current query: " + JSON.stringify(state)) ])
   var all_dims = ([]).concat(query_state.rows).concat(query_state.cols)
@@ -297,6 +299,11 @@ Query.render = function(modal_state, query_state, lang) {
 		      h('header.query-pane-section', [
 						h('h2', msgs[lang]['comparison_tool_scope_title']),
 						Aggregate.render(modal_state, query_state, lang),
+		      ]),
+
+		      h('header.query-pane-section', [
+						h('h2', msgs[lang]['comparison_tool_time_scope_title']),
+						TimePeriod.render(app_state, modal_state, query_state, lang),
 		      ]),
 
 		      h('header.query-pane-section' + (query_state.xAxisDropdownOpen || (query_state.selectedDimension && query_state.selectedDimension.axis == 'rows') ? '.interacted': ''), [

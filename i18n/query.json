@@ -3,6 +3,7 @@
 		"comparison_tool_title": "Comparison tool",
 		"new_search_button": "New search",
 		"comparison_tool_scope_title": "What are you looking for ?",
+		"comparison_tool_time_scope_title": "For witch period ?",
 		"comparison_tool_x_title": "x. In function of what ?",
 		"comparison_tool_y_title": "y. In function of what ?",
 		"comparison_tool_open_handle": "Search criterias",
@@ -25,6 +26,8 @@
     "find": "Search",
     "all": "All",
     "ok": "OK",
+    "from": "From",
+    "to": "To",
 
     "time": "Time",
     "performance": "Performance",
@@ -69,6 +72,7 @@
 		"comparison_tool_title": "Outil de comparaison",
 		"new_search_button": "Nouvelle recherche",
 		"comparison_tool_scope_title": "Que cherchez-vous ?",
+		"comparison_tool_time_scope_title": "Selon quelle période ?",
 		"comparison_tool_x_title": "x. En fonction de quoi ?",
 		"comparison_tool_y_title": "y. En fonction de quoi ?",
 		"comparison_tool_open_handle": "Critères de recherche",
@@ -91,6 +95,8 @@
     "find": "Rechercher",
     "all": "Tous",
     "ok": "OK",
+    "from": "De",
+    "to": "À",
 
     "time": "Période",
     "performance": "Pièce",

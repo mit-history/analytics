@@ -87,6 +87,8 @@ function App(url, initial_query) {
 
 // global state
             query: Query(initial_query, url),
+            start_date: hg.value(0),
+            end_date: hg.value(0),
             sel_dates: hg.value([]),
             focus_cell: hg.value({}),
             focus_day: hg.value(null),
@@ -106,6 +108,8 @@ function App(url, initial_query) {
 
 // global state transitions
             channels: {
+              set_start_date: App.set_start_date,
+              set_end_date: App.set_end_date,
               sel_dates: App.sel_dates,
               focus_cell: App.focus_cell,
               focus_day: App.focus_day,
@@ -220,13 +224,23 @@ function App(url, initial_query) {
 App.sel_dates = function(state, data) {
   var { startDate, endDate } = data
 
-  if(startDate && endDate) {
+  if(startDate && endDate && startDate != '-' && endDate != '-') {
+    startDate = new Date(startDate);
+    endDate = new Date(endDate);
     console.log("Setting new date selection: " + startDate + ' - ' + endDate)
     state.sel_dates.set([startDate, endDate])
   } else {
     console.log("Clearing date selection")
     state.sel_dates.set([])
   }
+}
+
+App.set_start_date = function(state, data) {
+  state.start_date.set(parseInt(data.startDate, 10) || 0)
+}
+
+App.set_end_date = function(state, data) {
+  state.end_date.set(parseInt(data.endDate, 10) || 0)
 }
 
 App.focus_cell = function(state, data) {
@@ -283,7 +297,7 @@ App.render = function(state) {
 
   function render_i18n(lang) {
     return h('div.row.main-container', [
-			Query.render(state.modal, state.query, lang),
+			Query.render(state, state.modal, state.query, lang),
 			h('section.columns.data-display-container', [
 				// h('div.pane_selector', h('nav', [
         //   h('button' + (state.pane_display == 1 ? '.selected' : ''), { 'ev-click': hg.send(state.channels.set_pane, 1) }, msgs[lang]['pane_selector_button_1']),
