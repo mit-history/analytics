@@ -84,6 +84,7 @@ function App(url, initial_query) {
             carousel: Carousel(1),
             register: Register(),
             status: Status(),
+            tableView: hg.value('half-table'),
 
 // global state
             query: Query(initial_query, url),
@@ -115,7 +116,8 @@ function App(url, initial_query) {
               focus_day: App.focus_day,
               focus_theater: App.focus_theater,
               toggle_modal: App.toggle_modal,
-              set_pane: App.set_pane
+              set_pane: App.set_pane,
+              switchTableView: App.switchTableView,
             }
           })
 
@@ -277,6 +279,10 @@ App.set_pane = function(state, data) {
   state.pane_display.set(data)
 }
 
+App.switchTableView = function(state, tableViewState) {
+  state.tableView.set(tableViewState);
+}
+
 // rendering
 
 App.render = function(state) {
@@ -304,11 +310,21 @@ App.render = function(state) {
         //   h('button' + (state.pane_display == 2 ? '.selected' : ''), { 'ev-click': hg.send(state.channels.set_pane, 2) }, msgs[lang]['pane_selector_button_2']),
         // ])),
 				h('div.data-container-pane' + (state.pane_display == 1 ? '.show' : '.hide'), [
-          h('section.crosstab-container', [
+          h('aside.crosstab-view-splitter-container', [
+            h('div.crosstab-view-splitter', [
+              h('button.full-table' + (state.tableView == 'full-table' ? '.selected' : ''),
+                { 'ev-click': hg.send(state.channels.switchTableView, 'full-table') }),
+              h('button.half-tablechart' + (state.tableView == 'half-table' ? '.selected' : ''),
+                { 'ev-click': hg.send(state.channels.switchTableView, 'half-table') }),
+              h('button.full-chart' + (state.tableView == 'full-chart' ? '.selected' : ''),
+                { 'ev-click': hg.send(state.channels.switchTableView, 'full-chart') })
+            ])
+          ]),
+          h('section.crosstab-container.' + state.tableView, [
             h('div.loading-indicator' + (state.loading ? '.show' : '.hide'), h('img.loading-icon', { 'src': 'image/ajax-loader.gif' })),
             Crosstab.render(state, lang)
           ]),
-				  h('section.chart-containter', [
+				  h('section.chart-containter.' + state.tableView, [
             h('div.loading-indicator' + (state.loading ? '.show' : '.hide'), h('img.loading-icon', { 'src': 'image/ajax-loader.gif' })),
             Chart.render(state.query, state.cube_data["1x1"], state.lang)
           ]),

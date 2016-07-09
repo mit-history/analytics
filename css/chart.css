@@ -1,8 +1,22 @@
 .chart-containter {
-	height:50%;
 	width:100%;
 	text-align:center;
   position:relative;
+}
+
+.crosstab-container.full-table {
+	visibility:hidden;
+	height:0%;
+}
+
+.crosstab-container.half-table {
+	visibility:visible;
+	height:50%;
+}
+
+.crosstab-container.full-chart {
+	visibility:visible;
+	height:100%;
 }
 
 /* TODO : the following rule is not working, but dunno why */

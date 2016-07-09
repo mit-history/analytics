@@ -1,8 +1,22 @@
 .crosstab-container {
-	height:50%;
 	width:100%;
 	border-bottom:solid 2px #BACAD4;
 	position:relative;
+}
+
+.crosstab-container.full-table {
+	visibility:visible;
+	height:100%;
+}
+
+.crosstab-container.half-table {
+	visibility:visible;
+	height:50%;
+}
+
+.crosstab-container.full-chart {
+	visibility:hidden;
+	height:0%;
 }
 
 .crosstab-container .content-container {
@@ -74,6 +88,10 @@
 .crosstab-container .cross-cell {
 	color:#CACACA;
 	background-color:#CACACA;
+	background-image:url('../image/invert_45deg.png');
+	background-repeat:no-repeat;
+	background-position:right;
+	cursor: pointer;
 }
 
 .crosstab-container .row-headers-col {

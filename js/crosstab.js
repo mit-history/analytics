@@ -34,7 +34,7 @@ Crosstab.generateRowHeadersColumn = function (query_state, cube_data, lang) {
 
 	// Generate header row
 	var lDataSet = cube_data['1x0'];
-	var lRows = [h('tr', h('th.cross-cell', 'X'))];
+	var lRows = [h('tr', h('th.cross-cell', { 'ev-click': hg.send(query_state.channels.interchangeAxis) }, 'X'))];
 	for (var i in lDataSet) {
 		if (lDataSet[i][lRowKey]) {
 			var lData = lDataSet[i][lRowKey].toString();
