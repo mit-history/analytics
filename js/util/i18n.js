@@ -49,8 +49,6 @@ function htmlize(msgs, s, lang) {
   var stem = m[1]
   var sub = m[2]
 
-  console.log(stem);
-
   if (stem == 'author' || stem == 'genre' || stem == 'title') {
     stem = msgs[lang][s];
     sub = null;

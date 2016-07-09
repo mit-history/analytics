@@ -80,7 +80,7 @@ function App(url, initial_query) {
 
 // component state
             route: Router(),
-            modal: Modal(),
+            modal: Modal(initial_query),
             carousel: Carousel(1),
             register: Register(),
             status: Status(),

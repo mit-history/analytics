@@ -27,15 +27,7 @@ var datapoint = require('./util/datapoint')
 
 function Query(initial_query, url) {
   var state = hg.state({
-// ui elements states
-		queryPanelOpen: hg.value(true),
-		aggregateDropdownOpen: hg.value(false),
-		xAxisDropdownOpen: hg.value(false),
-		yAxisDropdownOpen: hg.value(false),
-		axisDimensionDropdown: hg.value(null),
 		selectedDimension: hg.value(null),
-		selectAll: hg.varhash({}),
-
 
 // query data
     agg: Aggregate(initial_query.agg),
@@ -43,7 +35,6 @@ function Query(initial_query, url) {
     cols: Axis(initial_query.cols),
     order: Order(initial_query.order),
     filter: hg.varhash(initial_query.filter),
-    filter_selection: hg.varhash(initial_query.filter),
 // local data & server-loaded data
     filter_state: Filter(),
     domains_data: hg.varhash({}),
@@ -52,20 +43,13 @@ function Query(initial_query, url) {
 // actions
     channels: {
       resetSearch: Query.resetSearch,
-      setPanelOpen: Query.setPanelOpen,
-      setAggregateDropdownOpen: Query.setAggregateDropdownOpen,
-      setXAxisDropdownOpen: Query.setXAxisDropdownOpen,
-      setYAxisDropdownOpen: Query.setYAxisDropdownOpen,
-			setAxisDimensionDropdown: Query.setAxisDimensionDropdown,
 			setSelectedDimension: Query.setSelectedDimension,
       setAggregate: Query.setAggregate,
       addDimension: Query.addDimension,
       removeDimension: Query.removeDimension,
       interchangeAxis: Query.interchangeAxis,
 
-			toggleAllFilterValues: Query.toggleAllFilterValues,
       clearFilter: Query.clearFilter,
-      toggleFilterValue: Query.toggleFilterValue,
       toggleDimensionOrder: Query.toggleDimensionOrder,
       togglePivot: Query.togglePivot
     }
@@ -113,35 +97,12 @@ Query.resetSearch = function(state) {
 	state.selectedDimension.set('');
 }
 
-Query.setPanelOpen = function(state) {
-  state.queryPanelOpen.set(!state.queryPanelOpen());
-}
-
-Query.setAggregateDropdownOpen = function(state) {
-  state.aggregateDropdownOpen.set(!state.aggregateDropdownOpen())
-}
-
-Query.setXAxisDropdownOpen = function(state, axis) {
-  state.xAxisDropdownOpen.set(!state.xAxisDropdownOpen())
-  state.yAxisDropdownOpen.set(false)
-}
-
-Query.setYAxisDropdownOpen = function(state, axis) {
-  state.yAxisDropdownOpen.set(!state.yAxisDropdownOpen())
-  state.xAxisDropdownOpen.set(false)
-}
-
-Query.setAxisDimensionDropdown = function (state, dimension_name) {
-	if (state.axisDimensionDropdown() == dimension_name) {
-		state.axisDimensionDropdown.set(null)
-	} else {
-		state.axisDimensionDropdown.set(dimension_name)
-	}
-}
-
 Query.setSelectedDimension = function(state, data) {
 	// Set selected dimension
 	state.selectedDimension.set(data)
+
+  console.log('select dim');
+  console.log(data);
 
 	// Get filter values for selected dimension
   var api = datapoint(state.url)
@@ -166,32 +127,6 @@ Query.clearFilter = function(query, dim) {
   query.filter.put(dim, [])
 }
 
-Query.toggleAllFilterValues = function(query, dim) {
-  if (!query.selectAll[dim]) {
-    query.selectAll.put(dim, true);
-    query.filter_selection.put(dim, []);
-  }
-}
-
-Query.toggleFilterValue = function(query, data) {
-  var { dim, value } = data
-  var sv = query.filter_selection()[dim] || []
-  var start_count = sv.length
-
-  var j = sv.indexOf(value)
-
-  if (j > -1) { sv.splice(j, 1) }
-  else { sv.push(value) }
-  sv.sort()
-
-  console.log('toggled selection ' + dim + '.' + value + ' (' + sv.length + ')')
-
-  if (sv.length < 5) { console.log(JSON.stringify(sv)) }
-
-  query.filter_selection.put(dim, sv)
-  query.selectAll.put(dim, false);
-}
-
 // return a *live* version of the observ_struct axis value
 function axisByName(query, axis) {
   switch(axis) {
@@ -202,7 +137,9 @@ function axisByName(query, axis) {
 }
 
 Query.addDimension = function(query, data) {
-  var { axis, dim } = data
+  var axis        = data.axis;
+  var dim         = data.dim;
+  var filters     = data.filters;
   var dims = axisByName(query, axis)
   var j = dims.indexOf(dim)
 
@@ -212,13 +149,11 @@ Query.addDimension = function(query, data) {
 
 	// Add selected dimension and filter values into
 	query.domains_data.put(dim, query.domains_data_selection[dim])
-	query.filter.put(dim, query.filter_selection[dim])
-
+	query.filter.put(dim, filters)
 
 	// Clear dimension and filter selection
-	query.selectedDimension.set('')
 	query.domains_data_selection.put(dim, null)
-	query.filter_selection.put(dim, null)
+	query.selectedDimension.set('')
   query.filter_state.search.set('')
  }
 
@@ -271,25 +206,25 @@ Query.render = function(app_state, modal_state, query_state, lang) {
   var download_url = api.url(all_dims, query_state.agg, query_state.filter)
 
   return (
-		h('aside.slide-pannel-container' + (query_state.queryPanelOpen ? '' : ''), [
+		h('aside.slide-pannel-container' + (modal_state.queryPanelOpen ? '' : ''), [
 
       h('button.fa.fa-chevron-left.slide-pannel-button', {
-      	'ev-click': hg.send(query_state.channels.setPanelOpen)
+      	'ev-click': hg.send(modal_state.channels.setPanelOpen)
       }),
 
-			h('div.query-show-handle' + (query_state.queryPanelOpen ? '.hidden-container' : '.visible-container'),
+			h('div.query-show-handle' + (modal_state.queryPanelOpen ? '.hidden-container' : '.visible-container'),
 				{
 					'id': 'query_panel_open',
-	    		'ev-click': hg.send(query_state.channels.setPanelOpen),
+	    		'ev-click': hg.send(modal_state.channels.setPanelOpen),
 	    	}, [
 					h('div', h('p', msgs[lang]['comparison_tool_open_handle'])),
 					h('button.fa.fa-chevron-right.slide-pannel-button',  {
-	      		'ev-click': hg.send(query_state.channels.setPanelOpen)
+	      		'ev-click': hg.send(modal_state.channels.setPanelOpen)
 	      	})
 	    	]
 			),
 
-			h('section.query-container' + (query_state.queryPanelOpen ? '.visible-container' : '.hidden-container'), {id: 'query_panel'}, [
+			h('section.query-container' + (modal_state.queryPanelOpen ? '.visible-container' : '.hidden-container'), {id: 'query_panel'}, [
 	      h('div.query-pane-content', [
 					h('header.query-pane-section.header', [
 						h('h1', msgs[lang]['comparison_tool_title']),
@@ -306,7 +241,7 @@ Query.render = function(app_state, modal_state, query_state, lang) {
 						TimePeriod.render(app_state, modal_state, query_state, lang),
 		      ]),
 
-		      h('header.query-pane-section' + (query_state.xAxisDropdownOpen || (query_state.selectedDimension && query_state.selectedDimension.axis == 'rows') ? '.interacted': ''), [
+		      h('header.query-pane-section' + (modal_state.xAxisDropdownOpen || (query_state.selectedDimension && query_state.selectedDimension.axis == 'rows') ? '.interacted': ''), [
 						h('h2.axis-title', msgs[lang]['comparison_tool_x_title']),
 						Axis.render(modal_state, query_state, 'rows', lang),
 						DimensionSelector.render(modal_state, query_state, 'rows', lang),
@@ -314,7 +249,7 @@ Query.render = function(app_state, modal_state, query_state, lang) {
 		      	h('button.interchange-axis-button', { 'ev-click': hg.send(query_state.channels.interchangeAxis) })
 					]),
 
-		      h('header.query-pane-section' + (query_state.yAxisDropdownOpen || (query_state.selectedDimension && query_state.selectedDimension.axis == 'cols') ? '.interacted': ''), [
+		      h('header.query-pane-section' + (modal_state.yAxisDropdownOpen || (query_state.selectedDimension && query_state.selectedDimension.axis == 'cols') ? '.interacted': ''), [
 						h('h2.axis-title', msgs[lang]['comparison_tool_y_title']),
 						Axis.render(modal_state, query_state, 'cols', lang),
 						DimensionSelector.render(modal_state, query_state, 'cols', lang),
@@ -323,7 +258,7 @@ Query.render = function(app_state, modal_state, query_state, lang) {
 				])
 			]),
 
-			h('section.filter-container' + (query_state.queryPanelOpen && query_state.selectedDimension ? '.visible-flex-container' : '.hidden-container'), [
+			h('section.filter-container' + (modal_state.queryPanelOpen && query_state.selectedDimension ? '.visible-flex-container' : '.hidden-container'), [
 				(query_state.selectedDimension ? Filter.render(modal_state, query_state, query_state.selectedDimension.dim, query_state.selectedDimension.axis, lang) : ''),
 			])
     ])

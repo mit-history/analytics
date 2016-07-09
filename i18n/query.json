@@ -9,6 +9,7 @@
 		"comparison_tool_open_handle": "Search criterias",
 
 		"filter_button_all": "Use all filters",
+		"filter_button_clear_all": "Clear all filters",
 
     "sum_receipts_weighted": "Gross receipts (weighted)",
     "sum_receipts_unweighted": "Gross receipts (unweighted)",
@@ -78,6 +79,7 @@
 		"comparison_tool_open_handle": "Critères de recherche",
 
 		"filter_button_all": "Utiliser tous les filtres",
+		"filter_button_clear_all": "Supprimer les filtres",
 
     "sum_receipts_weighted": "Somme des recettes",
     "sum_receipts_unweighted": "Somme recette (non pondérée)",
