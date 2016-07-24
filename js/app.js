@@ -154,6 +154,17 @@ function App(url, initial_query) {
       state.available_decades.set(decades);
     })
 
+    // Setting default decade scope
+    if (initial_query.decade_scope) {
+      // UI date selection
+      state.start_date.set(parseInt(initial_query.decade_scope.start))
+      state.end_date.set(parseInt(initial_query.decade_scope.end))
+      // App query date selection
+      var startDate = new Date(initial_query.decade_scope.start + '-01-01');
+      var endDate = new Date(initial_query.decade_scope.end + '-12-30');
+      state.sel_dates.set([startDate, endDate])
+    }
+
   return state
 
   function loadCube() {
@@ -248,11 +259,11 @@ App.sel_dates = function(state, data) {
 }
 
 App.set_start_date = function(state, data) {
-  state.start_date.set(data.startDate || 0)
+  state.start_date.set(parseInt(data.startDate, 10) || 0)
 }
 
 App.set_end_date = function(state, data) {
-  state.end_date.set(data.endDate || 0)
+  state.end_date.set(parseInt(data.endDate, 10) || 0)
 }
 
 App.focus_cell = function(state, data) {

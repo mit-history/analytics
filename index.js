@@ -17,7 +17,11 @@ const DEFAULT_QUERY = {
   cols: [],
   agg: "performances_days",
   order: { },
-  filter: { }
+  filter: { },
+  decade_scope: {
+    start: '1680',
+    end: '1790'
+  }
 }
 
 // const DEFAULT_QUERY = {
