@@ -164,7 +164,7 @@
 	position:relative;
 }
 
-.time-period-selector input {
+.time-period-selector select {
 	width: 4em;
 	margin:0 0.5em;
 }

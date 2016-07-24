@@ -76,6 +76,8 @@ function debounce(func, wait, immediate) {
 
 function App(url, initial_query) {
   var api = datapoint(url)
+  var decades = [];
+
   var state = hg.state({
 
 // component state
@@ -93,6 +95,7 @@ function App(url, initial_query) {
             sel_dates: hg.value([]),
             focus_cell: hg.value({}),
             focus_day: hg.value(null),
+            available_decades: hg.value(decades),
 
             loading: hg.value(false),
             pane_display: hg.value(1),
@@ -143,6 +146,13 @@ function App(url, initial_query) {
     loadCube()
     loadTheaters()
     loadCalendar()
+
+    // Loading available decades (to be used in TimePeriod.js)
+    api.domain('decade', (vals) => {
+      vals.sort()
+      decades = vals
+      state.available_decades.set(decades);
+    })
 
   return state
 
@@ -238,11 +248,11 @@ App.sel_dates = function(state, data) {
 }
 
 App.set_start_date = function(state, data) {
-  state.start_date.set(parseInt(data.startDate, 10) || 0)
+  state.start_date.set(data.startDate || 0)
 }
 
 App.set_end_date = function(state, data) {
-  state.end_date.set(parseInt(data.endDate, 10) || 0)
+  state.end_date.set(data.endDate || 0)
 }
 
 App.focus_cell = function(state, data) {

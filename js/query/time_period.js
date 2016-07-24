@@ -17,41 +17,53 @@ var assign = require('object-assign')
 
 var Modal = require('../modal')
 
+var datapoint = require('../util/datapoint')
+
 var schema = require('../../cfrp-schema')
 
 var i18n = require('../util/i18n')
 
 /** Time period selector **/
 
-function TimePeriod() {
-  return hg.state({})
+function TimePeriod(query_state) {
+
+  return hg.state({
+  })
 }
 
 TimePeriod.render = function(app_state, modal_state, query_state, lang) {
-	var msgs_i18n = msgs[lang];
+  var msgs_i18n = msgs[lang];
+
+  var buildSelectOptionsFct = function(selected_decade) {
+    var lAvailableDecades = app_state.available_decades;
+    var lResult = [];
+    for (var i in lAvailableDecades) {
+      var lCurrentDecade = lAvailableDecades[i];
+      var lSelected = false;
+      if (selected_decade == lCurrentDecade) {
+        lSelected = true;
+      }
+      lResult.push(h('option', { value: lCurrentDecade, selected: lSelected }, lCurrentDecade));
+    }
+    return lResult;
+  };
 
   return (
 		h('div.row.time-period-selector', [
 			msgs_i18n.from,
-			h('input', {
-				'type': 'number',
+			h('select', {
 				'name': 'startDate',
-				'maxlength': '4',
-				'value': String(app_state.start_date),
         'ev-event': hg.sendChange(app_state.channels.set_start_date)
-			}),
+			}, buildSelectOptionsFct(app_state.start_date)),
 			msgs_i18n.to,
-			h('input', {
-				'type': 'number',
+			h('select', {
 				'name': 'endDate',
-				'maxlength': '4',
-				'value': String(app_state.end_date),
         'ev-event': hg.sendChange(app_state.channels.set_end_date)
-			}),
+			}, buildSelectOptionsFct(app_state.end_date)),
 			h('button.secondary', {
 				'ev-click': hg.send(app_state.channels.sel_dates, {
 					startDate: app_state.start_date ? app_state.start_date.toString() + '-01-01': '-',
-					endDate: app_state.end_date ? app_state.end_date.toString() + '-01-01': '-',
+					endDate: app_state.end_date ? app_state.end_date.toString() + '-12-30': '-',
 				})
 			}, msgs_i18n.ok)
 		])
