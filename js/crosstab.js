@@ -219,10 +219,10 @@ Crosstab.render = function(state, lang) {
 		lTableDisplay.push(h('div.sum-col' + lSizingClass, h('table', Crosstab.generateSumColumn(state.query, state.cube_data, lang))));
 
 	  return h('div.content-container', [
-	  	h('div.y-axis-dimensions-container', h('ul.axis-selected-dimensions', renderDimentionList('rows'))),
+	  	// h('div.y-axis-dimensions-container', h('ul.axis-selected-dimensions', renderDimentionList('rows'))),
 
 	  	h('div.x-axis-data-container', [
-				h('div.x-axis-dimensions-container', h('ul.axis-selected-dimensions', renderDimentionList('cols'))),
+				// h('div.x-axis-dimensions-container', h('ul.axis-selected-dimensions', renderDimentionList('cols'))),
 				h('div.data-table-container', lTableDisplay),
 	  	]),
 	  ]);

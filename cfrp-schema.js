@@ -37,15 +37,22 @@ const schema = {
   genre:
     subscript(playbills,
     [ "genre"]),
-  theater:
+//   seating_area:
+//     subscript(playbills,
+//     [ "seating_area"]),
+theater:
     [ "theater_period",
       "seating_area" ],
   acts:
     subscript(playbills,
     [ "acts"]),
-  prose_vers:
-    subscript(playbills,
-    [ "prose_vers" ]),
+
+
+
+
+//   prose_vers:
+//     subscript(playbills,
+//     [ "prose_vers" ]),
 
 
 		  /*performance_addl:
