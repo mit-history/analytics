@@ -133,6 +133,11 @@ Query.setSelectedDimension = function (state, data) {
         if (state.filter[dim]) {
             state.filter_selection.put(dim, state.filter[dim])
         }
+    } else {
+        // Clear dimension and filter selection
+        state.domains_data_selection.put(dim, null)
+        state.selectedDimension.set('')
+        state.filter_state.search.set('')
     }
 }
 
