@@ -74,6 +74,11 @@
 	position:relative;
 }
 
+.query-pane-section select {
+	padding:0;
+    height:inherit;
+}
+
 .query-pane-section .arrow-indicator {
 	position:absolute;
 	top:50%;

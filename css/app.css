@@ -46,6 +46,9 @@ button {
 	max-width:100% !important;
 	display:flex;
 	flex-direction: row;
+    font-family: "Roboto Regular", "Helvetica", "Arial", sans-serif;
+    font-weight: normal;
+    line-height: 1.5;
 }
 
 .data-display-container {
@@ -203,6 +206,10 @@ span.selected-dimension-bullet {
 	border-radius:5px;
 	padding:5px 10px;
 	font-size:12px;
+}
+
+span.selected-dimension-bullet span {
+	color:#fff;
 }
 
 span.selected-dimension-bullet.first-axis {
