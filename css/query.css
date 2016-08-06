@@ -225,7 +225,7 @@ ul.dropdown-list-content li {
 	font-size:10pt;
 }
 
-ul.dropdown-list-content li span {
+ul.dropdown-list-content li span.title {
 	/* Need to respecify the font familly here to make sure fontawesome won't override */
     font-family: "Roboto Regular", "Helvetica", "Arial", sans-serif;
     font-weight: normal;
