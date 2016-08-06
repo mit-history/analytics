@@ -143,6 +143,13 @@ button {
 	padding-left: 20px;
 }
 
+.custom-checkbox span {
+	/* Need to respecify the font familly here to make sure fontawesome won't override */
+    font-family: "Roboto Regular", "Helvetica", "Arial", sans-serif;
+    font-weight: normal;
+    line-height: 1.5;
+}
+
 .custom-checkbox input[type=checkbox] + label {
 	cursor:pointer;
 }
@@ -208,8 +215,15 @@ span.selected-dimension-bullet {
 	font-size:12px;
 }
 
-span.selected-dimension-bullet span {
+span.selected-dimension-bullet span, span.selected-dimension-bullet label  {
 	color:#fff;
+}
+
+span.selected-dimension-bullet label  {
+	/* Need to respecify the font familly here to make sure fontawesome won't override */
+    font-family: "Roboto Regular", "Helvetica", "Arial", sans-serif;
+    font-weight: normal;
+    line-height: 1.5;
 }
 
 span.selected-dimension-bullet.first-axis {
