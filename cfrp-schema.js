@@ -187,8 +187,20 @@ function format(lang, field, len=Infinity) {
       return fmt.numberFormat(",f")
   }
 
+  /* When len is set, returns the earlier of
+     (1) a 'hard' delimiter: parens, semicolon, comma
+     (2) the first 'soft' (space) delimiter after the len characters
+     TODO move into an editable short value in the database ? */
   return (x) => {
-    return !x ? "" : (x.length < len) ?  "" + x : x.slice(0,len-3) + "..."
+    if(!x) return ""
+    x = "" + x
+
+    let hard = /\s*[(,;]/.exec(x)
+    hard = hard ? hard.index : Infinity
+    let soft = x.indexOf(' ', len)
+    soft = (soft > -1) ? soft : Infinity
+
+    return x.slice(0,Math.min(hard, soft))
   }
 
   function formatBool(b) {

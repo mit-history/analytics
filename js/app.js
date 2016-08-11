@@ -273,7 +273,7 @@ App.render = function(state) {
 			Query.render(state.modal, state.query, lang),
 			h('section.columns.data-display-container', [
 				h('section.crosstab-container', Crosstab.render(state, lang)),
-				h('section.chart-containter', Chart.render(state.query, state.cube_data, [700, 250], lang)),
+				h('section.chart-containter', Chart.render(state.chart, state.query, state.cube_data, [700, 250], lang)),
 			])
 
     ])

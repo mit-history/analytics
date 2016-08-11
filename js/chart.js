@@ -11,22 +11,22 @@
  * [ ] salle data field  SERVER SIDE
  * [x] tilt labels
  * [x] colors for lines
- * [ ] scrolling (? - NOT TO DO)
  * [x] decades etc formatted
  * [x] grey legend background
  * [ ] clean up
  * [ ] think through ordinal/linear & nesting
  * [ ] bugs on unusual combinations of axes
- * [ ] "and 20 more"
  * [ ] x axis scale is wrong when # of ticks high (in decades)
  * [x] cartesian fisheye with labels?
  * [ ] rendering loop too slow
- * [ ] adjust legend of line graph to cursor NOT TO DO
  * [ ] fisheye jerks when scrubbing left
  * [ ] legend entries should have ellipsis when cut
- * [ ] calculate distortion from distance between axis points?
  * [ ] barchart: groups are moving independently from axis labels
  * [ ] barchart: don't show groups that are too small to see?
+ * [ ] "and 20 more"
+ * [ ] scrolling (? - NOT TO DO)
+ * [ ] calculate distortion from distance between axis points?  DIST CANCELLED
+ * [ ] adjust legend of line graph to cursor NOT TO DO
  */
 
 require('../css/chart.css')
@@ -86,6 +86,14 @@ Chart.render = function(state, query, data, size, lang) {
    *
    * future: matrix of graphs; select one dimension for color
    *   c.f. wilkinson, grammar of graphics, ch 11.3.2 "Multi-Way Tables"
+   *
+   * to handle visual complexity, chart shows only first 10 values in each dimension
+   *
+   * in combination with query.order, this gives
+   * - desc: top 10 values
+   * - asc: bottom 10 values
+   *
+   * in combination with query.filter, any particular series can be charted
    */
 
   let origdata = data
@@ -113,7 +121,14 @@ Chart.render = function(state, query, data, size, lang) {
   sums.sort((a,b) => d3.descending(f_y(a), f_y(b)))
   let sel_vectors = sums.slice(0, max_legend).map(f_color)
 
-  sums = (origdata ? (origdata["1x0"] || []) : []).slice()
+  sums = (origdata ? (origdata["1x1"] || []) : []).slice()
+  sums = sums.filter( (d) => {
+    var c = f_color(d)
+    var b = sel_vectors.indexOf(c) > -1
+    console.log(c + " : " + b)
+    return true
+  })
+  sums =
   sums.sort((a,b) => d3.descending(f_y(a), f_y(b)))
   console.log(sums)
 
@@ -145,7 +160,7 @@ Chart.render = function(state, query, data, size, lang) {
     .range([height, 0])
     .domain([0, d3.max(data, f_y)])
 
-  let x, plot, ticks, bar_width, distortion
+  let x, plot, ticks, bar_width
   if(ordinal) {
     x = d3.scale.ordinal()
       .rangeRoundBands([0,width], .1)
@@ -153,7 +168,6 @@ Chart.render = function(state, query, data, size, lang) {
     plot = bars()
     ticks = x.domain()
     bar_width = x.rangeBand() / num_vectors
-    distortion = bar_width > min_spacing ? 0 : (min_spacing / bar_width)
   } else {
     x = d3.scale.linear()
       .range([0,width])
@@ -162,12 +176,9 @@ Chart.render = function(state, query, data, size, lang) {
              .interpolate('monotone')
     ticks = x.ticks()
     bar_width = 0
-
-    let tick_spacing = x(ticks[1]) - x(ticks[0])  /* better, give a min_barwidth */
-    distortion = tick_spacing > min_spacing ? 0 : (min_spacing / tick_spacing)
   }
 
-  plot.x( (d) => distort(x(f_x(d)), state.focus, [0,width], distortion) )
+  plot.x( (d) => x(f_x(d)) )
       .y( (d) => y(f_y(d)) )
 
   let legend_labels = []
@@ -190,16 +201,9 @@ Chart.render = function(state, query, data, size, lang) {
 
   let num_legend_labels = Math.min(max_legend+1, legend_labels.length) /* +1 for extra labels line */
 
-  let opacity = d3.scale.linear()
-    .range(distortion ? [0, 1] : [1, 1])
-    .domain([width/2, 0])
-    .clamp(true)
-
   return svg('svg', { class: 'chart',
                       width: width + margins.left + margins.right,
-                      height: height + margins.top + margins.bottom,
-                      'ev-mousemove': distortion ? MousePoint(state.channels.focus) : null,
-                      'ev-mouseout' : distortion ? hg.send(state.channels.focus) : null
+                      height: height + margins.top + margins.bottom
                     }, [
     svg('g', {class: ordinal ? 'ordinal' : 'linear', transform: 'translate(' + margins.left + ',' + margins.top + ')'}, [
 
@@ -209,7 +213,7 @@ Chart.render = function(state, query, data, size, lang) {
         d3.entries(vectors).map( (d,i) =>
           svg('g', {class: 'line', transform: 'translate(' + (i * bar_width) + ')'},
             d.value.map( (dn) =>
-              svg('circle', {cx:distort(x(f_x(dn)), state.focus, [0,width], distortion), cy:y(f_y(dn)), r:2, fill: color(d.key)})
+              svg('circle', {cx: x(f_x(dn)), cy:y(f_y(dn)), r:2, fill: color(d.key)})
             ).concat([
               svg('path', {d: plot(d.value), stroke: color(d.key), fill: (ordinal ? color(d.key) : 'none')}),
               svg('title', d.key)
@@ -221,8 +225,8 @@ Chart.render = function(state, query, data, size, lang) {
 
       svg('g', {class: 'x axis', transform: 'translate(0,' + height + ')'},
         ticks.map( (d) => svg('g', { class: 'tick',
-                                     transform: 'translate(' + (distort(x(d), state.focus, [0,width], distortion) + bar_width * num_vectors / 2) + ',0)',
-                                     opacity: opacity(Math.abs(x(d) - state.focus)) }, [
+                                     transform: 'translate(' + x(d) + ')'
+                                   }, [
           svg('line', {y1:3, y2: 8}),
           svg('text', {y:8, dy:8, dx:8, transform: 'rotate(35)', 'text-anchor': 'start'}, fmt_x(d))
         ])).concat([
@@ -260,8 +264,7 @@ Chart.render = function(state, query, data, size, lang) {
     let x, y
 
     function f_rect(d,i) {
-      let xd = x(d, i)
-      return 'M' + distort(xd, state.focus, [0,width], distortion) + ' ' + y(d,i) + ' h' + bar_width + ' V' + height + ' h' + -bar_width + ' Z'
+      return 'M' + x(d,i) + ' ' + y(d,i) + ' h' + bar_width + ' V' + height + ' h' + -bar_width + ' Z'
     }
 
     function result(data) {
@@ -286,18 +289,6 @@ Chart.render = function(state, query, data, size, lang) {
 
 function ordinal_domain(data, f) {
   return typeof f(data[0]) !== 'number'
-}
-
-
-/* Fisheye scale calculation */
-
-function distort(x, a, range, d) {
-  let min = range[0]
-  let max = range[1]
-  let left = x < a
-  let m = left ? a - min : max - a
-  if (m == 0) m = max - min
-  return (left ? -1 : 1) * m * (d + 1) / (d + (m / Math.abs(x - a))) + a
 }
 
 export default Chart
