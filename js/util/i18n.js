@@ -42,7 +42,7 @@ var en_spec = {
 }
 var en = d3.locale(en_spec)
 
-function htmlize(msgs, s, lang) {
+function format_stem_sub(msgs, s, lang, callback) {
   if (!msgs[lang]) { throw "Unknown language (" + lang + ")" }
 
   var m = /(.*?)_?(\d+)?$/.exec(s)
@@ -56,7 +56,13 @@ function htmlize(msgs, s, lang) {
     stem = msgs[lang][stem] || stem
   }
 
-  return h('span', [ stem, sub ? h('sub', [ sub ]) : null ])
+  return callback(stem, sub)
 }
 
-export {fr, fr_spec, en, en_spec, htmlize}
+function htmlize(msgs, s, lang) {
+  return format_stem_sub(msgs, s, lang, function(stem, sub) {
+    return h('span', [ stem, sub ? h('sub', [ sub ]) : null ])
+  })
+}
+
+export {fr, fr_spec, en, en_spec, htmlize, format_stem_sub}

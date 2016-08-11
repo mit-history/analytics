@@ -8,6 +8,10 @@
 
 require('../css/chart.css')
 
+const msgs = require("json!../i18n/query.json")
+
+var i18n = require('./util/i18n')
+
 const hg = require('mercury')
 const svg = require('mercury/svg')
 
@@ -51,7 +55,7 @@ Chart.render = function(query, data, lang) {
     vectors[c].push(d)
   })
 
-  let num_vectors = d3.keys(vectors).length
+  let num_vectors = d3.min([d3.keys(vectors).length, 10])
 
   let color = (num_vectors < 10) ? d3.scale.category10() : d3.scale.category20()
   color.domain(d3.keys(vectors))
@@ -82,6 +86,12 @@ Chart.render = function(query, data, lang) {
       .y( (d) => y(f_y(d)) )
 
   let fmt = (v) => '' + v
+  let subscript = (attrs, axis) => {
+    if(!(axis && axis[0])) return null
+    return i18n.format_stem_sub(msgs, axis[0], lang, (stem, sub) => {
+      return svg('text', attrs || {}, [ stem.toUpperCase(), sub ? svg('tspan', {dy: '1em'}, sub) : null ])
+    })
+  }
 
   return svg('svg', { width: width + margins.left + margins.right, height: height + margins.top + margins.bottom }, [
     svg('g', {class: ordinal ? 'ordinal' : 'linear', transform: 'translate(' + margins.left + ',' + margins.top + ')'}, [
@@ -125,7 +135,14 @@ Chart.render = function(query, data, lang) {
           svg('path', {d: (ordinal ? 'M20 -5 h10 v10 h-10 z' : 'M0 0 H30'), stroke: color(d), fill: color(d)}),
           svg('circle', {cx:15, r:2, fill: color(d)})
         ])
-      ))
+      )),
+      svg('g', {class: 'axis-labels', 'font-size': '12px'}, [
+        subscript({class: 'cols', transform: 'translate(' + [width+15, 0] + ')', dx: '32'},
+                  query.cols),
+        subscript({class: 'rows', transform: 'translate(' + [width+15, height] + ')', dy: '0.3em'}, query.rows),
+        svg('text', {class: 'agg', transform: 'translate(-10)', dy: '-0.3em', 'text-anchor': 'end' },
+            msgs[lang][query.agg].toUpperCase())
+      ])
     ])
   ])
 
