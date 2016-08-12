@@ -76,7 +76,7 @@ function Chart() {
     focus: hg.value(null),
     channels: {
       focus: (state, key) => {
-        console.log('clicked ' + JSON.stringify(key) + '; state is ' + JSON.stringify(state.focus()))
+//        console.log('clicked ' + JSON.stringify(key) + '; state is ' + JSON.stringify(state.focus()))
         state.focus.set(state.focus() === key ? null : key)
       }
     }
@@ -142,8 +142,8 @@ Chart.render = function(state, query, data, size, lang) {
 
   let sel_groups = sums.slice(0, max_group).map(f_x)
 
-  console.log('vectors: ' + JSON.stringify(sel_vectors))
-  console.log('groups: ' + JSON.stringify(sel_groups))
+//  console.log('vectors: ' + JSON.stringify(sel_vectors))
+//  console.log('groups: ' + JSON.stringify(sel_groups))
 
   /* rearrange data */
 
@@ -212,7 +212,7 @@ Chart.render = function(state, query, data, size, lang) {
     legend_labels = d3.keys(vectors)
   }
 
-  console.log('legend_labels: ' + JSON.stringify(legend_labels.slice(0,max_legend)))
+//  console.log('legend_labels: ' + JSON.stringify(legend_labels.slice(0,max_legend)))
 
   let color = d3.scale.ordinal()
     .range(vector_palette)
