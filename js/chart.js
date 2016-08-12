@@ -8,7 +8,7 @@
 
 /*
  * TODO.
- * [ ] salle data field  SERVER SIDE
+ * [x] salle data field  SERVER SIDE
  * [x] tilt labels
  * [x] colors for lines
  * [x] decades etc formatted
@@ -16,17 +16,17 @@
  * [ ] clean up
  * [ ] think through ordinal/linear & nesting
  * [ ] bugs on unusual combinations of axes
- * [ ] x axis scale is wrong when # of ticks high (in decades)
- * [x] cartesian fisheye with labels?
+ * [x] x axis scale is wrong when # of ticks high (in decades)
+ * [ ] cartesian fisheye with labels?                           NOT TO DO
  * [ ] rendering loop too slow
  * [ ] fisheye jerks when scrubbing left                        NOT TO DO
- * [ ] legend entries should have ellipsis when cut
+ * [x] legend entries should have ellipsis when cut             ALTERNATE
  * [ ] barchart: groups are moving independently from axis labels
  * [ ] barchart: don't show groups that are too small to see?
  * [ ] "and 20 more"
- * [ ] scrolling (? - NOT TO DO)
+ * [ ] scrolling                                                NOT TO DO
  * [ ] calculate distortion from distance between axis points?  DIST CANCELLED
- * [ ] adjust legend of line graph to cursor NOT TO DO
+ * [x] adjust legend of line graph to cursor
  */
 
 require('../css/chart.css')
@@ -45,7 +45,7 @@ const d3_mouse = require('d3-selection').mouse
 const datapoint = require('./util/datapoint')
 const schema = require('../cfrp-schema')
 
-const margins = { top: 10, right: 120, bottom: 100, left: 75 }
+const margins = { top: 10, right: 130, bottom: 100, left: 65 }
 const legend_margins = { top: 5, right: 0, bottom: 0, left: 5 }  /* TODO.  remove */
 
 const max_legend = 10
@@ -75,7 +75,10 @@ function Chart() {
   return hg.state({
     focus: hg.value(null),
     channels: {
-      focus: (state, data) => { state.focus.set(data && data.point ? data.point[0] : null) }
+      focus: (state, key) => {
+        console.log('clicked ' + JSON.stringify(key) + '; state is ' + JSON.stringify(state.focus()))
+        state.focus.set(state.focus() === key ? null : key)
+      }
     }
   })
 }
@@ -131,12 +134,11 @@ Chart.render = function(state, query, data, size, lang) {
   sums = sums.filter( (d) => {
     var c = f_color(d)
     var b = sel_vectors.indexOf(c) > -1
-    console.log(c + " : " + b)
+//    console.log(c + " : " + b)
     return true
   })
-  sums =
-  sums.sort((a,b) => d3.descending(f_y(a), f_y(b)))
-  console.log(sums)
+  sums = sums.sort((a,b) => d3.descending(f_y(a), f_y(b)))
+//  console.log(sums)
 
   let sel_groups = sums.slice(0, max_group).map(f_x)
 
@@ -159,7 +161,6 @@ Chart.render = function(state, query, data, size, lang) {
 
   /* end of interlude */
 
-  // let sel_vectors = d3.keys(vectors)
   let num_vectors = sel_vectors.length
 
   let y = d3.scale.linear()
@@ -194,6 +195,9 @@ Chart.render = function(state, query, data, size, lang) {
       return svg('text', attrs || {}, [ stem.toUpperCase(), sub ? svg('tspan', {dy: '1em'}, sub) : null ])
     })
   }
+  let tspan_title = (v1, v2) => {
+    return [ svg('tspan', {}, v1), (v1 !== v2) ? svg('title', {}, v2) : null ]
+  }
 
   let legend_labels = []
   if(!ordinal) {
@@ -207,7 +211,8 @@ Chart.render = function(state, query, data, size, lang) {
   } else {
     legend_labels = d3.keys(vectors)
   }
-  legend_labels = legend_labels
+
+  console.log('legend_labels: ' + JSON.stringify(legend_labels.slice(0,max_legend)))
 
   let color = d3.scale.ordinal()
     .range(vector_palette)
@@ -225,7 +230,8 @@ Chart.render = function(state, query, data, size, lang) {
 
       svg('g', {class: 'marks'},
         d3.entries(vectors).map( (d,i) =>
-          svg('g', {class: 'line', transform: 'translate(' + (i * bar_width) + ')'},
+          svg('g', {class: 'line l' + i, transform: 'translate(' + (i * bar_width) + ')',
+                    opacity: (state.focus === null || state.focus === d.key) ? 1 : 0.1},
             d.value.map( (dn) =>
               svg('circle', {cx: x(f_x(dn)), cy:y(f_y(dn)), r:2, fill: color(d.key)})
             ).concat([
@@ -242,8 +248,7 @@ Chart.render = function(state, query, data, size, lang) {
                                      transform: 'translate(' + x(d) + ')'
                                    }, [
           svg('line', {y1:3, y2: 8}),
-          svg('text', {y:8, dy:8, dx:8, transform: 'rotate(35)', 'text-anchor': 'start'},
-              [svg('tspan', {}, fmt_x(d)), svg('title', {}, fmt_x_long(d))] )
+          svg('text', {y:8, dy:8, dx:8, transform: 'rotate(35)', 'text-anchor': 'start'}, tspan_title(fmt_x(d), fmt_x_long(d)) )
         ])).concat([
           svg('path', {d: 'M0 0 H' + (width + 10) + (ordinal ? '' : 'V1.5 L' + (width + 15) + ' 0 L' + (width + 10) + ' -1.5V0')})
         ])
@@ -264,17 +269,20 @@ Chart.render = function(state, query, data, size, lang) {
           legend_labels.length > max_legend ? svg('text', {x:margins.right-15, dy: '.3em', 'text-anchor': 'end'},
                                                   '[+ ' + (legend_labels.length - max_legend) + ' ]') : null
         ].concat(
-          legend_labels.slice(0,max_legend).map( (d,i) => svg('g', {class: 'line', transform: 'translate(' + legend_margins.left + ',' + (-(max_legend*15) + i*15) + ')'}, [
-            svg('text', {x:32, dy: '.3em'}, [ svg('tspan', {}, fmt_color(d)), svg('title', {}, fmt_color_long(d)) ]),
+          legend_labels.slice(0,max_legend).map( (d,i) => svg('g',
+              {class: 'line', transform: 'translate(' + legend_margins.left + ',' + (-(max_legend*15) + i*15) + ')',
+               'ev-click': hg.send(state.channels.focus, d),
+               opacity: (state.focus === null || state.focus === d) ? 1 : 0.1 }, [
+            svg('text', {x:32, dy: '.3em'}, tspan_title(fmt_color(d), fmt_color_long(d))),
             svg('path', {d: (ordinal ? 'M20 -5 h10 v10 h-10 z' : 'M0 0 H30'), stroke: color(d), fill: color(d)}),
             svg('circle', {cx:15, r:2, fill: color(d)})
           ]))
         )
       ),
       svg('g', {class: 'axis-labels', 'font-size': '12px'}, [
-        subscript({class: 'cols', transform: 'translate(' + [width+25, 0] + ')'}, query.cols),
+        subscript({class: 'cols', transform: 'translate(' + [width+25, height-(max_legend*15 + 20 + legend_margins.top)] + ')', dy:'-1em'}, query.cols),
         subscript({class: 'rows', transform: 'translate(' + [width+25, height] + ')', dy: '0.3em'}, query.rows),
-        svg('text', {class: 'agg', transform: 'translate(' + -margins.left + ')rotate(-90)', dy: '0.7em', 'text-anchor': 'end' },
+        svg('text', {class: 'agg', transform: 'translate(' + -margins.left + ')rotate(-90)', dy: '1em', 'text-anchor': 'end' },
             msgs[lang][query.agg].toUpperCase())
       ])
     ])

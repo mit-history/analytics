@@ -143,7 +143,7 @@ function parse(field) {
   }
 }
 
-function format(lang, field, len=Infinity) {
+function format(lang, field, len) {
   // TODO logic could be clearer... some much easier in ruby
   //      lets us use the same logic for both languages
 
@@ -200,13 +200,14 @@ function format(lang, field, len=Infinity) {
   return (x) => {
     if(!x) return ""
     x = "" + x
+    if(!len) return x
 
-    let hard = /\s*[(,;]/.exec(x)
-    hard = hard ? hard.index : Infinity
+    let hard = x.search(/\s*[(,;]/)
+    hard = (hard > -1) ? hard : Infinity
     let soft = x.indexOf(' ', len)
     soft = (soft > -1) ? soft : Infinity
 
-    return x.slice(0,Math.min(hard, soft))
+    return x.slice(0, Math.min(hard, soft))
   }
 
   function formatBool(b) {

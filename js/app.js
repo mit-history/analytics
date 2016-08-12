@@ -86,6 +86,7 @@ function App(url, initial_query) {
             carousel: Carousel(1),
             register: Register(),
             status: Status(),
+            chart: Chart(),
             tableView: hg.value('half-table'),
 
 // global state
@@ -347,7 +348,7 @@ App.render = function(state) {
           ]),
 				  h('section.chart-containter.' + state.tableView, [
             h('div.loading-indicator' + (state.loading ? '.show' : '.hide'), h('img.loading-icon', { 'src': 'image/ajax-loader.gif' })),
-            Chart.render(state.chart, state.query, state.cube_data, [850, 250], lang)
+            Chart.render(state.chart, state.query, state.cube_data, [850, 350], lang)
           ]),
         ]),
         // h('div.data-container-pane' + (state.pane_display == 2 ? '.show' : '.hide'), [
