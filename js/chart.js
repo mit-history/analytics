@@ -224,7 +224,11 @@ Chart.render = function(state, query, data, size, lang) {
                       width: width + margins.left + margins.right,
                       height: height + margins.top + margins.bottom
                     }, [
-    svg('g', {class: ordinal ? 'ordinal' : 'linear', transform: 'translate(' + margins.left + ',' + margins.top + ')'}, [
+    svg('g', { class: ordinal ? 'ordinal' : 'linear',
+               transform: 'translate(' + margins.left + ',' + margins.top + ')',
+               'font-family': 'Roboto Regular, Helvetica, Arial, sans-serif',
+               'font-size': '10px'
+             }, [
 
       // marks
 
@@ -233,7 +237,7 @@ Chart.render = function(state, query, data, size, lang) {
           svg('g', {class: 'line l' + i, transform: 'translate(' + (i * bar_width) + ')',
                     opacity: (state.focus === null || state.focus === d.key) ? 1 : 0.1},
             d.value.map( (dn) =>
-              svg('circle', {cx: x(f_x(dn)), cy:y(f_y(dn)), r:2, fill: color(d.key)})
+              !ordinal ? svg('circle', {cx: x(f_x(dn)), cy:y(f_y(dn)), r:2, fill: color(d.key)}) : null
             ).concat([
               svg('path', {d: plot(d.value), stroke: color(d.key), fill: (ordinal ? color(d.key) : 'none')}),
               svg('title', d.key)
@@ -247,25 +251,29 @@ Chart.render = function(state, query, data, size, lang) {
         ticks.map( (d) => svg('g', { class: 'tick',
                                      transform: 'translate(' + x(d) + ')'
                                    }, [
-          svg('line', {y1:3, y2: 8}),
+          svg('line', {y1:3, y2: 8, stroke: 'gray'}),
           svg('text', {y:8, dy:8, dx:8, transform: 'rotate(35)', 'text-anchor': 'start'}, tspan_title(fmt_x(d), fmt_x_long(d)) )
         ])).concat([
-          svg('path', {d: 'M0 0 H' + (width + 10) + (ordinal ? '' : 'V1.5 L' + (width + 15) + ' 0 L' + (width + 10) + ' -1.5V0')})
+          svg('path', {stroke: 'gray',
+                       d: 'M0 0 H' + (width + 10) + (ordinal ? '' : 'V1.5 L' + (width + 15) + ' 0 L' + (width + 10) + ' -1.5V0')})
         ])
       ),
       svg('g', {class: 'y axis'},
         y.ticks().map( (d) => svg('g', {class: 'tick', transform: 'translate(0,' + y(d) + ')'}, [
-          svg('line', {x1:-8, y1:0, x2:-3, y2: 0}),
+          svg('line', {x1:-8, y1:0, x2:-3, y2: 0, stroke: 'gray'}),
           svg('text', {x:-10, dy:'.3em', 'text-anchor': 'end'}, fmt_y(d))
       ])).concat([
-        svg('path', {d: 'M0 ' + height + ' V-10 H1.5 L0 -15 L-1.5 -10 H 0'})
+        svg('path', {stroke: 'gray', d: 'M0 ' + height + ' V-10 H1.5 L0 -15 L-1.5 -10 H 0'})
       ])),
 
       // legend + axis labels
       svg('g', {class: 'legend', transform: 'translate(' + [width+25, height-15] + ')'}, [
           legend_labels.length ? svg('rect', { class: 'background',
                                                x: 0, y: -(max_legend*15 + 5 + legend_margins.top),
-                                               width: margins.right-15, height: (num_legend_labels)*15 + legend_margins.top}) : null,
+                                               width: margins.right-15, height: (num_legend_labels)*15 + legend_margins.top,
+                                               stroke: 'none',
+                                               fill: 'black',
+                                               opacity: 0.05 }) : null,
           legend_labels.length > max_legend ? svg('text', {x:margins.right-15, dy: '.3em', 'text-anchor': 'end'},
                                                   '[+ ' + (legend_labels.length - max_legend) + ' ]') : null
         ].concat(
@@ -275,7 +283,7 @@ Chart.render = function(state, query, data, size, lang) {
                opacity: (state.focus === null || state.focus === d) ? 1 : 0.1 }, [
             svg('text', {x:32, dy: '.3em'}, tspan_title(fmt_color(d), fmt_color_long(d))),
             svg('path', {d: (ordinal ? 'M20 -5 h10 v10 h-10 z' : 'M0 0 H30'), stroke: color(d), fill: color(d)}),
-            svg('circle', {cx:15, r:2, fill: color(d)})
+            !ordinal ? svg('circle', {cx:15, r:2, fill: color(d)}) : null
           ]))
         )
       ),

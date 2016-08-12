@@ -24,6 +24,7 @@ var Chart = require('./chart')
 var Calendar = require('./calendar')
 var Register = require('./register')
 var Status = require('./status')
+var Download = require('./download')
 
 var datapoint = require('./util/datapoint')
 
@@ -339,7 +340,8 @@ App.render = function(state) {
               h('button.half-tablechart' + (state.tableView == 'half-table' ? '.selected' : ''),
                 { 'ev-click': hg.send(state.channels.switchTableView, 'half-table') }),
               h('button.full-chart' + (state.tableView == 'full-chart' ? '.selected' : ''),
-                { 'ev-click': hg.send(state.channels.switchTableView, 'full-chart') })
+                { 'ev-click': hg.send(state.channels.switchTableView, 'full-chart') }),
+              Download.render(state, lang),
             ])
           ]),
           h('section.crosstab-container.' + state.tableView, [
@@ -348,7 +350,7 @@ App.render = function(state) {
           ]),
 				  h('section.chart-containter.' + state.tableView, [
             h('div.loading-indicator' + (state.loading ? '.show' : '.hide'), h('img.loading-icon', { 'src': 'image/ajax-loader.gif' })),
-            Chart.render(state.chart, state.query, state.cube_data, [850, 350], lang)
+            Chart.render(state.chart, state.query, state.cube_data, [800, 350], lang)
           ]),
         ]),
         // h('div.data-container-pane' + (state.pane_display == 2 ? '.show' : '.hide'), [

@@ -114,6 +114,11 @@ button {
 	background-image:url('../image/graph_white.png');
 }
 
+.download {
+	padding: 4px;
+	background-color:#4382A0;
+	color:#fff !important;
+}
 
 
 .clearfix {

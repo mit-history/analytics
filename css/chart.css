@@ -30,33 +30,8 @@
 	margin:10px auto;
 }
 
-/* TODO.  svg rules below should be prefixed by .chart-container
-         - not clear why not working */
+/* NB Chart does not use CSS, so it can be downloaded in one piece */
 
-.axis text {
-  font-size: 10px;
-}
-
-.axis line,
-.axis path {
-  stroke: gray;
-  fill: gray;
-}
-
-.ordinal circle {
-  visibility: hidden;
-}
-
-.legend {
+.legend, .axis {
   cursor: pointer;
-}
-
-.legend rect {
-  stroke: none;
-  fill: black;
-  opacity: 0.05;
-}
-
-.legend text {
-  font-size: 10px;
 }
