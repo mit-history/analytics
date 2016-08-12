@@ -11,8 +11,8 @@ const d3 = require('d3')
 const h = require('mercury').h
 
 var fr_spec = {
-  decimal: ",",
-  thousands: " ",
+  decimal: ".",
+  thousands: ",",
   grouping: [3],
   currency: ["", " €"],
   dateTime: "%A, le %e %B %Y, %X",
@@ -28,7 +28,7 @@ var fr = d3.locale(fr_spec)
 
 var en_spec = {
   decimal: ".",
-  thousands: " ",
+  thousands: ",",
   grouping: [3],
   currency: ["$", ""],
   dateTime: "%a %b %e %X %Y",

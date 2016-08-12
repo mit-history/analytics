@@ -6,6 +6,29 @@
 *
 */
 
+/*
+ * TODO.
+ * [ ] salle data field  SERVER SIDE
+ * [x] tilt labels
+ * [x] colors for lines
+ * [x] decades etc formatted
+ * [x] grey legend background
+ * [ ] clean up
+ * [ ] think through ordinal/linear & nesting
+ * [ ] bugs on unusual combinations of axes
+ * [ ] x axis scale is wrong when # of ticks high (in decades)
+ * [x] cartesian fisheye with labels?
+ * [ ] rendering loop too slow
+ * [ ] fisheye jerks when scrubbing left                        NOT TO DO
+ * [ ] legend entries should have ellipsis when cut
+ * [ ] barchart: groups are moving independently from axis labels
+ * [ ] barchart: don't show groups that are too small to see?
+ * [ ] "and 20 more"
+ * [ ] scrolling (? - NOT TO DO)
+ * [ ] calculate distortion from distance between axis points?  DIST CANCELLED
+ * [ ] adjust legend of line graph to cursor NOT TO DO
+ */
+
 require('../css/chart.css')
 
 const msgs = require("json!../i18n/query.json")
@@ -15,50 +38,129 @@ var i18n = require('./util/i18n')
 const hg = require('mercury')
 const svg = require('mercury/svg')
 
+/* TODO.  switch completely to d3 v4 - better support for non-DOM situations */
 const d3 = require('d3')
-const colorbrewer = require('colorbrewer')
+const d3_mouse = require('d3-selection').mouse
 
 const datapoint = require('./util/datapoint')
+const schema = require('../cfrp-schema')
+
+const margins = { top: 10, right: 120, bottom: 100, left: 75 }
+const legend_margins = { top: 5, right: 0, bottom: 0, left: 5 }  /* TODO.  remove */
+
+const max_legend = 10
+const max_group = 10
+
+const min_spacing = 20
+
+const vector_palette = ['#2379b4', '#f7941e', '#2ba048', '#d62930',
+                        '#f8b6c0', '#006838', '#662d91', '#d7df23', '#ec008c', '#0c0c54',
+                        '#a8e0f9', '#da1c5c', '#726658', '#603913', '#231f20', '#2b3990',
+                        '#9fc59a', '#819cd1', '#92278f', '#00a79d', '#27aae1', '#f04b44']
 
 
-const width = 570
-const height = 200
-const margins = { top: 20, right: 80, bottom: 30, left: 50 }
+/* mercury support for mouse tracking */
+let delegator = hg.Delegator()
+delegator.listenTo('mousemove')
+delegator.listenTo('mouseout')
 
+let MousePoint = hg.BaseEvent( function(ev, broadcast) {
+  var point = d3_mouse(ev.target, ev)
+  broadcast(Object.assign({point: point}, this.data))
+})
+
+
+/* component state */
 function Chart() {
-  return null
+  return hg.state({
+    focus: hg.value(null),
+    channels: {
+      focus: (state, data) => { state.focus.set(data && data.point ? data.point[0] : null) }
+    }
+  })
 }
 
-Chart.render = function(query, data, lang) {
+/* state, query: required; data, size, lang: optional */
+Chart.render = function(state, query, data, size, lang) {
 
   /* For now, queries map to graph as follows:
    * x axis is last dimension in rows
    * y axis is the aggregate value
    * color is the last dimension in cols
+   *
    * future: matrix of graphs; select one dimension for color
    *   c.f. wilkinson, grammar of graphics, ch 11.3.2 "Multi-Way Tables"
-  */
+   *
+   * to handle visual complexity, chart shows only first 10 values in each dimension
+   *
+   * in combination with query.order, this gives
+   * - desc: top 10 values
+   * - asc: bottom 10 values
+   *
+   * in combination with query.filter, any particular series can be charted
+   */
 
-  // TODO.  define semantics of empty query
-  data = data || []
+  let origdata = data
+
+  data = data ? (data["1x1"] || []) : []
+  size = size || [800, 250]
+
+  let width = size[0] - margins.left - margins.right
+  let height = size[1] - margins.top - margins.bottom
 
   let f_x = (d) => d && query.rows.length ? d[ query.rows[query.rows.length-1] ] : 'tous'
   let f_y = (d) => d[query.agg]
   let f_color = (d) => d && query.cols.length ? d[ query.cols[query.cols.length-1] ] : 'tous'
 
+  let fmt_x = schema.format(lang, query.rows[query.rows.length-1], 10)
+  let fmt_x_long = schema.format(lang, query.rows[query.rows.length-1])
+  let fmt_y = schema.format(lang, query.agg)
+  let fmt_color = schema.format(lang, query.cols[query.cols.length-1], 10)
+  let fmt_color_long = schema.format(lang, query.cols[query.cols.length-1])
+
   let ordinal = ordinal_domain(data, f_x)
+
+  /* interlude to find top 10 by color and group */
+
+  let sums
+  sums = (origdata ? (origdata["0x1"] || []) : []).slice()
+  sums.sort((a,b) => d3.descending(f_y(a), f_y(b)))
+  let sel_vectors = sums.slice(0, max_legend).map(f_color)
+
+  sums = (origdata ? (origdata["1x1"] || []) : []).slice()
+  sums = sums.filter( (d) => {
+    var c = f_color(d)
+    var b = sel_vectors.indexOf(c) > -1
+    console.log(c + " : " + b)
+    return true
+  })
+  sums =
+  sums.sort((a,b) => d3.descending(f_y(a), f_y(b)))
+  console.log(sums)
+
+  let sel_groups = sums.slice(0, max_group).map(f_x)
+
+  console.log('vectors: ' + JSON.stringify(sel_vectors))
+  console.log('groups: ' + JSON.stringify(sel_groups))
+
+  /* rearrange data */
 
   let vectors = {}
   data.forEach( (d) => {
     var c = f_color(d)
-    vectors[c] = vectors[c] || []
-    vectors[c].push(d)
+    var x = f_x(d)
+
+    if((!ordinal && sel_vectors.indexOf(c) !== -1) ||
+        (ordinal && sel_groups.indexOf(x) !== -1 && sel_vectors.indexOf(c) !== -1)) {
+      vectors[c] = vectors[c] || []
+      vectors[c].push(d)
+    }
   })
 
-  let num_vectors = d3.min([d3.keys(vectors).length, 10])
+  /* end of interlude */
 
-  let color = (num_vectors < 10) ? d3.scale.category10() : d3.scale.category20()
-  color.domain(d3.keys(vectors))
+  // let sel_vectors = d3.keys(vectors)
+  let num_vectors = sel_vectors.length
 
   let y = d3.scale.linear()
     .range([height, 0])
@@ -66,20 +168,20 @@ Chart.render = function(query, data, lang) {
 
   let x, plot, ticks, bar_width
   if(ordinal) {
-      x = d3.scale.ordinal()
-        .rangeRoundBands([0,width], .1)
-        .domain( d3.set(data.map(f_x)).values() )
-      plot = bars();
-      ticks = x.domain();
-      bar_width = x.rangeBand() / num_vectors;
+    x = d3.scale.ordinal()
+      .rangeRoundBands([0,width], .1)
+      .domain( sel_groups )
+    plot = bars()
+    ticks = x.domain()
+    bar_width = x.rangeBand() / num_vectors
   } else {
     x = d3.scale.linear()
       .range([0,width])
       .domain(d3.extent(data, f_x))
     plot = d3.svg.line()
-             .interpolate('monotone');
-    ticks = x.ticks();
-    bar_width = 0;
+             .interpolate('monotone')
+    ticks = x.ticks()
+    bar_width = 0
   }
 
   plot.x( (d) => x(f_x(d)) )
@@ -93,7 +195,30 @@ Chart.render = function(query, data, lang) {
     })
   }
 
-  return svg('svg', { width: width + margins.left + margins.right, height: height + margins.top + margins.bottom }, [
+  let legend_labels = []
+  if(!ordinal) {
+    let maxima = Object.create({})
+    sel_vectors.forEach( (key) => {
+      maxima[key] = d3.max(vectors[key], (d) => d[query.agg])
+    })
+    maxima = d3.entries(maxima)
+    maxima.sort( (a,b) => d3.descending(a.value, b.value))
+    legend_labels = maxima.map( (d) => d.key )
+  } else {
+    legend_labels = d3.keys(vectors)
+  }
+  legend_labels = legend_labels
+
+  let color = d3.scale.ordinal()
+    .range(vector_palette)
+    .domain(legend_labels)
+
+  let num_legend_labels = Math.min(max_legend+1, legend_labels.length) /* +1 for extra labels line */
+
+  return svg('svg', { class: 'chart',
+                      width: width + margins.left + margins.right,
+                      height: height + margins.top + margins.bottom
+                    }, [
     svg('g', {class: ordinal ? 'ordinal' : 'linear', transform: 'translate(' + margins.left + ',' + margins.top + ')'}, [
 
       // marks
@@ -102,9 +227,10 @@ Chart.render = function(query, data, lang) {
         d3.entries(vectors).map( (d,i) =>
           svg('g', {class: 'line', transform: 'translate(' + (i * bar_width) + ')'},
             d.value.map( (dn) =>
-              svg('circle', {cx:x(f_x(dn)), cy:y(f_y(dn)), r:2, fill: color(d.key)})
+              svg('circle', {cx: x(f_x(dn)), cy:y(f_y(dn)), r:2, fill: color(d.key)})
             ).concat([
-              svg('path', {d: plot(d.value), stroke: color(d.key), fill: (ordinal ? color(d.key) : 'none')})
+              svg('path', {d: plot(d.value), stroke: color(d.key), fill: (ordinal ? color(d.key) : 'none')}),
+              svg('title', d.key)
             ])
           )
       )),
@@ -112,9 +238,12 @@ Chart.render = function(query, data, lang) {
       // axes
 
       svg('g', {class: 'x axis', transform: 'translate(0,' + height + ')'},
-        ticks.map( (d) => svg('g', {class: 'tick', transform: 'translate(' + (x(d) + bar_width * num_vectors / 2) + ',0)'}, [
-          svg('line', {x1: 0, y1:3, x2: 0, y2: 8}),
-          svg('text', {y:8, dy:'1em', 'text-anchor': 'middle'}, fmt(d))
+        ticks.map( (d) => svg('g', { class: 'tick',
+                                     transform: 'translate(' + x(d) + ')'
+                                   }, [
+          svg('line', {y1:3, y2: 8}),
+          svg('text', {y:8, dy:8, dx:8, transform: 'rotate(35)', 'text-anchor': 'start'},
+              [svg('tspan', {}, fmt_x(d)), svg('title', {}, fmt_x_long(d))] )
         ])).concat([
           svg('path', {d: 'M0 0 H' + (width + 10) + (ordinal ? '' : 'V1.5 L' + (width + 15) + ' 0 L' + (width + 10) + ' -1.5V0')})
         ])
@@ -122,25 +251,30 @@ Chart.render = function(query, data, lang) {
       svg('g', {class: 'y axis'},
         y.ticks().map( (d) => svg('g', {class: 'tick', transform: 'translate(0,' + y(d) + ')'}, [
           svg('line', {x1:-8, y1:0, x2:-3, y2: 0}),
-          svg('text', {x:-10, dy:'.3em', 'text-anchor': 'end'}, fmt(d))
+          svg('text', {x:-10, dy:'.3em', 'text-anchor': 'end'}, fmt_y(d))
       ])).concat([
         svg('path', {d: 'M0 ' + height + ' V-10 H1.5 L0 -15 L-1.5 -10 H 0'})
       ])),
 
-      // legend
-
-      svg('g', {class: 'legend', transform: 'translate(' + [width+15, height-30] + ')'},
-        d3.keys(vectors).map( (d,i) => svg('g', {class: 'line', transform: 'translate(0,' + (-num_vectors*15 + i*15) + ')'}, [
-          svg('text', {x:32, dy: '.3em'}, d),
-          svg('path', {d: (ordinal ? 'M20 -5 h10 v10 h-10 z' : 'M0 0 H30'), stroke: color(d), fill: color(d)}),
-          svg('circle', {cx:15, r:2, fill: color(d)})
-        ])
-      )),
+      // legend + axis labels
+      svg('g', {class: 'legend', transform: 'translate(' + [width+25, height-15] + ')'}, [
+          legend_labels.length ? svg('rect', { class: 'background',
+                                               x: 0, y: -(max_legend*15 + 5 + legend_margins.top),
+                                               width: margins.right-15, height: (num_legend_labels)*15 + legend_margins.top}) : null,
+          legend_labels.length > max_legend ? svg('text', {x:margins.right-15, dy: '.3em', 'text-anchor': 'end'},
+                                                  '[+ ' + (legend_labels.length - max_legend) + ' ]') : null
+        ].concat(
+          legend_labels.slice(0,max_legend).map( (d,i) => svg('g', {class: 'line', transform: 'translate(' + legend_margins.left + ',' + (-(max_legend*15) + i*15) + ')'}, [
+            svg('text', {x:32, dy: '.3em'}, [ svg('tspan', {}, fmt_color(d)), svg('title', {}, fmt_color_long(d)) ]),
+            svg('path', {d: (ordinal ? 'M20 -5 h10 v10 h-10 z' : 'M0 0 H30'), stroke: color(d), fill: color(d)}),
+            svg('circle', {cx:15, r:2, fill: color(d)})
+          ]))
+        )
+      ),
       svg('g', {class: 'axis-labels', 'font-size': '12px'}, [
-        subscript({class: 'cols', transform: 'translate(' + [width+15, 0] + ')', dx: '32'},
-                  query.cols),
-        subscript({class: 'rows', transform: 'translate(' + [width+15, height] + ')', dy: '0.3em'}, query.rows),
-        svg('text', {class: 'agg', transform: 'translate(-10)', dy: '-0.3em', 'text-anchor': 'end' },
+        subscript({class: 'cols', transform: 'translate(' + [width+25, 0] + ')'}, query.cols),
+        subscript({class: 'rows', transform: 'translate(' + [width+25, height] + ')', dy: '0.3em'}, query.rows),
+        svg('text', {class: 'agg', transform: 'translate(' + -margins.left + ')rotate(-90)', dy: '0.7em', 'text-anchor': 'end' },
             msgs[lang][query.agg].toUpperCase())
       ])
     ])

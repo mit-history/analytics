@@ -1,4 +1,5 @@
 .chart-containter {
+	top:10px;
 	width:100%;
 	text-align:center;
   position:relative;
@@ -44,6 +45,16 @@
 
 .ordinal circle {
   visibility: hidden;
+}
+
+.legend {
+  cursor: pointer;
+}
+
+.legend rect {
+  stroke: none;
+  fill: black;
+  opacity: 0.05;
 }
 
 .legend text {

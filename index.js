@@ -13,8 +13,10 @@ var App = require('./js/app')
 // application defaults
 
 const DEFAULT_QUERY = {
-  rows: [],
-  cols: [],
+  // rows: [],
+  // cols: [],
+  rows: [ "decade" ],
+  cols: [ "author_1" ],
   agg: "performances_days",
   order: { },
   filter: { },

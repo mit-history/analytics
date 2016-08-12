@@ -143,7 +143,7 @@ function parse(field) {
   }
 }
 
-function format(lang, field) {
+function format(lang, field, len=Infinity) {
   // TODO logic could be clearer... some much easier in ruby
   //      lets us use the same logic for both languages
 
@@ -154,7 +154,7 @@ function format(lang, field) {
 
     // dimensions
 		case /^decade(_.*)?/.test(field):
-	    return (i) => [i, i+9].join(' - ')
+	    return (i) => +i   // [i, +i+9].join(' - ')
     case /^month(_.*)?/.test(field):
     // NB. months and weekdays are kept in 1-indexed format (like postgresql; unlike javascript)
       return (i) => (i === null) ? "" : spec.months[+i-1]
@@ -193,8 +193,21 @@ function format(lang, field) {
       return fmt.numberFormat(",f")
   }
 
-//  return (x) => x ? ("*** " + x) : ""
-  return (x) => x ? ("" + x) : ""
+  /* When len is set, returns the earlier of
+     (1) a 'hard' delimiter: parens, semicolon, comma
+     (2) the first 'soft' (space) delimiter after the len characters
+     TODO move into an editable short value in the database ? */
+  return (x) => {
+    if(!x) return ""
+    x = "" + x
+
+    let hard = /\s*[(,;]/.exec(x)
+    hard = hard ? hard.index : Infinity
+    let soft = x.indexOf(' ', len)
+    soft = (soft > -1) ? soft : Infinity
+
+    return x.slice(0,Math.min(hard, soft))
+  }
 
   function formatBool(b) {
     if (b === true) { return lang === 'en' ? 'yes' : 'oui' }

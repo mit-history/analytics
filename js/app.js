@@ -347,7 +347,7 @@ App.render = function(state) {
           ]),
 				  h('section.chart-containter.' + state.tableView, [
             h('div.loading-indicator' + (state.loading ? '.show' : '.hide'), h('img.loading-icon', { 'src': 'image/ajax-loader.gif' })),
-            Chart.render(state.query, state.cube_data["1x1"], lang)
+            Chart.render(state.chart, state.query, state.cube_data, [850, 250], lang)
           ]),
         ]),
         // h('div.data-container-pane' + (state.pane_display == 2 ? '.show' : '.hide'), [
