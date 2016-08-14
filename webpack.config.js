@@ -4,7 +4,8 @@ module.exports = {
   entry: './index.js',
   output: {
     path: __dirname + '/build/',
-    publicPath: '/build/',
+    publicPath: '/analytics/build/',	// Staging
+    // publicPath: '/js/app/', 				// Production
     filename: 'bundle.js'
   },
   module: {
@@ -20,4 +21,3 @@ module.exports = {
     new webpack.NoErrorsPlugin()
   ]
 };
-
