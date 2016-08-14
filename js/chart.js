@@ -40,7 +40,6 @@ const svg = require('mercury/svg')
 
 /* TODO.  switch completely to d3 v4 - better support for non-DOM situations */
 const d3 = require('d3')
-const d3_mouse = require('d3-selection').mouse
 
 const datapoint = require('./util/datapoint')
 const schema = require('../cfrp-schema')
@@ -57,17 +56,6 @@ const vector_palette = ['#2379b4', '#f7941e', '#2ba048', '#d62930',
                         '#f8b6c0', '#006838', '#662d91', '#d7df23', '#ec008c', '#0c0c54',
                         '#a8e0f9', '#da1c5c', '#726658', '#603913', '#231f20', '#2b3990',
                         '#9fc59a', '#819cd1', '#92278f', '#00a79d', '#27aae1', '#f04b44']
-
-
-/* mercury support for mouse tracking */
-let delegator = hg.Delegator()
-delegator.listenTo('mousemove')
-delegator.listenTo('mouseout')
-
-let MousePoint = hg.BaseEvent( function(ev, broadcast) {
-  var point = d3_mouse(ev.target, ev)
-  broadcast(Object.assign({point: point}, this.data))
-})
 
 
 /* component state */
