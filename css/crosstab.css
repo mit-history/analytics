@@ -20,9 +20,9 @@
 }
 
 .crosstab-container .content-container {
-	width:80%;
+	width:90%;
 	max-width:1200px;
-	max-height:70%;
+	max-height:90%;
   margin: auto;
   position: absolute;
   top: 0; left: 0; bottom: 0; right: 0;
@@ -44,8 +44,8 @@
 
 
 .x-axis-data-container {
-	float:left;
-	width:85%;
+	/*float:left;*/
+	width:100%;
 	height:100%;
 	overflow:hidden;
 }

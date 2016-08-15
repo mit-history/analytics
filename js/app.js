@@ -345,11 +345,11 @@ App.render = function(state) {
             ])
           ]),
           h('section.crosstab-container.' + state.tableView, [
-            h('div.loading-indicator' + (state.loading ? '.show' : '.hide'), h('img.loading-icon', { 'src': 'image/ajax-loader.gif' })),
+                        h('div.loading-indicator' + (state.loading ? '.show' : '.hide'), h('div.loading-icon')),
             Crosstab.render(state, lang)
           ]),
 				  h('section.chart-containter.' + state.tableView, [
-            h('div.loading-indicator' + (state.loading ? '.show' : '.hide'), h('img.loading-icon', { 'src': 'image/ajax-loader.gif' })),
+            h('div.loading-indicator' + (state.loading ? '.show' : '.hide'), h('div.loading-icon')),
             Chart.render(state.chart, state.query, state.cube_data, [800, 350], lang)
           ]),
         ]),

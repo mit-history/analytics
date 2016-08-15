@@ -74,6 +74,11 @@
 	position:relative;
 }
 
+.query-pane-section select {
+	padding:0;
+    height:inherit;
+}
+
 .query-pane-section .arrow-indicator {
 	position:absolute;
 	top:50%;
@@ -184,6 +189,10 @@ button.dropdown-list span.title{
 	white-space:nowrap;
 	text-overflow: ellipsis;
 	text-transform:uppercase;
+    /* Need to respecify the font familly here to make sure fontawesome won't override */
+    font-family: "Roboto Regular", "Helvetica", "Arial", sans-serif;
+    font-weight: normal;
+    line-height: 1.5;
 }
 
 button.dropdown-list .fa  {
@@ -214,6 +223,13 @@ ul.dropdown-list-content {
 ul.dropdown-list-content li {
 	padding-left:0px;
 	font-size:10pt;
+}
+
+ul.dropdown-list-content li span.title {
+	/* Need to respecify the font familly here to make sure fontawesome won't override */
+    font-family: "Roboto Regular", "Helvetica", "Arial", sans-serif;
+    font-weight: normal;
+    line-height: 1.5;
 }
 
 ul.dropdown-list-content li input[type=radio] + label {
@@ -280,6 +296,13 @@ ul.dropdown-list-content.dropdown-inline {
 	flex-direction:column;
 	height:100%;
 	max-height:100%;
+}
+
+.filter-container span, .filter-container input {
+	/* Need to respecify the font familly here to make sure fontawesome won't override */
+    font-family: "Roboto Regular", "Helvetica", "Arial", sans-serif;
+    font-weight: normal;
+    line-height: 1.5;
 }
 
 .filter-container > div, .filter-container > ul {

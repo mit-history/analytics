@@ -15,14 +15,34 @@ var App = require('./js/app')
 const DEFAULT_QUERY = {
   rows: [ "decade" ],
   cols: [ "author_1" ],
-  agg: "performances_days",
-  order: { },
-  filter: { },
+    agg: "sum_receipts_weighted",
+    order: {
+        "author_1": "desc",
+        "decade": "nat"
+    },
+    filter: {
+        "author_1":
+        [
+            "Corneille (Pierre)",
+            "Molière (Jean-Baptiste Poquelin dit)",
+            "Racine (Jean)",
+            "Voltaire (François-Marie Arouet dit)",
+        ],
+        "decade":
+        [
+            1710,
+            1720,
+            1730,
+            1740,
+            1750,
+        ]
+    },
   decade_scope: {
-    start: '1680',
-    end: '1790'
+        start: '1710',  // 1680
+        end: '1750'     // 1790
   }
 }
+
 
 // const DEFAULT_QUERY = {
 //   rows: [ "decade" ],
