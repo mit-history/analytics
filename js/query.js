@@ -259,6 +259,11 @@ Query.render = function (app_state, modal_state, query_state, lang) {
                     ]),
 
                     h('header.query-pane-section', [
+                        h('h2', msgs[lang]['comparison_tool_place_title']),
+                        TimePeriod.render(app_state, modal_state, query_state, lang),
+                    ]),
+
+                    h('header.query-pane-section', [
                         h('h2', msgs[lang]['comparison_tool_time_scope_title']),
                         TimePeriod.render(app_state, modal_state, query_state, lang),
                     ]),
