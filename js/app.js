@@ -89,7 +89,7 @@ function App(url, initial_query) {
             status: Status(),
             chart: Chart(),
             tableView: hg.value('half-table'),
-            download: Download(),
+            download: Download(url),
 
 // global state
             query: Query(initial_query, url),
