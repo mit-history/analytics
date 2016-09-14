@@ -5,7 +5,9 @@
 
     "pane_selector_button_1" : "Crosstab",
     "pane_selector_button_2" : "Calendar",
-    "pane_selector_button_3" : "Resgistry"
+    "pane_selector_button_3" : "Resgistry",
+
+    "download" : "Download in format"
   },
 
   "fr":
@@ -15,6 +17,8 @@
 
     "pane_selector_button_1" : "Tableau Croisé",
     "pane_selector_button_2" : "Calendrier",
-    "pane_selector_button_3" : "Registre"
+    "pane_selector_button_3" : "Registre",
+
+    "download" : "Télécharger au format"
   }
 }

@@ -89,6 +89,7 @@ function App(url, initial_query) {
             status: Status(),
             chart: Chart(),
             tableView: hg.value('half-table'),
+            download: Download(),
 
 // global state
             query: Query(initial_query, url),
@@ -340,10 +341,10 @@ App.render = function(state) {
               h('button.half-tablechart' + (state.tableView == 'half-table' ? '.selected' : ''),
                 { 'ev-click': hg.send(state.channels.switchTableView, 'half-table') }),
               h('button.full-chart' + (state.tableView == 'full-chart' ? '.selected' : ''),
-                { 'ev-click': hg.send(state.channels.switchTableView, 'full-chart') }),
-              Download.render(state, lang),
+                { 'ev-click': hg.send(state.channels.switchTableView, 'full-chart') })
             ])
           ]),
+          Download.render(state, lang),
           h('section.crosstab-container.' + state.tableView, [
             h('div.loading-indicator' + (state.loading ? '.show' : '.hide'), h('img.loading-icon', { 'src': 'image/ajax-loader.gif' })),
             Crosstab.render(state, lang)
