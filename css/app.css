@@ -46,6 +46,9 @@ button {
 	max-width:100% !important;
 	display:flex;
 	flex-direction: row;
+    font-family: "Roboto Regular", "Helvetica", "Arial", sans-serif;
+    font-weight: normal;
+    line-height: 1.5;
 }
 
 .data-display-container {
@@ -139,6 +142,13 @@ button {
 	padding-left: 20px;
 }
 
+.custom-checkbox span {
+	/* Need to respecify the font familly here to make sure fontawesome won't override */
+    font-family: "Roboto Regular", "Helvetica", "Arial", sans-serif;
+    font-weight: normal;
+    line-height: 1.5;
+}
+
 .custom-checkbox input[type=checkbox] + label {
 	cursor:pointer;
 }
@@ -204,6 +214,17 @@ span.selected-dimension-bullet {
 	font-size:12px;
 }
 
+span.selected-dimension-bullet span, span.selected-dimension-bullet label  {
+	color:#fff;
+}
+
+span.selected-dimension-bullet label  {
+	/* Need to respecify the font familly here to make sure fontawesome won't override */
+    font-family: "Roboto Regular", "Helvetica", "Arial", sans-serif;
+    font-weight: normal;
+    line-height: 1.5;
+}
+
 span.selected-dimension-bullet.first-axis {
 	background-color:#5A5B5D;
 }
@@ -240,6 +261,9 @@ span.selected-dimension-bullet .fa-close {
 	display:block;
 	top:50%;
 	left:50%;
+    width:32px;
+    height:32px;
+    background-image:url('../image/ajax-loader.gif');
 }
 
 .show {
