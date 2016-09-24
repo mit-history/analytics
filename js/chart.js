@@ -109,7 +109,7 @@ Chart.render = function(state, query, data, size, lang) {
   let fmt_color = schema.format(lang, query.cols[query.cols.length-1], 10)
   let fmt_color_long = schema.format(lang, query.cols[query.cols.length-1])
 
-  let ordinal = ordinal_domain(data, f_x)
+  let ordinal = ordinal_domain(data, (v) => fmt_x(f_x(v)))
 
   /* interlude to find top 10 by color and group */
 
@@ -312,6 +312,7 @@ Chart.render = function(state, query, data, size, lang) {
 }
 
 function ordinal_domain(data, f) {
+  console.log('f_x type: ' + typeof f(data[0]))
   return typeof f(data[0]) !== 'number'
 }
 
