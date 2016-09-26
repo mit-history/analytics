@@ -3,8 +3,9 @@
 *
 * Copyright (c) 2015 MIT Hyperstudio
 * Christopher York, 08/2015
-* David Talbot, Laval University, 04/2016
 *
+* TODO : This component is not actively used (not called in app.js) and may be removed in future if not needed. Kept for possible reintegration (dtalbot)
+* Used in axis.js
 */
 
 require('../../css/query.css')
