@@ -4,6 +4,7 @@
 * Copyright (c) 2015 MIT Hyperstudio
 * Christopher York, 04/2015
 *
+* TODO : This component is not actively used (not called in app.js) and may be removed in future if not needed. Kept for possible reintegration (dtalbot)
 */
 
 

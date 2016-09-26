@@ -2,7 +2,7 @@
 * MDAT Query manipulation component
 *
 * Copyright (c) 2015 MIT Hyperstudio
-* David Talbot, 05/2016
+* David Talbot, 07/2016
 *
 */
 

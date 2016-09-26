@@ -3,6 +3,7 @@
 *
 * Copyright (c) 2015 MIT Hyperstudio
 * Christopher York, 06/2015
+* David Talbot, Laval University, 04/2016
 *
 */
 
