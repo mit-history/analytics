@@ -1,5 +1,5 @@
 /*
-* Crosstab charting component
+* MDAT Charting Component
 *
 * Copyright (c) 2016 MIT Hyperstudio
 * Christopher York, 04/2016

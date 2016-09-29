@@ -1,5 +1,5 @@
 /*
-* Main CFRP application component
+* MDAT Crosstab Component
 *
 * Copyright (c) 2015 MIT Hyperstudio
 * Christopher York, 06/2015

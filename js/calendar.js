@@ -1,5 +1,5 @@
 /*
-* MDAT Calendar component
+* MDAT Calendar Component
 *
 * Copyright (c) 2015 MIT Hyperstudio
 * Christopher York, 04/2015
