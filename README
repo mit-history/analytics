@@ -29,7 +29,8 @@ npm start                                        # start the client UI locally
 git checkout gh-pages
 git rebase ulaval-design-integration             # rewrite staging branch to include new commits
 npm run build                                    # bundle sources with webpack
-git commit -a --amend --no-edit                  # rewrite the second commit to include bundle
+npm run cache-bust                               # optional: cache-bust the bundle url in index.html
+git commit -a --amend --no-edit                  # rewrite the second gh-pages commit to include bundle
 git push origin gh-pages --force                 # push to github pages
 
 # NB gh-pages is a 'throw away' branch.  So it's safe to rebase and force-push
