@@ -43,7 +43,10 @@ Axis.render = function(modal_state, query_state, axis, lang) {
       //Order.render(query_state, dim),
       h('span.selected-dimension-bullet' + (query_state.selectedDimension && query_state.selectedDimension.axis == axis && query_state.selectedDimension.dim == dim ? '.selected': '') + (lIndex == 1 ? '.first-axis': ''), [
 				h('label', {'ev-click': hg.send(query_state.channels.setSelectedDimension, {axis: axis, dim: dim}) }, [lLabelPrefix, i18n.htmlize(msgs, dim, lang)]),
-      	h('span.fa.fa-close', {'ev-click': hg.send(query_state.channels.removeDimension, {axis: axis, dim: dim}) })
+      	h('span.fa.fa-close', {'ev-click': [
+                hg.send(query_state.channels.removeDimension, {axis: axis, dim: dim}),
+                hg.send(modal_state.channels.resetSelectedFilterValue, {dim: dim})
+          ]})
 			]),
     ])
   })

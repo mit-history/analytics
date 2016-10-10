@@ -194,7 +194,9 @@ Query.removeDimension = function (query, data) {
         dims.splice(j, 1)
     }
 
-    query.filter.delete(dim)
+
+    query.filter.put(dim, [])
+    // query.filter.delete(dim)
 }
 
 Query.interchangeAxis = function (state) {
