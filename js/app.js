@@ -119,6 +119,7 @@ function App(url, initial_query) {
               set_start_date: App.set_start_date,
               set_end_date: App.set_end_date,
               sel_dates: App.sel_dates,
+              reset_dates: App.reset_dates,
               focus_cell: App.focus_cell,
               focus_day: App.focus_day,
               focus_theater: App.focus_theater,
@@ -268,6 +269,11 @@ App.set_start_date = function(state, data) {
 
 App.set_end_date = function(state, data) {
   state.end_date.set(parseInt(data.endDate, 10) || 0)
+}
+
+App.reset_dates = function(state) {
+  state.start_date.set(1680);
+  state.end_date.set(1790);
 }
 
 App.focus_cell = function(state, data) {

@@ -91,10 +91,15 @@ function Query(initial_query, url) {
 const ORDER_VALUES = ['nat', 'asc', 'desc']
 
 Query.resetSearch = function (state) {
-    state.agg.set('');
+    state.agg.set('sum_receipts_weighted');
     state.rows.set([]);
     state.cols.set([]);
-    state.filter.set({});
+    state.filter.set({
+        "decade":
+        [
+            1680, 1690, 1700, 1710, 1720, 1730, 1740, 1750, 1760, 1770, 1780, 1790
+        ]
+    });
     state.selectedDimension.set('');
 }
 
@@ -222,6 +227,7 @@ Query.togglePivot = function (query) {
     console.log(JSON.stringify(query.rows()) + ' <--> ' + JSON.stringify(query.cols()))
 }
 
+
 Query.render = function (app_state, modal_state, query_state, lang) {
     var api = datapoint(query_state.url)
     //  return h('div.query', [ String("Current query: " + JSON.stringify(state)) ])
@@ -251,7 +257,7 @@ Query.render = function (app_state, modal_state, query_state, lang) {
                 h('div.query-pane-content', [
                     h('header.query-pane-section.header', [
                         h('h1', msgs[lang]['comparison_tool_title']),
-                        h('button', { 'ev-click': hg.send(query_state.channels.resetSearch) }, msgs[lang]['new_search_button']),
+                        h('button', { 'ev-click': [hg.send(query_state.channels.resetSearch), hg.send(app_state.channels.reset_dates)]}, msgs[lang]['new_search_button']),
                     ]),
 
                     h('header.query-pane-section', [
@@ -262,7 +268,7 @@ Query.render = function (app_state, modal_state, query_state, lang) {
                     // Started temporary work on theater selection
                     // h('header.query-pane-section', [
                     //     h('h2', msgs[lang]['comparison_tool_place_title']),
-                    //     TimePeriod.render(app_state, modal_state, query_state, lang),
+                    //     TheatreSelector.render(app_state, modal_state, query_state, lang),
                     // ]),
 
                     h('header.query-pane-section', [
