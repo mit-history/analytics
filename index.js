@@ -15,7 +15,7 @@ var App = require('./js/app')
 const DEFAULT_QUERY = {
   rows: [ "decade" ],
   cols: [ "author_1" ],
-    agg: "sum_receipts_weighted",
+    agg: "sum_receipts",
     order: {
         "author_1": "desc",
         "decade": "nat"

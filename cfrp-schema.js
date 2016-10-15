@@ -15,7 +15,7 @@ const subscript = (range, items) => {
   return result.reduce( (a, b) => a.concat(b) )
 }
 
-const playbills = d3.range(1,4)
+const playbills = ['n'].concat(d3.range(1,4))
 
 
 const schema = {
@@ -70,22 +70,12 @@ const schema = {
 }
 
 const public_aggregates = [
-  "sum_receipts_weighted",
+  "sum_receipts",
+  // "sum_receipts_weighted",
   "performances_days",
-  "mean_receipts_day_weighted",
+  "mean_receipts_day",
+  // "mean_receipts_day_weighted",
   "mean_price" ]
-
-// const public_aggregates = [
-//   "sum_receipts_weighted",
-//   "sum_receipts_unweighted",
-//   "performances_days",
-//   "mean_receipts_day_weighted",
-//   "mean_receipts_day_unweighted",
-//   "mean_price",
-//   "count_authors_1",
-//   "count_authors_2",
-//   "count_titles_1",
-//   "count_titles_2" ]
 
 function group() {
   return schema
@@ -122,15 +112,15 @@ function parse(field) {
       return parseBool
 
     // aggregates
-    case /sum_receipts_weighted/.test(field):
+    case /sum_receipts/.test(field):
       return parseFloat
-    case /sum_receipts_unweighted/.test(field):
+    case /sum_receipts_weighted/.test(field):
       return parseFloat
     case /performances_days/.test(field):
       return parseInt
-    case /mean_receipts_day_weighted/.test(field):
+    case /mean_receipts_day/.test(field):
       return parseFloat
-    case /mean_receipts_day_unweighted/.test(field):
+    case /mean_receipts_day_weighted/.test(field):
       return parseFloat
     case /mean_price/.test(field):
       return parseFloat
@@ -182,15 +172,15 @@ function format(lang, field, len) {
       return formatBool
 
     // aggregates
-    case /sum_receipts_weighted/.test(field):
+    case /sum_receipts/.test(field):
       return fmt.numberFormat(",f")
-    case /sum_receipts_unweighted/.test(field):
+    case /sum_receipts_weighted/.test(field):
       return fmt.numberFormat(",f")
     case /performances_days/.test(field):
       return fmt.numberFormat(",f")
-    case /mean_receipts_day_weighted/.test(field):
+    case /mean_receipts_day/.test(field):
       return fmt.numberFormat(",f")
-    case /mean_receipts_day_unweighted/.test(field):
+    case /mean_receipts_day_weighted/.test(field):
       return fmt.numberFormat(",f")
     case /mean_price/.test(field):
       return fmt.numberFormat(",f")
