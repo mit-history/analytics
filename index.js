@@ -9,11 +9,11 @@ var App = require('./js/app')
 
 const DEFAULT_QUERY = {
   rows: [ "decade" ],
-  cols: [ "author_1" ],
+  cols: [ "author_n" ],
   agg: "sum_receipts_weighted",
-  order: { "author_1": "desc",
+  order: { "author_n": "desc",
            "decade": "nat" },
-  filter: { "author_1":
+  filter: { "author_n":
             ["Corneille (Pierre)",
              "Molière (Jean-Baptiste Poquelin dit)",
              "Racine (Jean)",

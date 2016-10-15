@@ -15,7 +15,7 @@ const subscript = (range, items) => {
   return result.reduce( (a, b) => a.concat(b) )
 }
 
-const playbills = d3.range(1,4)
+const playbills = ['n'].concat(d3.range(1,4))
 
 const schema = {
   time:

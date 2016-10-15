@@ -45,7 +45,7 @@ var en = d3.locale(en_spec)
 function htmlize(msgs, s, lang) {
   if (!msgs[lang]) { throw "Unknown language (" + lang + ")" }
 
-  var m = /(.*?)_?(\d+)?$/.exec(s)
+  var m = /(.*?)_?(\d|n)?$/.exec(s)
   var stem = m[1]
   stem = msgs[lang][stem] || stem
   var sub = m[2]
