@@ -39,11 +39,11 @@
     "theater_period": "Theater + Period",
     "seating_area": "Seat",
 
+    "sum_receipts": "Gross receipts",
     "sum_receipts_weighted": "Gross receipts (weighted)",
-    "sum_receipts_unweighted": "Gross receipts (unweighted)",
     "performances_days": "Performances (= days)",
+    "mean_receipts_day": "Average receipts / day",
     "mean_receipts_day_weighted": "Average receipts / day (weighted)",
-    "mean_receipts_day_unweighted": "Average receipts / day (unweighted)",
     "mean_price": "Average ticket price",
     "count_authors": "Count author",
     "count_titles": "Count title"
@@ -90,13 +90,11 @@
     "theater_period": "Théâtre + Period",
     "seating_area": "Place",
 
+    "sum_receipts": "Somme recette",
     "sum_receipts_weighted": "Somme recette (pondérée)",
-    "sum_receipts_unweighted": "Somme recette (non pondérée)",
     "performances_days": "Représentations(jours)",
+    "mean_receipts_day": "Moyenne recette/jour",
     "mean_receipts_day_weighted": "Moyenne recette/jour (pondérée)",
-    "mean_receipts_day_unweighted": "Moyenne recette/jour (non pondérée)",
-    "mean_price": "Moyenne(prix)",
-    "count_authors": "Compte Auteur",
-    "count_titles": "Compte Pièce"
+    "mean_price": "Moyenne(prix)"
   }
 }

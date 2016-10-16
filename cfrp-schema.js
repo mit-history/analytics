@@ -51,16 +51,12 @@ const schema = {
 }
 
 const public_aggregates = [
+  "sum_receipts",
   "sum_receipts_weighted",
-  "sum_receipts_unweighted",
   "performances_days",
+  "mean_receipts_day",
   "mean_receipts_day_weighted",
-  "mean_receipts_day_unweighted",
-  "mean_price",
-  "count_authors_1",
-  "count_authors_2",
-  "count_titles_1",
-  "count_titles_2" ]
+  "mean_price" ]
 
 function group() {
   return schema
@@ -97,22 +93,18 @@ function parse(field) {
       return parseBool
 
     // aggregates
-    case /sum_receipts_weighted/.test(field):
+    case /sum_receipts/.test(field):
       return parseFloat
-    case /sum_receipts_unweighted/.test(field):
+    case /sum_receipts_weighted/.test(field):
       return parseFloat
     case /performances_days/.test(field):
       return parseInt
-    case /mean_receipts_day_weighted/.test(field):
+    case /mean_receipts_day/.test(field):
       return parseFloat
-    case /mean_receipts_day_unweighted/.test(field):
+    case /mean_receipts_day_weighted/.test(field):
       return parseFloat
     case /mean_price/.test(field):
       return parseFloat
-    case /count_authors_(\d)/.test(field):
-      return parseInt
-    case /count_titles_(\d)/.test(field):
-      return parseInt
   }
   return (x) => x
 
@@ -155,22 +147,18 @@ function format(lang, field) {
       return formatBool
 
     // aggregates
-    case /sum_receipts_weighted/.test(field):
+    case /sum_receipts/.test(field):
       return fmt.numberFormat(",.2f")
-    case /sum_receipts_unweighted/.test(field):
+    case /sum_receipts_weighted/.test(field):
       return fmt.numberFormat(",.2f")
     case /performances_days/.test(field):
       return fmt.numberFormat(",.0f")
-    case /mean_receipts_day_weighted/.test(field):
+    case /mean_receipts_day/.test(field):
       return fmt.numberFormat(",.2f")
-    case /mean_receipts_day_unweighted/.test(field):
+    case /mean_receipts_day_weighted/.test(field):
       return fmt.numberFormat(",.2f")
     case /mean_price/.test(field):
       return fmt.numberFormat(",.2f")
-    case /count_authors_(\d)/.test(field):
-      return fmt.numberFormat(",.0f")
-    case /count_titles_(\d)/.test(field):
-      return fmt.numberFormat(",.0f")
   }
 
 //  return (x) => x ? ("*** " + x) : ""
