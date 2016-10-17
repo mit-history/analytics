@@ -6,7 +6,7 @@
   "scripts": {
     "start": "rm -rf build; webpack-dev-server --hot --inline --history-api-fallback",
     "build": "webpack -p",
-    "cache-bust": "hash=`git rev-parse --short HEAD`; sed -i.bak -e \"s/bundle\\.js.[[:xdigit:]]*/bundle.js?$hash/\" index.html && rm index.html.bak",
+    "cache-bust": "hash=`git rev-parse --short HEAD`; sed -i.bak -Ee \"s/bundle\\.js(.[[:xdigit:]]+)?/bundle.js?$hash/\" index.html && rm index.html.bak",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
