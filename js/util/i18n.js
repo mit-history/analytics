@@ -44,16 +44,15 @@ var en = d3.locale(en_spec)
 
 function format_stem_sub(msgs, s, lang, callback) {
   if (!msgs[lang]) { throw "Unknown language (" + lang + ")" }
+  var stem, sub, m
 
-  var m = /(.*?)_?(\d|n)?$/.exec(s)
-  var stem = m[1]
-  var sub = m[2]
-
-  if (stem == 'author' || stem == 'genre' || stem == 'title') {
-    stem = msgs[lang][s];
-    sub = null;
+  if(stem = msgs[lang][s]) {
+    sub = null
   } else {
+    m = /([A-Za-z0-9]+)(_[n0-9])?$/.exec(s)
+    stem = m[1]
     stem = msgs[lang][stem] || stem
+    sub = m[2] ? m[2].slice(1) : null
   }
 
   return callback(stem, sub)
@@ -61,7 +60,7 @@ function format_stem_sub(msgs, s, lang, callback) {
 
 function htmlize(msgs, s, lang) {
   return format_stem_sub(msgs, s, lang, function(stem, sub) {
-    return h('span', [ stem, sub ? h('sub', [ sub ]) : null ])
+     return h('span', [ stem, sub ? h('sub', [ sub ]) : null ])
   })
 }
 
