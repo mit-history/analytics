@@ -38,7 +38,7 @@ Axis.render = function(modal_state, query_state, axis, lang) {
   var sel_lis = dims.map( (dim) => {
     var sel_values = query_state.filter[dim] || []
 		lIndex++;
-		var lLabelPrefix = ((axis == 'rows') ? 'x' : 'y') + lIndex + '. '
+    var lLabelPrefix = ((axis == 'rows') ? 'x' : 'y') + lIndex + '. '
     return h('li', [
       //Order.render(query_state, dim),
       h('span.selected-dimension-bullet' + (query_state.selectedDimension && query_state.selectedDimension.axis == axis && query_state.selectedDimension.dim == dim ? '.selected': '') + (lIndex == 1 ? '.first-axis': ''), [

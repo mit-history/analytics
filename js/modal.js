@@ -18,7 +18,7 @@ function Modal(initial_query) {
 		queryPanelOpen: hg.value(true),
 		aggregateDropdownOpen: hg.value(false),
 		xAxisDropdownOpen: hg.value(false),
-		yAxisDropdownOpen: hg.value(false),
+		yAxisDropdownOpen: hg.value(false),    
 		axisDimensionDropdown: hg.value(null),
 		selectAll: hg.varhash({}),
     filter_selection: hg.varhash(initial_query.filter),

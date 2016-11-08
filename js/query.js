@@ -16,12 +16,16 @@ const msgs = require("json!../i18n/query.json")
 
 var Aggregate = require('./query/aggregate')
 var TimePeriod = require('./query/time_period')
+var RangeSelector = require('./query/range_selector')
 var Axis = require('./query/axis')
 var Order = require('./query/order')
 var Filter = require('./query/filter')
 var DimensionSelector = require('./query/dimension_selector')
+var schema = require('../cfrp-schema')
 
 var datapoint = require('./util/datapoint')
+
+var filter_dims = ["decade", "month", "weekday", "theater_period"];
 
 
 /** Query selector as a whole **/
@@ -45,6 +49,7 @@ function Query(initial_query, url) {
         channels: {
             resetSearch: Query.resetSearch,
             setSelectedDimension: Query.setSelectedDimension,
+            addFilter: Query.addFilter,
             setAggregate: Query.setAggregate,
             addDimension: Query.addDimension,
             removeDimension: Query.removeDimension,
@@ -114,11 +119,11 @@ Query.setSelectedDimension = function (state, data) {
 
     // Get possible filter values for selected dimension
     api.domain(dim, (vals) => {
-        vals.sort()
+        schema.sort(vals);
         state.domains_data_selection.put(dim, vals)
 
-        if (dim == 'decade') {
-            // Decade selected ? Then bypasse filter selection and just add the dimension
+        if (filter_dims.indexOf(dim) != -1) {
+            // Bypass filter selection for preselected filter dimension and just add the dimension
             // with all filters selected and the scope will be reduced to what was selected
             // in the time selector
             var dims = axisByName(state, axis)
@@ -130,8 +135,8 @@ Query.setSelectedDimension = function (state, data) {
         }
     })
 
-    // If user didn't select decade, than have him choose between possible filter values
-    if (dim != 'decade') {
+    // If user didn't select a preselected filter dimension, than have him choose between possible filter values
+    if (filter_dims.indexOf(dim) == -1) {
         // Set selected dimension
         state.selectedDimension.set(data)
 
@@ -145,6 +150,16 @@ Query.setSelectedDimension = function (state, data) {
         state.selectedDimension.set('')
         state.filter_state.search.set('')
     }
+}
+
+Query.addFilter = function(state, data) {
+  if(state.filter.get(data.dim)) {
+    var filters = state.filter.get(data.dim);
+    filters.push(data.value);
+    state.filter.put(data.dim, filters);
+  } else {
+    state.filter.put(data.dim, [data.value]);
+  }
 }
 
 Query.setAggregate = function (query, new_agg) {
@@ -168,16 +183,18 @@ Query.addDimension = function (query, data) {
     var axis = data.axis;
     var dim = data.dim;
     var filters = data.filters;
-    var dims = axisByName(query, axis)
-    var j = dims.indexOf(dim)
+    if(filters) {
+      var dims = axisByName(query, axis)
+      var j = dims.indexOf(dim)
 
-    if (j === -1) {
-        dims.push(dim)
+      if (j === -1) {
+          dims.push(dim)
+      }
+
+      // Add selected dimension and filter values into
+      query.domains_data.put(dim, query.domains_data_selection[dim])
+      query.filter.put(dim, filters)
     }
-
-    // Add selected dimension and filter values into
-    query.domains_data.put(dim, query.domains_data_selection[dim])
-    query.filter.put(dim, filters)
 
     // Clear dimension and filter selection
     query.domains_data_selection.put(dim, null)
@@ -237,7 +254,7 @@ Query.render = function (app_state, modal_state, query_state, lang) {
     var download_url = api.url(all_dims, query_state.agg, query_state.filter)
 
     return (
-        h('aside.slide-pannel-container' + (modal_state.queryPanelOpen ? '' : ''), [
+        h('aside.slide-pannel-container', [
 
             h('button.fa.fa-chevron-left.slide-pannel-button', {
                 'ev-click': hg.send(modal_state.channels.setPanelOpen)
@@ -267,15 +284,10 @@ Query.render = function (app_state, modal_state, query_state, lang) {
                         Aggregate.render(modal_state, query_state, lang),
                     ]),
 
-                    // Started temporary work on theater selection
-                    // h('header.query-pane-section', [
-                    //     h('h2', msgs[lang]['comparison_tool_place_title']),
-                    //     TheatreSelector.render(app_state, modal_state, query_state, lang),
-                    // ]),
-
                     h('header.query-pane-section', [
                         h('h2', msgs[lang]['comparison_tool_time_scope_title']),
                         TimePeriod.render(app_state, modal_state, query_state, lang),
+                        RangeSelector.render(app_state, modal_state, query_state, lang),
                     ]),
 
                     h('header.query-pane-section' + (modal_state.xAxisDropdownOpen || (query_state.selectedDimension && query_state.selectedDimension.axis == 'rows') ? '.interacted' : ''), [

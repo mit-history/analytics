@@ -215,4 +215,14 @@ function format(lang, field, len) {
   }
 }
 
-export { group, dimension, aggregate, parse, format };
+function sort(vals) {
+  if(vals && vals.hasOwnProperty("sort") && vals.length > 0) {
+    if(typeof vals[0] === "number") {
+      vals.sort(function(a, b) { return a - b; });
+    } else {
+      vals.sort();
+    }
+  }
+}
+
+export { group, dimension, aggregate, parse, format, sort };

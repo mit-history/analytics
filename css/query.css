@@ -95,6 +95,44 @@
 	right:-15px;
 }
 
+.selector .dropdown-list {
+	margin-top: 1rem;
+}
+
+.selector .custom-checkbox {
+	position: relative;
+	cursor: pointer;
+}
+
+.selector .selected-period-filters {
+	margin-top: 1rem;
+	margin-bottom: 0;
+	list-style:none;
+	padding:0px;
+	margin-left:0px;
+}
+
+.selector .selected-period-filters li {
+	display: inline-block;
+	margin-right: 3px;
+}
+
+.selector .custom-checkbox .selected-filter {
+	color: #3E94A6;
+}
+
+.selector .custom-checkbox .selected-filter .custom-input {
+	background-color: #3E94A6;
+	color: transparent;
+}
+
+.selector .custom-checkbox input[type=checkbox]  + label > span.custom-input {
+	top: 3px;
+	left: -4px;
+	width: 0.7em;
+	height: 0.7em;
+}
+
 .interchange-axis-button {
 	position:absolute;
 	z-index:9;
@@ -287,7 +325,7 @@ ul.dropdown-list-content li input[type=radio]:checked + label > span.radio > spa
 }
 
 ul.dropdown-list-content.axis-content {
-	max-height:250px;
+	max-height:265px;
 	overflow-y:scroll;
 }
 

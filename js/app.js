@@ -30,6 +30,7 @@ var Download = require('./download')
 var datapoint = require('./util/datapoint')
 
 var assign = require('object-assign')
+var schema = require('../cfrp-schema');
 
 var queue = require('queue-async')
 
@@ -38,6 +39,8 @@ const msgs = require("json!../i18n/app.json")
 const DATE_NAME = 'day'
 
 const dateIndexFormat = d3.time.format('%Y-%m-%d')
+
+const filterDims = ["decade", "month", "weekday", "theater_period"];
 
 // cribbed from underscore: http://underscorejs.org/docs/underscore.html#section-69
 function debounce(func, wait, immediate) {
@@ -78,7 +81,8 @@ function debounce(func, wait, immediate) {
 
 function App(url, initial_query) {
   var api = datapoint(url)
-  var decades = [];
+  var decades, months, weekdays;
+  decades = months = weekdays = [];
 
   var state = hg.state({
 
@@ -97,9 +101,16 @@ function App(url, initial_query) {
             start_date: hg.value(0),
             end_date: hg.value(0),
             sel_dates: hg.value([]),
+            period_filters: hg.varhash({}),
+            month_filter_opened: hg.value(false),
+            day_filter_opened: hg.value(false),
+            theater_filter_opened: hg.value(false),
             focus_cell: hg.value({}),
             focus_day: hg.value(null),
             available_decades: hg.value(decades),
+            available_months: hg.value(months),
+            available_weekdays: hg.value(weekdays),
+            available_theater_periods: hg.value([]),
 
             loading: hg.value(false),
             pane_display: hg.value(1),
@@ -119,6 +130,11 @@ function App(url, initial_query) {
               set_start_date: App.set_start_date,
               set_end_date: App.set_end_date,
               sel_dates: App.sel_dates,
+              add_period_filter: App.add_period_filter,
+              remove_period_filter: App.remove_period_filter,
+              open_month_period_filter: App.open_month_period_filter,
+              open_day_period_filter: App.open_day_period_filter,
+              open_theater_period_filter: App.open_theater_period_filter,
               reset_dates: App.reset_dates,
               focus_cell: App.focus_cell,
               focus_day: App.focus_day,
@@ -152,12 +168,11 @@ function App(url, initial_query) {
     loadTheaters()
     loadCalendar()
 
-    // Loading available decades (to be used in TimePeriod.js)
-    api.domain('decade', (vals) => {
-      vals.sort()
-      decades = vals
-      state.available_decades.set(decades);
-    })
+    // Loading filters to be used in query panel
+    filterDims.forEach((dim) => api.domain(dim, (vals) => {
+      schema.sort(vals);
+      state['available_' + dim + 's'].set(vals);
+    }));
 
     // Setting default decade scope
     if (initial_query.decade_scope) {
@@ -251,7 +266,6 @@ function App(url, initial_query) {
 
 App.sel_dates = function(state, data) {
   var { startDate, endDate } = data
-
   if(startDate && endDate && startDate != '-' && endDate != '-') {
     startDate = new Date(startDate);
     endDate = new Date(endDate);
@@ -269,6 +283,51 @@ App.set_start_date = function(state, data) {
 
 App.set_end_date = function(state, data) {
   state.end_date.set(parseInt(data.endDate, 10) || 0)
+}
+
+App.add_period_filter = function(state, data) {
+  var filters = state.period_filters.get(data.dim);
+  if(!filters) {
+    filters = [];
+    state.period_filters.put(data.dim, filters);
+  }
+  if(filters.indexOf(data.value) === -1) {
+    filters.push(data.value);
+  } else {
+    filters.splice(filters.indexOf(data.value), 1);
+  }  
+  App.close_period_filters(state);
+}
+
+App.remove_period_filter = function(state, data) {
+  var filters = state.period_filters.get(data.dim);
+  filters.splice(filters.indexOf(data.value), 1);
+  state.period_filters.put(data.dim, filters);
+  App.close_period_filters(state);
+}
+
+App.close_period_filters = function(state) {
+  state.month_filter_opened.set(false);
+  state.day_filter_opened.set(false);
+  state.theater_filter_opened.set(false);
+}
+
+App.open_month_period_filter = function(state) {
+  state.month_filter_opened.set(!state.month_filter_opened());
+  state.day_filter_opened.set(false);
+  state.theater_filter_opened.set(false);
+}
+
+App.open_day_period_filter = function(state) {
+  state.month_filter_opened.set(false);
+  state.day_filter_opened.set(!state.day_filter_opened());
+  state.theater_filter_opened.set(false);
+}
+
+App.open_theater_period_filter = function(state) {
+  state.month_filter_opened.set(false);
+  state.day_filter_opened.set(false);
+  state.theater_filter_opened.set(!state.theater_filter_opened());
 }
 
 App.reset_dates = function(state) {

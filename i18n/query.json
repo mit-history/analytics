@@ -78,8 +78,8 @@
         "mean_receipts_day": "Moyenne des recettes / jour",
         "mean_receipts_day_weighted": "Moyenne recette/jour (pondérée)",
         "mean_price": "Moyenne du prix des places",
-        "count_authors": "Compte Auteur",
-        "count_titles": "Compte Pièce",
+        "count_authors": "Nombre d'auteurs",
+        "count_titles": "Nombre de pièces",
         "rows": "Lignes",
         "cols": "Colonnes",
         "cells": "Cellules",
@@ -119,12 +119,12 @@
         "free_entry": "Gratuit",
         "firstrun": "First Run",
         "reprise": "Reprise",
-        "newactor": "Nouveau Acteur",
+        "newactor": "Nouvel Acteur",
         "debut": "Début",
         "ex_attendance": "Présence exceptionelle",
         "ex_representation": "Répresentation exceptionelles",
         "ex_place": "ExPlace",
-        "theater_period": "Théâtre + Period",
+        "theater_period": "Théâtre + Période",
         "seating_area": "Place"
     }
 }

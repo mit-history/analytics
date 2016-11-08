@@ -35,7 +35,6 @@ DimensionSelector.setDimensionDropdownOpen = function (state, dimension) {
 }
 
 DimensionSelector.render = function(modal_state, query_state, axis, lang) {
-
 	var lAxisChannel = (axis == 'rows' ? 'setXAxisDropdownOpen': 'setYAxisDropdownOpen')
 	var lAxisDropdown = (axis == 'rows' ? 'xAxisDropdownOpen': 'yAxisDropdownOpen')
 
