@@ -57,6 +57,7 @@ Crosstab.generateTableData = function (app_state, query_state, cube_data, lang) 
 	var lAggKey = query_state.agg;
 	var lRowKey = query_state.rows[0];
 	var lColKey = query_state.cols[0];
+  var formatter = schema.format(lang, lColKey);
 
 	// Generate header row
 	var lDataSet 		= cube_data['0x1'];
@@ -66,8 +67,8 @@ Crosstab.generateTableData = function (app_state, query_state, cube_data, lang) 
 	for (var i in lDataSet) {
 		if (lDataSet[i][lColKey]) {
 			lTableCols.push(h('col', {width: '100px'}));
-			var lData = lDataSet[i][lColKey].toString();
-			lHeaderRow.push(h('th',{title: lData}, lData));
+			var lData = formatter(lDataSet[i][lColKey].toString());
+      lHeaderRow.push(h('th',{title: lData}, lData));
 			lColCount ++;
 		}
 	}
@@ -77,7 +78,7 @@ Crosstab.generateTableData = function (app_state, query_state, cube_data, lang) 
 		lHeaderRow.push(h('th', {title: msgs[lang][lAggKey]}, msgs[lang][lAggKey]));
 	}
 	lResult.push(lTableCols);
-	lResult.push(h('tr.heading-row', {id: 'data-heading-row'}, lHeaderRow));
+  lResult.push(h('tr.heading-row', {id: 'data-heading-row'}, lHeaderRow));
 
 	// Calculate row count as the .lenght attribute seems to cause obscur error
 	var lRowCount = 0;
