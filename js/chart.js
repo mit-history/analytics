@@ -312,7 +312,6 @@ Chart.render = function(state, query, data, size, lang) {
 }
 
 function ordinal_domain(data, f) {
-  console.log('f_x type: ' + typeof f(data[0]))
   return typeof f(data[0]) !== 'number'
 }
 

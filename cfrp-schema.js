@@ -40,9 +40,8 @@ const schema = {
 //   seating_area:
 //     subscript(playbills,
 //     [ "seating_area"]),
-  theater:
-    [ "theater_period",
-      "seating_area" ],
+  seating_area: 
+    [ "seating_area" ],
   acts:
     subscript(playbills,
     [ "acts"]),

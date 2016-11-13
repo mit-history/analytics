@@ -81,9 +81,6 @@ function debounce(func, wait, immediate) {
 
 function App(url, initial_query) {
   var api = datapoint(url)
-  var decades, months, weekdays;
-  decades = months = weekdays = [];
-
   var state = hg.state({
 
 // component state
@@ -107,9 +104,9 @@ function App(url, initial_query) {
             theater_filter_opened: hg.value(false),
             focus_cell: hg.value({}),
             focus_day: hg.value(null),
-            available_decades: hg.value(decades),
-            available_months: hg.value(months),
-            available_weekdays: hg.value(weekdays),
+            available_decades: hg.value(),
+            available_months: hg.value(),
+            available_weekdays: hg.value(),
             available_theater_periods: hg.value([]),
 
             loading: hg.value(false),
@@ -216,7 +213,6 @@ function App(url, initial_query) {
   function alignFocus() {
     var cube_data = state.cube_data()
     var focus_cell = state.focus_cell()
-    console.log("need to make sure focus cell is still in cube data")
   }
 
   function loadCalendar() {
@@ -295,7 +291,7 @@ App.add_period_filter = function(state, data) {
     filters.push(data.value);
   } else {
     filters.splice(filters.indexOf(data.value), 1);
-  }  
+  }
   App.close_period_filters(state);
 }
 

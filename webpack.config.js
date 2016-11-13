@@ -4,6 +4,7 @@ module.exports = {
   entry: './index.js',
   output: {
     path: __dirname + '/build/',
+    // publicPath: '/build/'             // Development
     publicPath: '/analytics/build/',	// Staging
     // publicPath: '/js/app/', 				// Production
     filename: 'bundle.js'
@@ -18,6 +19,11 @@ module.exports = {
     ]
   },
   plugins: [
-    new webpack.NoErrorsPlugin()
+    new webpack.NoErrorsPlugin(),
+    new webpack.ProvidePlugin({
+      $: 'jquery',
+      jQuery: 'jquery',
+      'window.jQuery': 'jquery'
+    })
   ]
 };

@@ -1,9 +1,8 @@
 var document = require('global/document');
 var hg = require('mercury')
 var h = require('mercury').h
-
-
-require('./css/third-party/foundation6/foundation-flex.css')
+require('./css/third-party/foundation6/foundation.css')
+require('./js/third-party/foundation6/foundation')
 
 require("font-awesome-webpack");
 

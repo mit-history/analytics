@@ -43,7 +43,7 @@ function isFilterSelected(dimension_filters, value) {
   return selected;
 }
 
-function listFilters(app_state, lang) {
+function listFilters(app_state, query_state, lang) {
   var sel_lis = Object.keys(app_state.period_filters).map( (dim) => {
     var format = schema.format(lang, dim);
     var sel_values = app_state.period_filters[dim] || [];
@@ -54,7 +54,7 @@ function listFilters(app_state, lang) {
           h('label', [format(value)]),
           h('span.fa.fa-close', {'ev-click': [
                   hg.send(app_state.channels.remove_period_filter, {dim: dim, value: value}),
-                /*hg.send(modal_state.channels.resetSelectedFilterValue, {dim: dim})*/
+                  hg.send(query_state.channels.removeFilter, { dim: dim, value: value })
             ]})
         ]),
       ])

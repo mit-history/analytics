@@ -105,7 +105,7 @@ Crosstab.generateTableData = function (app_state, query_state, cube_data, lang) 
 				});
 
 				var lCellData = lFullCubeData.length > 0 ? lFullCubeData[0][lAggKey].toFixed(0).toString() : '';
-				var lCellDataTitle = lRowCubeData[lRowKey].toString() + ', ' + lColCubeData[lColKey] + ' : ' + lCellData;
+				var lCellDataTitle = lRowCubeData[lRowKey].toString() + ', ' + lColCubeData[lColKey] + ' : ' + (lCellData ? lCellData : '-');
 
 				var lClickEvntObject = {focus: {}};
 				lClickEvntObject.focus[lRowKey] = lRowCubeData[lRowKey];
@@ -119,7 +119,7 @@ Crosstab.generateTableData = function (app_state, query_state, cube_data, lang) 
 
 				lDataRow.push(h('td' + lClass, {
 					title: lCellDataTitle,
-					'ev-click': hg.send(app_state.channels.focus_cell, lClickEvntObject)
+          'ev-click': hg.send(app_state.channels.focus_cell, lClickEvntObject)
 				}, lCellData));
 
 			}
@@ -131,8 +131,12 @@ Crosstab.generateTableData = function (app_state, query_state, cube_data, lang) 
 	// Add row with all sums
 	var lSumRow = [];
 	for (var i in lColDataSet) {
-		var lCellData = lColDataSet[i][lAggKey].toFixed(0).toString();
-		var lCellDataTitle = lColDataSet[lColKey] + ' : ' + lCellData;
+    var lCellData = "";
+    var lCellDataTitle = "";
+    if(!isNaN(lColDataSet[i][lAggKey].toFixed(0))) {
+      lCellData = lColDataSet[i][lAggKey].toFixed(0).toString();
+      lCellDataTitle = lColDataSet[i][lColKey] + ' : ' + lCellData;
+    }
 
 		lSumRow.push(h('td.sum-row', { title: lCellDataTitle, }, lCellData));
 	}
@@ -153,13 +157,20 @@ Crosstab.generateSumColumn = function (query_state, cube_data, lang) {
 	var lRows = [h('tr', h('th', {title: msgs[lang][lAggKey]}, msgs[lang][lAggKey]))];
 	for (var i in lDataSet) {
 		if (lDataSet[i][lRowKey]) {
-			var lData = lDataSet[i][lAggKey].toFixed(0).toString();
+      let lData = "";
+      if(!isNaN(lDataSet[i][lAggKey])) {
+        lData = lDataSet[i][lAggKey].toFixed(0).toString();
+      }
 			lRows.push(h('tr', h('td', {title: lData}, lData)));
 		}
 	}
 
 	// Add sum
 	for (var i in cube_data['0x0']) {
+    let lData = "0";
+    if(!isNaN(cube_data['0x0'][i][lAggKey].toFixed(0))) {
+      lData = cube_data['0x0'][i][lAggKey].toFixed(0).toString();
+    }
 		var lData = cube_data['0x0'][i][lAggKey].toFixed(0).toString();
 		lRows.push(h('tr', h('td.sum-table', {title: lData}, lData)));
 	}

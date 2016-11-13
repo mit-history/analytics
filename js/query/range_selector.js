@@ -34,7 +34,7 @@ function RangeSelector(query_state) {
 RangeSelector.render = function(app_state, modal_state, query_state, lang) {
     return (
         h('div.selector.date-period-selector', [
-            range.listFilters(app_state, lang),
+            range.listFilters(app_state, query_state, lang),
             h('button.dropdown-list', {
                 'ev-click': hg.send(app_state.channels.open_month_period_filter)
             }, [
@@ -58,7 +58,7 @@ RangeSelector.render = function(app_state, modal_state, query_state, lang) {
                 h('span.fa.right' + (app_state.theater_filter_opened ? '.fa-chevron-up' : '.fa-chevron-down'))
             ]),
             h('ul.dropdown-list-content.axis-content' + (app_state.theater_filter_opened ? '.visible-container' : '.hidden-container'),
-                range.listPeriodFiltersOptions(app_state, query_state, "theater_period", app_state.available_theater_periods, lang))            
+                range.listPeriodFiltersOptions(app_state, query_state, "theater_period", app_state.available_theater_periods, lang))
         ])
     )
 }

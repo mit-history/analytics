@@ -50,6 +50,8 @@ function Query(initial_query, url) {
             resetSearch: Query.resetSearch,
             setSelectedDimension: Query.setSelectedDimension,
             addFilter: Query.addFilter,
+            removeFilter: Query.removeFilter,
+            addFilterRange: Query.addFilterRange,
             setAggregate: Query.setAggregate,
             addDimension: Query.addDimension,
             removeDimension: Query.removeDimension,
@@ -161,6 +163,27 @@ Query.addFilter = function(state, data) {
     state.filter.put(data.dim, [data.value]);
   }
 }
+
+Query.removeFilter = function(state, data) {
+  if(state.filter.get(data.dim)) {
+    var filters = state.filter.get(data.dim);
+    filters.splice(filters.indexOf(data.value), 1);
+    state.filter.put(data.dim, filters);
+  }
+}
+
+Query.addFilterRange = function(state, data) {
+  if(data.values) {
+    var from = data.values.indexOf(data.range.from);
+    var to = data.values.indexOf(data.range.to);
+    if(from != -1 && to != -1 && from <= to) {
+      data.values.slice(from, to + 1).forEach((value) => {
+        Query.addFilter(state, {dim: data.dim, value: value});
+      })
+    }
+  }
+}
+
 
 Query.setAggregate = function (query, new_agg) {
     query.agg.set(new_agg)

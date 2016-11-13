@@ -61,10 +61,20 @@ TimePeriod.render = function(app_state, modal_state, query_state, lang) {
         'ev-event': hg.sendChange(app_state.channels.set_end_date)
 			}, buildSelectOptionsFct(app_state.end_date)),
 			h('button.secondary', {
-				'ev-click': hg.send(app_state.channels.sel_dates, {
-					startDate: app_state.start_date ? app_state.start_date.toString() + '-01-01': '-',
-					endDate: app_state.end_date ? app_state.end_date.toString() + '-12-30': '-',
-				})
+				'ev-click': [
+          hg.send(app_state.channels.sel_dates, {
+  					startDate: app_state.start_date ? app_state.start_date.toString() + '-01-01': '-',
+  					endDate: app_state.end_date ? app_state.end_date.toString() + '-12-31': '-',
+  				}),
+          hg.send(query_state.channels.addFilterRange, {
+            dim: "decade",
+            values: app_state.available_decades,
+            range: {
+              from: app_state.start_date,
+              to: app_state.end_date
+            }
+          })
+        ]
 			}, msgs_i18n.ok)
 		])
   )
