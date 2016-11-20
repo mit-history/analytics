@@ -72,6 +72,7 @@
 	overflow-y:auto;
 	position:relative;
 	font-size:11pt;
+	border:1px solid #CACACA;
 }
 
 .data-table-container table {
