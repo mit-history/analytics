@@ -86,12 +86,13 @@
 	border:1px solid #CACACA;
 	font-weight: 200;
 	line-height:12pt;
-	padding: 5px 10px;
+	padding: 8px 10px;
 	text-align:center;
 }
 
 .crosstab-container table td.selected {
-	border:2px solid blue;
+	background-color: #65A8DF;
+	font-weight: 500;
 }
 
 .crosstab-container .cross-cell {
