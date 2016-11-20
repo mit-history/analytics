@@ -126,6 +126,13 @@
 	width:100%;
 }
 
+.crosstab-container .data-content .has-tip,
+.crosstab-container .row-headers-col .has-tip,
+.crosstab-container .sum-col .has-tip {
+	font-weight: inherit;
+	border-bottom: 0;
+}
+
 .crosstab-container table tr.heading-row {
 	position:relative;
 }

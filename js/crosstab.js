@@ -22,6 +22,7 @@ var svg = require('virtual-hyperscript/svg')
 var assign = require('object-assign')
 
 var schema = require('../cfrp-schema')
+var foundation = require('./util/foundation-utils');
 
 function Crosstab() {
   return null
@@ -39,11 +40,17 @@ Crosstab.generateRowHeadersColumn = function (query_state, cube_data, lang) {
 	for (var i in lDataSet) {
 		if (lDataSet[i][lRowKey]) {
 			var lData = lDataSet[i][lRowKey].toString();
-			lRows.push(h('tr', h('th', {title: lData}, lData)));
+			lRows.push(h('tr', h('th', h('span.has-tip', {
+        "ev-tooltip-create": new foundation.Tooltip(),
+        title: lData
+      }, lData))));
 		}
 	}
 	// Add sum row
-	lRows.push(h('tr', h('th.sum-row', {title: msgs[lang][lAggKey]}, msgs[lang][lAggKey])));
+	lRows.push(h('tr', h('th.sum-row', h('span.has-tip', {
+    "ev-tooltip-create": new foundation.Tooltip(),
+    title: msgs[lang][lAggKey]
+  }, msgs[lang][lAggKey]))));
 
 	lResult.push(lRows);
 
@@ -68,14 +75,20 @@ Crosstab.generateTableData = function (app_state, query_state, cube_data, lang) 
 		if (lDataSet[i][lColKey]) {
 			lTableCols.push(h('col', {width: '100px'}));
 			var lData = formatter(lDataSet[i][lColKey].toString());
-      lHeaderRow.push(h('th',{title: lData}, lData));
+      lHeaderRow.push(h('th', h('span.has-tip', {
+        "ev-tooltip-create": new foundation.Tooltip(),
+        title: lData
+      }, lData)));
 			lColCount ++;
 		}
 	}
 	if (lHeaderRow.length <= 0) {
 		// Sometimes, no header is present because no X axis dimension was set
 		lTableCols.push(h('col', {width: '100px'}));
-		lHeaderRow.push(h('th', {title: msgs[lang][lAggKey]}, msgs[lang][lAggKey]));
+		lHeaderRow.push(h('th', h('span.has-tip', {
+      "ev-tooltip-create": new foundation.Tooltip(),
+      title: msgs[lang][lAggKey]
+    }, msgs[lang][lAggKey])));
 	}
 	lResult.push(lTableCols);
   lResult.push(h('tr.heading-row', {id: 'data-heading-row'}, lHeaderRow));
@@ -105,7 +118,7 @@ Crosstab.generateTableData = function (app_state, query_state, cube_data, lang) 
 				});
 
 				var lCellData = lFullCubeData.length > 0 ? lFullCubeData[0][lAggKey].toFixed(0).toString() : '';
-				var lCellDataTitle = lRowCubeData[lRowKey].toString() + ', ' + lColCubeData[lColKey] + ' : ' + (lCellData ? lCellData : '-');
+				var lCellDataTitle = lRowCubeData[lRowKey].toString() + ' / '+ lColCubeData[lColKey] + ' : ' + (lCellData ? lCellData : '-');
 
 				var lClickEvntObject = {focus: {}};
 				lClickEvntObject.focus[lRowKey] = lRowCubeData[lRowKey];
@@ -117,10 +130,12 @@ Crosstab.generateTableData = function (app_state, query_state, cube_data, lang) 
 					lClass = ".selected";
 				}
 
-				lDataRow.push(h('td' + lClass, {
-					title: lCellDataTitle,
-          'ev-click': hg.send(app_state.channels.focus_cell, lClickEvntObject)
-				}, lCellData));
+        lDataRow.push(h('td' + lClass, {
+					'ev-click': hg.send(app_state.channels.focus_cell, lClickEvntObject)
+				}, h('span.has-tip', {
+          "ev-tooltip-create": new foundation.Tooltip(),
+          title: lCellDataTitle
+        }, lCellData)));
 
 			}
 		}
@@ -131,14 +146,17 @@ Crosstab.generateTableData = function (app_state, query_state, cube_data, lang) 
 	// Add row with all sums
 	var lSumRow = [];
 	for (var i in lColDataSet) {
-    var lCellData = "";
-    var lCellDataTitle = "";
+    let lCellData = "";
+    let lCellDataTitle = "";
     if(!isNaN(lColDataSet[i][lAggKey].toFixed(0))) {
       lCellData = lColDataSet[i][lAggKey].toFixed(0).toString();
       lCellDataTitle = lColDataSet[i][lColKey] + ' : ' + lCellData;
     }
 
-		lSumRow.push(h('td.sum-row', { title: lCellDataTitle, }, lCellData));
+		lSumRow.push(h('td.sum-row', h('span.has-tip', {
+      "ev-tooltip-create": new foundation.Tooltip(),
+      title: lCellDataTitle
+    }, lCellData)));
 	}
 	lResult.push(h('tr', lSumRow));
 
@@ -154,25 +172,39 @@ Crosstab.generateSumColumn = function (query_state, cube_data, lang) {
 
 	// Generate header row
 	var lDataSet = cube_data['1x0'];
-	var lRows = [h('tr', h('th', {title: msgs[lang][lAggKey]}, msgs[lang][lAggKey]))];
+	var lRows = [h('tr', h('th', h('span.has-tip', {
+    "ev-tooltip-create": new foundation.Tooltip(),
+    title: msgs[lang][lAggKey]
+  }, msgs[lang][lAggKey])))];
 	for (var i in lDataSet) {
 		if (lDataSet[i][lRowKey]) {
       let lData = "";
+      let lDataTitle = lDataSet[i][lRowKey] + " : ";
       if(!isNaN(lDataSet[i][lAggKey])) {
         lData = lDataSet[i][lAggKey].toFixed(0).toString();
+        lDataTitle = lDataTitle + lData;
+      } else {
+        lDataTitle = lDataTitle + " -";
       }
-			lRows.push(h('tr', h('td', {title: lData}, lData)));
+      lRows.push(h('tr', h('td', h('span.has-tip', {
+        "ev-tooltip-create": new foundation.Tooltip(),
+        title: lDataTitle
+      }, lData))));
 		}
 	}
 
 	// Add sum
 	for (var i in cube_data['0x0']) {
     let lData = "0";
+    let lDataTitle = msgs[lang][lAggKey] + " : ";
     if(!isNaN(cube_data['0x0'][i][lAggKey].toFixed(0))) {
       lData = cube_data['0x0'][i][lAggKey].toFixed(0).toString();
     }
-		var lData = cube_data['0x0'][i][lAggKey].toFixed(0).toString();
-		lRows.push(h('tr', h('td.sum-table', {title: lData}, lData)));
+    lDataTitle = lDataTitle + lData;
+		lRows.push(h('tr', h('td.sum-table', h('span.has-tip', {
+      "ev-tooltip-create": new foundation.Tooltip(),
+      title: lDataTitle
+    }, lData))));
 	}
 	lResult.push(lRows);
 

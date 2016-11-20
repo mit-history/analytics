@@ -8,6 +8,7 @@ require("font-awesome-webpack");
 
 var App = require('./js/app')
 
+$(document).foundation();
 
 // application defaults
 
