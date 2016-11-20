@@ -23,6 +23,12 @@ body .tooltip {
 	border: 1px solid #0a0a0a;
 }
 
+body .tooltip::before {
+	border-top-color: transparent;
+	border-left-color: transparent;
+	border-right-color: transparent;
+}
+
 body .tooltip::after {
 	content: '';
 	display: block;
