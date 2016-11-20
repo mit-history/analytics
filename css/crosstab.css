@@ -71,8 +71,11 @@
 	overflow-x:hidden;
 	overflow-y:auto;
 	position:relative;
-	border:1px solid #CACACA;
 	font-size:11pt;
+}
+
+.data-table-container table {
+	margin-bottom: 0;
 }
 
 .crosstab-container table {
@@ -156,7 +159,6 @@
 .crosstab-container .sum-col table {
 	width:100%;
 	max-width:100%;
-	margin-bottom: 0;
 }
 
 
