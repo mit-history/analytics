@@ -27,6 +27,7 @@ body .tooltip::before {
 	border-top-color: transparent;
 	border-left-color: transparent;
 	border-right-color: transparent;
+	border-bottom-color: #0a0a0a;
 }
 
 body .tooltip::after {
