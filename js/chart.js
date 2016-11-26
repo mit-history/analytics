@@ -72,8 +72,7 @@ function Chart() {
 }
 
 /* state, query: required; data, size, lang: optional */
-Chart.render = function(state, query, data, size, lang) {
-
+Chart.render = function(state, query, data, size, legend, lang) {
   /* For now, queries map to graph as follows:
    * x axis is last dimension in rows
    * y axis is the aggregate value
@@ -223,7 +222,7 @@ Chart.render = function(state, query, data, size, lang) {
       svg('g', {class: 'marks'},
         d3.entries(vectors).map( (d,i) =>
           svg('g', {class: 'line l' + i, transform: 'translate(' + (i * bar_width) + ')',
-                    opacity: (state.focus === null || state.focus === d.key) ? 1 : 0.1},
+                    opacity: (state.focus === null || state.focus === d.key) ? 1 : 0.2},
             d.value.map( (dn) =>
               !ordinal ? svg('circle', {cx: x(f_x(dn)), cy:y(f_y(dn)), r:2, fill: color(d.key)}) : null
             ).concat([
@@ -255,9 +254,10 @@ Chart.render = function(state, query, data, size, lang) {
       ])),
 
       // legend + axis labels
-      svg('g', {class: 'legend', transform: 'translate(' + [width+25, height-15] + ')'}, [
+      (legend ?
+      svg('g', {class: 'legend', transform: 'translate(' + [width + 5, 15] + ')'}, [
           legend_labels.length ? svg('rect', { class: 'background',
-                                               x: 0, y: -(max_legend*15 + 5 + legend_margins.top),
+                                               x: 0, y: (legend_margins.top),
                                                width: margins.right-15, height: (num_legend_labels)*15 + legend_margins.top,
                                                stroke: 'none',
                                                fill: 'black',
@@ -266,7 +266,7 @@ Chart.render = function(state, query, data, size, lang) {
                                                   '[+ ' + (legend_labels.length - max_legend) + ' ]') : null
         ].concat(
           legend_labels.slice(0,max_legend).map( (d,i) => svg('g',
-              {class: 'line', transform: 'translate(' + legend_margins.left + ',' + (-(max_legend*15) + i*15) + ')',
+              {class: 'line', transform: 'translate(' + legend_margins.left + ',' + (15 + i*15) + ')',
                'ev-click': hg.send(state.channels.focus, d),
                opacity: (state.focus === null || state.focus === d) ? 1 : 0.1 }, [
             svg('text', {x:32, dy: '.3em'}, tspan_title(fmt_color(d), fmt_color_long(d))),
@@ -274,9 +274,9 @@ Chart.render = function(state, query, data, size, lang) {
             !ordinal ? svg('circle', {cx:15, r:2, fill: color(d)}) : null
           ]))
         )
-      ),
+      ) : null),
       svg('g', {class: 'axis-labels', 'font-size': '12px'}, [
-        subscript({class: 'cols', transform: 'translate(' + [width+25, height-(max_legend*15 + 20 + legend_margins.top)] + ')', dy:'-1em'}, query.cols),
+        (legend ? subscript({class: 'cols', transform: 'translate(' + [width + 5, 0] + ')', dy:'0.3em'}, query.cols) : null),
         subscript({class: 'rows', transform: 'translate(' + [width+25, height] + ')', dy: '0.3em'}, query.rows),
         svg('text', {class: 'agg', transform: 'translate(' + -margins.left + ')rotate(-90)', dy: '1em', 'text-anchor': 'end' },
             msgs[lang][query.agg].toUpperCase())

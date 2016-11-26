@@ -26,6 +26,7 @@ var Calendar = require('./calendar')
 var Register = require('./register')
 var Status = require('./status')
 var Download = require('./download')
+var Legend = require('./legend')
 
 var datapoint = require('./util/datapoint')
 
@@ -90,6 +91,7 @@ function App(url, initial_query) {
             register: Register(),
             status: Status(),
             chart: Chart(),
+            legend: Legend(),
             tableView: hg.value('half-table'),
             download: Download(url),
 
@@ -98,6 +100,7 @@ function App(url, initial_query) {
             start_date: hg.value(0),
             end_date: hg.value(0),
             sel_dates: hg.value([]),
+            chart_sizes: hg.value([800, 350]),
             period_filters: hg.varhash({}),
             month_filter_opened: hg.value(false),
             day_filter_opened: hg.value(false),
@@ -177,8 +180,8 @@ function App(url, initial_query) {
       state.start_date.set(parseInt(initial_query.decade_scope.start))
       state.end_date.set(parseInt(initial_query.decade_scope.end))
       // App query date selection
-      var startDate = new Date(initial_query.decade_scope.start + '-01-01');
-      var endDate = new Date(initial_query.decade_scope.end + '-12-30');
+      var startDate = new Date(initial_query.decade_scope.start + '-04-01');
+      var endDate = new Date(initial_query.decade_scope.end + '-03-31');
       state.sel_dates.set([startDate, endDate])
     }
 
@@ -387,6 +390,17 @@ App.render = function(state) {
     }
   }
 
+  function chart_size() {
+    var sizes = [800, 350];
+    if(!state.modal.queryPanelOpen) {
+      sizes[0] = 1200;
+    }
+    if(state.tableView == 'full-chart') {
+      sizes[1] = 500;
+    }
+    return sizes;
+  }
+
   function render_i18n(lang) {
     return h('div.row.main-container', [
 			Query.render(state, state.modal, state.query, lang),
@@ -413,7 +427,8 @@ App.render = function(state) {
           ]),
 				  h('section.chart-containter.' + state.tableView, [
             h('div.loading-indicator' + (state.loading ? '.show' : '.hide'), h('div.loading-icon')),
-            Chart.render(state.chart, state.query, state.cube_data, [800, 350], lang)
+            Chart.render(state.chart, state.query, state.cube_data, chart_size(), false, lang),
+            Legend.render(state.legend, state.query, state.cube_data, state.chart, lang)
           ]),
         ]),
         // h('div.data-container-pane' + (state.pane_display == 2 ? '.show' : '.hide'), [

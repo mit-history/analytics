@@ -37,7 +37,7 @@ Download.toggleOpen = function(state, data) {
 
 Download.render = function(state, lang) {
   // TODO.  more performant to avoid creating DOM elements?
-  let svg_vnode = Chart.render(state.chart, state.query, state.cube_data, svg_size, lang)
+  let svg_vnode = Chart.render(state.chart, state.query, state.cube_data, svg_size, true, lang)
   let svg_elem = vdom.create(svg_vnode)
   let svg_xml = '<?xml version="1.0" standalone="no"?>\n' +
         '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">\n' +

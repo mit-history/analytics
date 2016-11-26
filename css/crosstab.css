@@ -136,6 +136,10 @@
 .crosstab-container .sum-col .has-tip {
 	font-weight: inherit;
 	border-bottom: 0;
+	overflow:hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: 100%;
 }
 
 .crosstab-container table tr.heading-row {

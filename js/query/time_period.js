@@ -63,8 +63,8 @@ TimePeriod.render = function(app_state, modal_state, query_state, lang) {
 			h('button.secondary', {
 				'ev-click': [
           hg.send(app_state.channels.sel_dates, {
-  					startDate: app_state.start_date ? app_state.start_date.toString() + '-01-01': '-',
-  					endDate: app_state.end_date ? app_state.end_date.toString() + '-12-31': '-',
+  					startDate: app_state.start_date ? app_state.start_date.toString() + '-04-01': '-',
+  					endDate: app_state.end_date ? app_state.end_date.toString() + '-03-31': '-',
   				}),
           hg.send(query_state.channels.addFilterRange, {
             dim: "decade",
