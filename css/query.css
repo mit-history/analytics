@@ -69,6 +69,7 @@
 
 .query-pane-content {
 	max-width: 450px;
+  position: relative;
 }
 
 .query-pane-section {
@@ -86,6 +87,7 @@
 	position:absolute;
 	top:50%;
 	right:-15px;
+  z-index: 2;
 }
 
 .selector .dropdown-list {
@@ -327,16 +329,18 @@ ul.dropdown-list-content.dropdown-inline {
 }
 
 .filter-container {
-	height: 100%;
-	background-color: #DADBDB;
+  position: absolute;
+  flex-direction: column;
+  top: 0;
+  left: calc(100% + 8px);
+  z-index: 1;
+  bottom: 0;
+  background-color: #DADBDB;
 	box-sizing: border-box;
 	border-left:solid 2px #BACAD4;
 	padding:10px 30px;
+  min-width: 150px;
 	max-width:250px;
-	display:flex;
-	flex-direction:column;
-	height:100%;
-	max-height:100%;
 }
 
 .filter-container span, .filter-container input {

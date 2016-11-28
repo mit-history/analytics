@@ -327,12 +327,12 @@ Query.render = function (app_state, modal_state, query_state, lang) {
                         DimensionSelector.render(modal_state, query_state, 'cols', lang),
                         h('div.arrow-indicator' + (query_state.selectedDimension && query_state.selectedDimension.axis == 'cols' ? '.visible-container' : '.hidden-container'))
                     ]),
+                ,
+                h('section.filter-container' + (modal_state.queryPanelOpen && query_state.selectedDimension ? '.visible-flex-container' : '.hidden-container'), [
+                    (query_state.selectedDimension ? Filter.render(modal_state, query_state, query_state.selectedDimension.dim, query_state.selectedDimension.axis, lang) : ''),
                 ])
+              ])
             ]),
-
-            h('section.filter-container' + (modal_state.queryPanelOpen && query_state.selectedDimension ? '.visible-flex-container' : '.hidden-container'), [
-                (query_state.selectedDimension ? Filter.render(modal_state, query_state, query_state.selectedDimension.dim, query_state.selectedDimension.axis, lang) : ''),
-            ])
         ])
     )
 }

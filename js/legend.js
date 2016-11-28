@@ -4,6 +4,7 @@ const msgs = require("json!../i18n/query.json")
 const hg = require('mercury')
 const h = require('mercury').h
 const svg = require('mercury/svg')
+const max_group = 10
 const max_legend = 20
 const vector_palette = ['#2379b4', '#f7941e', '#2ba048', '#d62930',
                         '#f8b6c0', '#006838', '#662d91', '#d7df23', '#ec008c', '#0c0c54',
@@ -49,6 +50,7 @@ Legend.render = function(state, query, data, chart, lang) {
     return true
   })
   sums = sums.sort((a,b) => d3.descending(f_y(a), f_y(b)))
+  let sel_groups = sums.slice(0, max_group).map(f_x)
 
   let vectors = {}
   data.forEach( (d) => {
