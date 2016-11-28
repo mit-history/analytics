@@ -90,10 +90,10 @@ Legend.render = function(state, query, data, chart, lang) {
           title: fmt_color(d)
           }, [
           svg('svg', {width: 40, height: 15}, [
-            svg('path', {d: (ordinal ? 'M20 -5 h10 v10 h-10 z' : 'M0 8 H30'), stroke: color(d), fill: color(d)}),
+            svg('path', {d: (ordinal ? 'M20 5 h10 v5 h-10 z' : 'M0 8 H30'), stroke: color(d), fill: color(d)}),
             !ordinal ? svg('circle', {cx:15, cy: 8, r: (state.focus === d ? 4 : 2), fill: color(d)}) : null
           ]),
-          h('span', fmt_color(d))]))))]));
+          h('span', {}, fmt_color(d))]))))]));
 }
 
 export default Legend;
