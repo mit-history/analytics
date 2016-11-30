@@ -12,8 +12,9 @@ const msgs = require("json!../i18n/app.json")
 
 var hg = require('mercury')
 var h = require('mercury').h
-
+const saveAs = require("./third-party/save-svg-as-png/saveSvgAsPng");
 const Chart = require('./chart')
+const jsPDF = require("./third-party/jsPDF/jspdf.debug");
 const datapoint = require('./util/datapoint')
 
 const vdom = require('virtual-dom')
@@ -23,6 +24,8 @@ const svg_size = [1250, 515]
 function Download(url) {
   return hg.state({
     open: hg.value(false),
+    jpeg: hg.value(),
+    pdf: hg.value(),
     url: url,
     channels: {
       toggleOpen: Download.toggleOpen
@@ -45,25 +48,17 @@ Download.render = function(state, lang) {
         svg_elem.innerHTML +
         '</svg>'
   let svg_base64 = encodeURIComponent(window.btoa(svg_xml))
-
-  /*let canvas = document.getElementById("canvas");
-  if(!canvas) {
-    canvas = document.createElement("canvas");
-    canvas.id = "canvas";
-    canvas.width = svg_size[0];
-    canvas.height = svg_size[1];
-    document.body.appendChild(canvas);
-
-    let context = canvas.getContext("2d");
-    let image = new Image();
-    image.width = svg_size[0];
-    image.height = svg_size[1];
-    image.onload = function() {
-      context.drawImage(image, 0, 0);
-    }
-    image.src = "data:image/svg+xml;base64," + window.btoa(svg_xml);
-    document.body.appendChild(image);
-  }*/
+  saveAs.svgAsPngUri(svg_elem, {
+      encoderType: "image/jpeg",
+      backgroundColor: "white",
+      width: svg_size[0],
+      height: svg_size[1]
+    }, function(uri) {
+      state.jpeg = uri;
+      let document = new jsPDF("landscape");
+      document.addImage(state.jpeg, "JPEG", 10, 40, 280, 160);
+      state.pdf = document.output("datauristring")
+  });
 
   var api = datapoint(state.download.url)
   var all_dims = ([]).concat(state.query.rows).concat(state.query.cols)
@@ -75,7 +70,8 @@ Download.render = function(state, lang) {
     h('div.formats', [
       h('a.format', { download: 'cfrp-table.csv', href: download_url }, 'CSV'),
       h('a.format', { download: 'cfrp-chart.svg', href: 'data:image/svg+xml;base64,' + svg_base64 }, 'SVG'),
-      // h('a.format', { download: 'cfrp-chart.jpg', href: canvas.toDataURL("image/jpeg") }, 'JPG')
+      h('a.format', { download: 'cfrp-chart.jpg', href: state.jpeg }, 'JPG'),
+      h('a.format', { download: 'cfrp-chart.pdf', href: state.pdf }, 'PDF')
     ])
   ])
 }

@@ -16,6 +16,7 @@ function Legend() {
     focus: hg.value(null),
     channels: {
       focus: (state, key) => {
+        console.log(key);
         state.focus.set(state.focus() === key ? null : key)
       }
     }

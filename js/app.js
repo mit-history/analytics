@@ -338,6 +338,8 @@ App.focus_cell = function(state, data) {
   var new_focus = data.focus
   console.log("Setting new focus: " + JSON.stringify(new_focus))
   state.focus_cell.set(new_focus)
+  state.legend.focus.set(new_focus[state.query.cols]);
+  state.chart.focus.set(new_focus[state.query.cols]);
   Carousel.setSlide(state.carousel, 1)
 }
 
