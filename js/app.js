@@ -136,6 +136,7 @@ function App(url, initial_query) {
               open_day_period_filter: App.open_day_period_filter,
               open_theater_period_filter: App.open_theater_period_filter,
               reset_dates: App.reset_dates,
+              focus_col: App.focus_col,
               focus_cell: App.focus_cell,
               focus_day: App.focus_day,
               focus_theater: App.focus_theater,
@@ -334,12 +335,21 @@ App.reset_dates = function(state) {
   state.end_date.set(1790);
 }
 
+App.focus_col = function(state, data) {
+  state.legend.focus.set(data);
+  state.chart.focus.set(data);
+}
+
+App.focus_row = function(state, data) {
+
+}
+
 App.focus_cell = function(state, data) {
   var new_focus = data.focus
-  console.log("Setting new focus: " + JSON.stringify(new_focus))
-  state.focus_cell.set(new_focus)
-  state.legend.focus.set(new_focus[state.query.cols]);
-  state.chart.focus.set(new_focus[state.query.cols]);
+  let first_col = state.query.cols.slice(0, 1);
+  state.focus_cell.set(new_focus);
+  state.legend.focus.set(new_focus[first_col]);
+  state.chart.focus.set(new_focus[first_col]);
   Carousel.setSlide(state.carousel, 1)
 }
 
@@ -430,7 +440,7 @@ App.render = function(state) {
 				  h('section.chart-containter.' + state.tableView, [
             h('div.loading-indicator' + (state.loading ? '.show' : '.hide'), h('div.loading-icon')),
             Chart.render(state.chart, state.query, state.cube_data, chart_size(), false, lang),
-            Legend.render(state.legend, state.query, state.cube_data, state.chart, lang)
+            Legend.render(state.legend, state, state.query, state.cube_data, lang)
           ]),
         ]),
         // h('div.data-container-pane' + (state.pane_display == 2 ? '.show' : '.hide'), [

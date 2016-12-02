@@ -27,15 +27,15 @@ function ordinal_domain(data, f) {
   return typeof f(data[0]) !== 'number'
 }
 
-Legend.render = function(state, query, data, chart, lang) {
+Legend.render = function(state, app, query, data, lang) {
   let origdata = data
   data = data ? (data["1x1"] || []) : []
   let f_x = (d) => d && query.rows.length ? d[ query.rows[query.rows.length-1] ] : 'tous'
   let f_y = (d) => d[query.agg]
-  let f_color = (d) => d && query.cols.length ? d[ query.cols[query.cols.length-1] ] : 'tous'
+  let f_color = (d) => d && query.cols.length ? d[ query.cols[0] ] : 'tous'
   let fmt_x = schema.format(lang, query.rows[query.rows.length-1], 10)
-  let fmt_color = schema.format(lang, query.cols[query.cols.length-1], 10)
-  let fmt_color_long = schema.format(lang, query.cols[query.cols.length-1])
+  let fmt_color = schema.format(lang, query.cols[0], 10)
+  let fmt_color_long = schema.format(lang, query.cols[0])
   let ordinal = ordinal_domain(data, (v) => fmt_x(f_x(v)))
 
   let sums
@@ -87,7 +87,7 @@ Legend.render = function(state, query, data, chart, lang) {
   return (h('div.legend', [
       h('h6', msgs[lang][query.cols]), h('div.legend-labels',
         [].concat(legend_labels.map((d, i) => h('p' + (state.focus === d ? '.highlight' : ''), {
-          'ev-click': [hg.send(chart.channels.focus, d), hg.send(state.channels.focus, d)],
+          'ev-click': [hg.send(app.channels.focus_col, d)],
           title: fmt_color(d)
           }, [
           svg('svg', {width: 40, height: 15}, [

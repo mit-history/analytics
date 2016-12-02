@@ -40,7 +40,7 @@ const schema = {
 //   seating_area:
 //     subscript(playbills,
 //     [ "seating_area"]),
-  seating_area: 
+  seating_area:
     [ "seating_area" ],
   acts:
     subscript(playbills,
@@ -172,17 +172,17 @@ function format(lang, field, len) {
 
     // aggregates
     case /sum_receipts/.test(field):
-      return fmt.numberFormat(",f")
+      return fmt.numberFormat(",.2f")
     case /sum_receipts_weighted/.test(field):
       return fmt.numberFormat(",f")
     case /performances_days/.test(field):
       return fmt.numberFormat(",f")
     case /mean_receipts_day/.test(field):
-      return fmt.numberFormat(",f")
+      return fmt.numberFormat(",.2f")
     case /mean_receipts_day_weighted/.test(field):
       return fmt.numberFormat(",f")
     case /mean_price/.test(field):
-      return fmt.numberFormat(",f")
+      return fmt.numberFormat(",.2f")
     case /count_authors_(\d)/.test(field):
       return fmt.numberFormat(",f")
     case /count_titles_(\d)/.test(field):
