@@ -137,11 +137,13 @@ function App(url, initial_query) {
               open_theater_period_filter: App.open_theater_period_filter,
               reset_dates: App.reset_dates,
               focus_col: App.focus_col,
+              focus_row: App.focus_row,
               focus_cell: App.focus_cell,
               focus_day: App.focus_day,
               focus_theater: App.focus_theater,
               toggle_modal: App.toggle_modal,
               set_pane: App.set_pane,
+              open_calendar: App.open_calendar,
               switchTableView: App.switchTableView,
             }
           })
@@ -160,7 +162,6 @@ function App(url, initial_query) {
 
     state.cube_data(alignFocus)
     state.query.agg(loadCalendar)
-    state.focus_cell(loadCalendar)
 
     // this might be bad form... how to send a message to a component?
     state.focus_day( (date) => Register.setDate(state.register, url, date) )
@@ -277,6 +278,10 @@ App.sel_dates = function(state, data) {
   }
 }
 
+App.open_calendar = function(state, data) {
+  state.pane_display.set(2);
+}
+
 App.set_start_date = function(state, data) {
   state.start_date.set(parseInt(data.startDate, 10) || 0)
 }
@@ -333,23 +338,34 @@ App.open_theater_period_filter = function(state) {
 App.reset_dates = function(state) {
   state.start_date.set(1680);
   state.end_date.set(1790);
+  state.period_filters.set({});
+  state.pane_display.set(1);
 }
 
 App.focus_col = function(state, data) {
-  state.legend.focus.set(data);
-  state.chart.focus.set(data);
+  let focus = state.focus_cell;
+  focus[data.dimension] = data.value;
+  state.focus_cell.set(focus);
+  state.legend.focus.set(data.value);
+  state.chart.focus.set(data.value);
 }
 
 App.focus_row = function(state, data) {
-
+  let focus = state.focus_cell;
+  focus[data.dimension] = data.value;
+  focus.agg = data.agg;
+  state.focus_cell.set(focus);
+  state.chart.point.set(data.value);
 }
 
 App.focus_cell = function(state, data) {
-  var new_focus = data.focus
+  let new_focus = data.focus
   let first_col = state.query.cols.slice(0, 1);
+  let first_row = state.query.rows.slice(0, 1)
   state.focus_cell.set(new_focus);
   state.legend.focus.set(new_focus[first_col]);
   state.chart.focus.set(new_focus[first_col]);
+  state.chart.point.set(new_focus[first_row]);
   Carousel.setSlide(state.carousel, 1)
 }
 
@@ -439,14 +455,13 @@ App.render = function(state) {
           ]),
 				  h('section.chart-containter.' + state.tableView, [
             h('div.loading-indicator' + (state.loading ? '.show' : '.hide'), h('div.loading-icon')),
-            Chart.render(state.chart, state.query, state.cube_data, chart_size(), false, lang),
+            Chart.render(state.chart, state, state.query, state.cube_data, chart_size(), false, lang),
             Legend.render(state.legend, state, state.query, state.cube_data, lang)
           ]),
         ]),
-        // h('div.data-container-pane' + (state.pane_display == 2 ? '.show' : '.hide'), [
-        //   hg.partial(Calendar.render, state, lang),
-        //   h('div.register-container' + (state.show_registry  ? '.show' :'.hide'), hg.partial(Register.render, state.register))
-        // ]),
+        h('div.data-container-pane' + (state.pane_display == 2 ? '.show' : '.hide'), [
+            Calendar.render(state, chart_size(), lang)
+        ]),
 			])
 
     ])

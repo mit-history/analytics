@@ -196,6 +196,18 @@
 .query-pane-section.header button {
 	background-color:#88C4C6;
 	color:#000;
+	margin-right: 3px;
+	margin-left: 3px;
+}
+
+.query-pane-section.header button:first-of-type {
+	margin-right: 3px;
+	margin-left: 0;
+}
+
+.query-pane-section.header button:last-of-type {
+	margin-left: 3px;
+	margin-right: 0;
 }
 
 .query-pane-section h2 {
@@ -339,7 +351,7 @@ ul.dropdown-list-content.dropdown-inline {
 	box-sizing: border-box;
 	border-left:solid 2px #BACAD4;
 	padding:10px 30px;
-  min-width: 150px;
+  min-width: 200px;
 	max-width:250px;
 }
 

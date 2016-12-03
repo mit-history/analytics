@@ -19,6 +19,11 @@
     "pane_selector_button_2" : "Calendrier",
     "pane_selector_button_3" : "Registre",
 
+    "sum_receipts": "{agg} Livres est la somme des recettes {cols} {rows}",
+    "performances_days": "{agg} est le nombre de représentations par jour {cols} {rows}",
+    "mean_receipts_day": "{agg} Livres est la moyenne des recettes par jour {cols} {rows}",
+    "mean_price": "{agg} Livres est la moyenne du prix des places {cols} {rows}",
+
     "download" : "Télécharger au format"
   }
 }

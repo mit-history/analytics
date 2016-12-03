@@ -6,10 +6,7 @@ const h = require('mercury').h
 const svg = require('mercury/svg')
 const max_group = 10
 const max_legend = 20
-const vector_palette = ['#2379b4', '#f7941e', '#2ba048', '#d62930',
-                        '#f8b6c0', '#006838', '#662d91', '#d7df23', '#ec008c', '#0c0c54',
-                        '#a8e0f9', '#da1c5c', '#726658', '#603913', '#231f20', '#2b3990',
-                        '#9fc59a', '#819cd1', '#92278f', '#00a79d', '#27aae1', '#f04b44']
+const rendering = require('./util/rendering')
 
 function Legend() {
   return hg.state({
@@ -67,27 +64,13 @@ Legend.render = function(state, app, query, data, lang) {
 
 
 
-  let legend_labels = []
-  if(!ordinal) {
-    let maxima = Object.create({})
-    sel_vectors.forEach( (key) => {
-      maxima[key] = d3.max(vectors[key], (d) => d[query.agg])
-    })
-    maxima = d3.entries(maxima)
-    maxima.sort( (a,b) => d3.descending(a.value, b.value))
-    legend_labels = maxima.map( (d) => d.key )
-  } else {
-    legend_labels = d3.keys(vectors)
-  }
-  let color = d3.scale.ordinal()
-    .range(vector_palette)
-    .domain(legend_labels)
-
+  let legend_labels = d3.keys(vectors)
+  let color = rendering.colors(legend_labels);
 
   return (h('div.legend', [
       h('h6', msgs[lang][query.cols]), h('div.legend-labels',
         [].concat(legend_labels.map((d, i) => h('p' + (state.focus === d ? '.highlight' : ''), {
-          'ev-click': [hg.send(app.channels.focus_col, d)],
+          'ev-click': [hg.send(app.channels.focus_col, {dimension: query.cols[0], value: d})],
           title: fmt_color(d)
           }, [
           svg('svg', {width: 40, height: 15}, [

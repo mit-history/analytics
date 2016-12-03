@@ -10,22 +10,67 @@
 
 require('../css/crosstab.css')
 
+const hints = require("json!../i18n/app.json");
 const msgs = require("json!../i18n/query.json")
-
-var i18n = require('./util/i18n')
+const i18n = require('./util/i18n')
+const rendering = require('./util/rendering')
+const foundation = require('./util/foundation-utils');
+const schema = require('../cfrp-schema')
+const hint_suffix = "_hint";
 
 var hg = require('mercury')
 var h = require('mercury').h
-
 var svg = require('virtual-hyperscript/svg')
-
 var assign = require('object-assign')
-
-var schema = require('../cfrp-schema')
-var foundation = require('./util/foundation-utils');
 
 function Crosstab() {
   return null
+}
+
+function getSelectionHint(app_state, query_state, cube_data, lang) {
+  let rowKey = query_state.rows[0];
+	let colKey = query_state.cols[0];
+  let aggKey = query_state.agg;
+  let hint = "";
+
+  if (cube_data
+    && cube_data['0x1']
+    && cube_data['1x0']
+    && cube_data['1x1']
+    && app_state.focus_cell[rowKey]
+    &&	app_state.focus_cell[colKey]) {
+    let aggData = cube_data['1x1'].find((entry) =>
+      entry[colKey] === app_state.focus_cell[colKey] &&
+      entry[rowKey] === app_state.focus_cell[rowKey]);
+    hint = hints[lang][aggKey];
+    hint = hint.replace(/\{agg}/, schema.format(lang, aggKey)(aggData[aggKey]));
+    let cols = [], rows = [];
+    query_state.cols.forEach(function(key) {
+      let colData = cube_data['0x1']
+        .find((column) => column[colKey] === app_state.focus_cell[colKey]);
+      if(colData) {
+        cols.push(msgs[lang][key + hint_suffix].replace(new RegExp("\\{" + key + "}"),
+          schema.format(lang, colKey)(colData[colKey])))
+      }
+    });
+    query_state.rows.forEach(function(key) {
+      let rowData = cube_data['1x0']
+        .find((row) => row[rowKey] === app_state.focus_cell[rowKey])
+      if(rowData) {
+        console.log("Hint for: " + key);
+        rows.push(msgs[lang][key + hint_suffix]
+          .replace(new RegExp("\\{" + key + "}"),
+            schema.format(lang, rowKey)(rowData[rowKey])));
+      }
+    });
+    // TODO, better phrasing when more than one filter on an axis
+    // hint = hint.replace(/\{cols}/, (cols.length > 1 ? cols.join(", ") : cols[0]));
+    //hint = hint.replace(/\{rows}/, (rows.length > 1 ? rows.join(", ") : rows[0]));
+    hint = hint.replace(/\{cols}/, cols[0]);
+    hint = hint.replace(/\{rows}/, rows[0]);
+  }
+
+  return hint;
 }
 
 Crosstab.generateRowHeadersColumn = function (query_state, cube_data, lang) {
@@ -39,7 +84,7 @@ Crosstab.generateRowHeadersColumn = function (query_state, cube_data, lang) {
 	var lRows = [h('tr', h('th.cross-cell', { 'ev-click': hg.send(query_state.channels.interchangeAxis) }, 'X'))];
 	for (var i in lDataSet) {
 		if (lDataSet[i][lRowKey]) {
-			var lData = lDataSet[i][lRowKey].toString();
+			var lData = schema.format(lang, lRowKey)(lDataSet[i][lRowKey]);
 			lRows.push(h('tr', h('th', h('span.has-tip', {
         "ev-tooltip-create": new foundation.Tooltip(),
         title: lData
@@ -70,18 +115,28 @@ Crosstab.generateTableData = function (app_state, query_state, cube_data, lang) 
 	var lDataSet 		= cube_data['0x1'];
 	var lTableCols 	= [];
 	var lHeaderRow 	= [];
-	var lColCount 	= 0;
-	for (var i in lDataSet) {
+  let columns     = [];
+  for (var i in lDataSet) {
 		if (lDataSet[i][lColKey]) {
-			lTableCols.push(h('col', {width: '100px'}));
-			var lData = formatter(lDataSet[i][lColKey].toString());
-      lHeaderRow.push(h('th', h('span.has-tip', {
-        "ev-tooltip-create": new foundation.Tooltip(),
-        title: lData
-      }, lData)));
-			lColCount ++;
+      columns.push(formatter(lDataSet[i][lColKey]));
 		}
 	}
+  let color = rendering.colors(columns);
+  columns.forEach(function(lData) {
+    let cellColor;
+    if (app_state.focus_cell[lColKey] == lData) {
+      cellColor = rendering.lighten(color(lData), 0.2);
+    }
+    lTableCols.push(h('col', {width: '100px'}));
+    lHeaderRow.push(h('th', {
+        style: {'background-color': cellColor}
+      }, h('span.has-tip', {
+          "ev-tooltip-create": new foundation.Tooltip(),
+          title: lData
+        }, lData)
+      ));
+  });
+
 	if (lHeaderRow.length <= 0) {
 		// Sometimes, no header is present because no X axis dimension was set
 		lTableCols.push(h('col', {width: '100px'}));
@@ -104,6 +159,7 @@ Crosstab.generateTableData = function (app_state, query_state, cube_data, lang) 
 	var lRowDataSet 	= cube_data['1x0'];
 	var lFullDataSet 	= cube_data['1x1'];
 
+
 	for (var i in cube_data['1x0']) {
 		var lRowCubeData = cube_data['1x0'][i];
 		var lDataRow = [];
@@ -123,14 +179,19 @@ Crosstab.generateTableData = function (app_state, query_state, cube_data, lang) 
 				var lClickEvntObject = {focus: {}};
 				lClickEvntObject.focus[lRowKey] = lRowCubeData[lRowKey];
 				lClickEvntObject.focus[lColKey] = lColCubeData[lColKey];
+        lClickEvntObject.focus.agg = lCellData;
 
-				var lClass= '';
+				let cellColor;
+
 				if (app_state.focus_cell[lRowKey] == lRowCubeData[lRowKey]
-						&& app_state.focus_cell[lColKey] == lColCubeData[lColKey]) {
-					lClass = ".selected";
+					&&	app_state.focus_cell[lColKey] == lColCubeData[lColKey]) {
+					cellColor = rendering.lighten(color(lColCubeData[lColKey]), 0.6);
+				} else if (app_state.focus_cell[lColKey] == lColCubeData[lColKey]) {
+					cellColor = rendering.lighten(color(lColCubeData[lColKey]), 0.2);
 				}
 
-        lDataRow.push(h('td' + lClass, {
+        lDataRow.push(h('td', {
+          style: {'background-color': cellColor},
 					'ev-click': hg.send(app_state.channels.focus_cell, lClickEvntObject)
 				}, h('span.has-tip', {
           "ev-tooltip-create": new foundation.Tooltip(),
@@ -267,6 +328,7 @@ Crosstab.render = function(state, lang) {
 	  	h('div.x-axis-data-container', [
 				// h('div.x-axis-dimensions-container', h('ul.axis-selected-dimensions', renderDimentionList('cols'))),
 				h('div.data-table-container', lTableDisplay),
+        h('div.hint', h('p', getSelectionHint(state, state.query, state.cube_data, lang)))
 	  	]),
 	  ]);
 	} else {

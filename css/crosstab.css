@@ -7,6 +7,11 @@
 *
 */
 
+.hint {
+	font-size: 12px;
+	font-weight: bold;
+}
+
 .crosstab-container {
 	width:100%;
 	border-bottom:solid 2px #BACAD4;
@@ -31,8 +36,7 @@
 .crosstab-container .content-container {
 	width:90%;
 	max-width:1200px;
-	max-height:90%;
-  margin: auto;
+	margin: auto;
   position: absolute;
   top: 0; left: 0; bottom: 0; right: 0;
 }
@@ -67,7 +71,7 @@
 }
 
 .crosstab-container .data-table-container {
-	height:90%;
+	height:85%;
 	overflow-x:hidden;
 	overflow-y:auto;
 	position:relative;
@@ -97,6 +101,10 @@
 .crosstab-container table td.selected {
 	background-color: #65A8DF;
 	font-weight: 500;
+}
+
+.crosstab-container table td.partly-selected {
+	background-color: #8DCEFF;
 }
 
 .crosstab-container .cross-cell {

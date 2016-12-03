@@ -26,7 +26,6 @@ const assign = require('object-assign')
 
 const Status = require('./status')
 
-const cellSize = 8
 const timeFormat = d3.time.format
 const numberFormat = d3.format
 
@@ -42,6 +41,7 @@ const dateIndexFormat = d3.time.format('%Y-%m-%d')
 
 
 var y_global = null
+var cellSize = 12
 
 var sameDate = function(d0, d1) {
   return d0 && d1 && (d1 - d0 === 0)
@@ -64,7 +64,7 @@ var greyscale = function(c) {
 }
 
 
-function GraphWidget(calendar_data, theater_data, calendar_extent, sel_dates, focus_day, mode, scale, lang) {
+function GraphWidget(calendar_data, theater_data, calendar_extent, sel_dates, focus_day, mode, scale, sizes , lang) {
   this.calendar_data = calendar_data
   this.theater_data = theater_data
   this.calendar_extent = calendar_extent
@@ -73,19 +73,20 @@ function GraphWidget(calendar_data, theater_data, calendar_extent, sel_dates, fo
   this.mode = mode
   this.scale = scale
   this.lang = lang
+  this.sizes = sizes;
 }
 
 GraphWidget.prototype.type = 'Widget'
 
 GraphWidget.prototype.init = function() {
   var elem = document.createElement('div')
-
+  cellSize = (this.sizes[0] - 60) / 60;
   var graph = d3.select(elem)
       .classed('graph', true)
   var canvas = graph.append('canvas')
-      .attr('width', 550)
+      .attr('width', this.sizes[0])
   var svg = graph.append('svg')
-    .attr('width', 550)
+    .attr('width', this.sizes[0])
   var foreground = svg.append('g')
       .classed('foreground', true)
       .attr('transform', 'translate(' + margins.left + ',' + margins.top + ')')
@@ -384,7 +385,7 @@ function Calendar() {
 
 var dragging = false
 
-Calendar.render = function(state, lang) {
+Calendar.render = function(state, sizes, lang) {
 
   var dragDateExtent = hg.BaseEvent(function (ev, broadcast) {
     // @see https://github.com/Raynos/mercury/blob/master/examples/geometry/lib/drag-handler.js
@@ -442,7 +443,9 @@ Calendar.render = function(state, lang) {
         'ev-click' : sendDay(state.channels.focus_day)
       }, [
         Status.render(state, lang, scale, state.status),
-        new GraphWidget(state.calendar_data, state.theater_data, state.calendar_extent, state.sel_dates, state.focus_day, 'focus', scale, lang)
+        new GraphWidget(state.calendar_data,
+          state.theater_data, state.calendar_extent, state.sel_dates,
+          state.focus_day, 'focus', scale, sizes, lang)
       ])
   )
 }

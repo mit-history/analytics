@@ -300,6 +300,7 @@ Query.render = function (app_state, modal_state, query_state, lang) {
                     h('header.query-pane-section.header', [
                         h('h1', msgs[lang]['comparison_tool_title']),
                         h('button', { 'ev-click': [hg.send(query_state.channels.resetSearch), hg.send(app_state.channels.reset_dates)]}, msgs[lang]['new_search_button']),
+                        // h('button', { 'ev-click': [hg.send(app_state.channels.open_calendar)]}, msgs[lang]['calendar_tool_title'])
                     ]),
 
                     h('header.query-pane-section', [

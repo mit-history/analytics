@@ -42,6 +42,7 @@ const svg = require('mercury/svg')
 const d3 = require('d3')
 
 const datapoint = require('./util/datapoint')
+const rendering = require('./util/rendering');
 const schema = require('../cfrp-schema')
 
 const margins = { top: 10, right: 130, bottom: 100, left: 80 }
@@ -52,27 +53,25 @@ const max_group = 10
 
 const min_spacing = 20
 
-const vector_palette = ['#2379b4', '#f7941e', '#2ba048', '#d62930',
-                        '#f8b6c0', '#006838', '#662d91', '#d7df23', '#ec008c', '#0c0c54',
-                        '#a8e0f9', '#da1c5c', '#726658', '#603913', '#231f20', '#2b3990',
-                        '#9fc59a', '#819cd1', '#92278f', '#00a79d', '#27aae1', '#f04b44']
-
-
 /* component state */
 function Chart() {
   return hg.state({
     focus: hg.value(null),
+    point: hg.value(null),
     channels: {
       focus: (state, key) => {
 //        console.log('clicked ' + JSON.stringify(key) + '; state is ' + JSON.stringify(state.focus()))
         state.focus.set(state.focus() === key ? null : key)
+      },
+      point: (state, key) => {
+        state.point.set(state.point() === key ? null : key)
       }
     }
   })
 }
 
 /* state, query: required; data, size, lang: optional */
-Chart.render = function(state, query, data, size, legend, lang) {
+Chart.render = function(state, app, query, data, size, legend, lang) {
   /* For now, queries map to graph as follows:
    * x axis is last dimension in rows
    * y axis is the aggregate value
@@ -186,24 +185,11 @@ Chart.render = function(state, query, data, size, legend, lang) {
     return [ svg('tspan', {}, v1), (v1 !== v2) ? svg('title', {}, v2) : null ]
   }
 
-  let legend_labels = []
-  if(!ordinal) {
-    let maxima = Object.create({})
-    sel_vectors.forEach( (key) => {
-      maxima[key] = d3.max(vectors[key], (d) => d[query.agg])
-    })
-    maxima = d3.entries(maxima)
-    maxima.sort( (a,b) => d3.descending(a.value, b.value))
-    legend_labels = maxima.map( (d) => d.key )
-  } else {
-    legend_labels = d3.keys(vectors)
-  }
+  let legend_labels = d3.keys(vectors)
 
 //  console.log('legend_labels: ' + JSON.stringify(legend_labels.slice(0,max_legend)))
 
-  let color = d3.scale.ordinal()
-    .range(vector_palette)
-    .domain(legend_labels)
+  let color = rendering.colors(legend_labels);
 
   let num_legend_labels = Math.min(max_legend+1, legend_labels.length) /* +1 for extra labels line */
 
@@ -221,10 +207,19 @@ Chart.render = function(state, query, data, size, legend, lang) {
 
       svg('g', {class: 'marks'},
         d3.entries(vectors).map( (d,i) =>
-          svg('g', {class: 'line l' + i, transform: 'translate(' + (i * bar_width) + ')',
-                    opacity: (state.focus === null || state.focus === d.key) ? 1 : 0.2},
+          svg('g', {
+              class: 'line l' + i, transform: 'translate(' + (i * bar_width) + ')',
+              opacity: (state.focus === null || state.focus === d.key) ? 1 : 0.2
+            },
             d.value.map( (dn) =>
-              !ordinal ? svg('circle', {cx: x(f_x(dn)), cy:y(f_y(dn)), r:2, fill: color(d.key)}) : null
+              !ordinal ? svg('circle', {
+                cx: x(f_x(dn)), cy:y(f_y(dn)),
+                r: (state.point === f_x(dn) && state.focus === d.key ? 6 : 4), fill: color(d.key),
+                'ev-click': [
+                  hg.send(app.channels.focus_row, {dimension: query.rows[0], value: f_x(dn), agg: f_y(dn)}),
+                  hg.send(app.channels.focus_col, {dimension: query.cols[0], value: d.key})
+                ]
+              }) : null
             ).concat([
               svg('path', {d: plot(d.value), stroke: color(d.key), fill: (ordinal ? color(d.key) : 'none')}),
               svg('title', d.key)
