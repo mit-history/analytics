@@ -35,7 +35,7 @@ const day = d3.time.format('%w')
 const weeksOffset = (e, y) => d3_time.sunday.count(d3_time.sunday(new Date(e.getFullYear(), 3, 1)), y)
 const invertWeekOffset = (y, c) => d3_time.sunday.offset(d3_time.sunday(new Date(y.getFullYear(), 3, 1)), c)
 
-const margins = { top: 30, right: 5, bottom: 10, left: 25 }
+const margins = { top: 30, right: 25, bottom: 10, left: 25 }
 
 const dateIndexFormat = d3.time.format('%Y-%m-%d')
 
@@ -80,7 +80,7 @@ GraphWidget.prototype.type = 'Widget'
 
 GraphWidget.prototype.init = function() {
   var elem = document.createElement('div')
-  cellSize = (this.sizes[0] - 60) / 60;
+  cellSize = (this.sizes[0] - (margins.left + margins.right)) / 60;
   var graph = d3.select(elem)
       .classed('graph', true)
   var canvas = graph.append('canvas')

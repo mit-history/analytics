@@ -145,30 +145,33 @@ function App(url, initial_query) {
               set_pane: App.set_pane,
               open_calendar: App.open_calendar,
               switchTableView: App.switchTableView,
+              refresh_pane: App.refresh_pane
             }
           })
 
     var debouncingLoadCube = debounce(loadCube, 500)
+    var debouncingLoadCalendar = debounce(loadCalendar, 500);
 
     state.query(function() {
       state.cube_data.set(hg.varhash({}))
       debouncingLoadCube()
+      debouncingLoadCalendar();
     })
 
     state.sel_dates(function() {
       state.cube_data.set(hg.varhash({}))
       debouncingLoadCube()
+      debouncingLoadCalendar();
     })
 
-    state.cube_data(alignFocus)
-    state.query.agg(loadCalendar)
+    state.cube_data(alignFocus);
+    state.query.agg(loadCalendar);
 
     // this might be bad form... how to send a message to a component?
     state.focus_day( (date) => Register.setDate(state.register, url, date) )
 
     loadCube()
     loadTheaters()
-    loadCalendar()
 
     // Loading filters to be used in query panel
     filterDims.forEach((dim) => api.domain(dim, (vals) => {
@@ -190,29 +193,31 @@ function App(url, initial_query) {
   return state
 
   function loadCube() {
-    var query = state.query()
-    var first_row = query.rows.slice(0, 1)
-    var first_col = query.cols.slice(0, 1)
-    var day_window = state.sel_dates ? { day : state.sel_dates() } : {}
+    if(state.pane_display() === 1) {
+      var query = state.query()
+      var first_row = query.rows.slice(0, 1)
+      var first_col = query.cols.slice(0, 1)
+      var day_window = state.sel_dates ? { day : state.sel_dates() } : {}
 
-    state.loading.set(true);
+      state.loading.set(true);
 
-    // load the 4 fundamental combinations of cube dimensions;
-    // remainder are accessible via drill-down in the UI
-    queue().defer(api.summarize, [], query.agg, query.filter, day_window)
-           .defer(api.summarize, first_row, query.agg, query.filter, day_window)
-           .defer(api.summarize, first_col, query.agg, query.filter, day_window)
-           .defer(api.summarize, [].concat(first_row).concat(first_col), query.agg, query.filter, day_window)
-           .await( (err, d1, d2, d3, d4) => {
-              if(err) { throw err }
-              state.cube_data.set({
-                '0x0': d1,
-                '1x0': d2,
-                '0x1': d3,
-                '1x1': d4
-              })
-              state.loading.set(false);
-          })
+      // load the 4 fundamental combinations of cube dimensions;
+      // remainder are accessible via drill-down in the UI
+      queue().defer(api.summarize, [], query.agg, query.filter, day_window)
+             .defer(api.summarize, first_row, query.agg, query.filter, day_window)
+             .defer(api.summarize, first_col, query.agg, query.filter, day_window)
+             .defer(api.summarize, [].concat(first_row).concat(first_col), query.agg, query.filter, day_window)
+             .await( (err, d1, d2, d3, d4) => {
+                if(err) { throw err }
+                state.cube_data.set({
+                  '0x0': d1,
+                  '1x0': d2,
+                  '0x1': d3,
+                  '1x1': d4
+                })
+                state.loading.set(false);
+            })
+    }
   }
 
   function alignFocus() {
@@ -221,23 +226,9 @@ function App(url, initial_query) {
   }
 
   function loadCalendar() {
-    // presumes access to state... seems bad
-    state.calendar_data.set([])
-
-    var day_window = state.sel_dates ? { day : state.sel_dates } : {}
-
-    api.summarize([DATE_NAME], state.query.agg(), state.focus_cell(), day_window, function(err, raw_data) {
-      if (err) { throw err }
-      var data = Object.create({})
-      raw_data.forEach( (d) => {
-        var day = d[DATE_NAME]
-        data[day] = d[state.query.agg()]
-      })
-      state.calendar_data.set(data)
-      // NB this works because the date format sorts alphanumerically
-      var min_max = d3.extent(d3.keys(data))
-      state.calendar_extent.set(min_max)
-    })
+    if(state.pane_display() === 2) {
+      App.loadCalendar(state);
+    }
   }
 
   function loadTheaters() {
@@ -263,22 +254,48 @@ function App(url, initial_query) {
   }
 }
 
+
+App.loadCalendar = function(state) {
+  var api = datapoint(state.url);
+  // presumes access to state... seems bad
+  state.calendar_data.set([])
+
+  var day_window = state.sel_dates ? { day : state.sel_dates() } : {}
+  api.summarize([DATE_NAME], state.query.agg(), state.query.filter(), day_window, function(err, raw_data) {
+    if (err) { throw err }
+    var data = Object.create({})
+    raw_data.forEach( (d) => {
+      var day = d[DATE_NAME]
+      data[day] = d[state.query.agg()]
+    })
+    state.calendar_data.set(data)
+    // NB this works because the date format sorts alphanumerically
+    var min_max = d3.extent(d3.keys(data))
+    state.calendar_extent.set(min_max)
+  })
+}
 // focus changes
+
+App.refresh_pane = function(state, data) {
+  if(state.pane_display === 2) {
+    App.loadCalendar(state);
+  }
+}
 
 App.sel_dates = function(state, data) {
   var { startDate, endDate } = data
   if(startDate && endDate && startDate != '-' && endDate != '-') {
     startDate = new Date(startDate);
     endDate = new Date(endDate);
-    console.log("Setting new date selection: " + startDate + ' - ' + endDate)
     state.sel_dates.set([startDate, endDate])
   } else {
-    console.log("Clearing date selection")
     state.sel_dates.set([])
   }
+  App.refresh_pane(state);
 }
 
 App.open_calendar = function(state, data) {
+  App.loadCalendar(state);
   state.pane_display.set(2);
 }
 

@@ -61,10 +61,10 @@ function Chart() {
     channels: {
       focus: (state, key) => {
 //        console.log('clicked ' + JSON.stringify(key) + '; state is ' + JSON.stringify(state.focus()))
-        state.focus.set(state.focus() === key ? null : key)
+        state.focus.set(state.focus() == key ? null : key)
       },
       point: (state, key) => {
-        state.point.set(state.point() === key ? null : key)
+        state.point.set(state.point() == key ? null : key)
       }
     }
   })
@@ -209,12 +209,12 @@ Chart.render = function(state, app, query, data, size, legend, lang) {
         d3.entries(vectors).map( (d,i) =>
           svg('g', {
               class: 'line l' + i, transform: 'translate(' + (i * bar_width) + ')',
-              opacity: (state.focus === null || state.focus === d.key) ? 1 : 0.2
+              opacity: (state.focus === null || state.focus == d.key) ? 1 : 0.2
             },
             d.value.map( (dn) =>
               !ordinal ? svg('circle', {
                 cx: x(f_x(dn)), cy:y(f_y(dn)),
-                r: (state.point === f_x(dn) && state.focus === d.key ? 6 : 4), fill: color(d.key),
+                r: (state.point === f_x(dn) && state.focus == d.key ? 6 : 4), fill: color(d.key),
                 'ev-click': [
                   hg.send(app.channels.focus_row, {dimension: query.rows[0], value: f_x(dn), agg: f_y(dn)}),
                   hg.send(app.channels.focus_col, {dimension: query.cols[0], value: d.key})

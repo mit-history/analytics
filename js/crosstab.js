@@ -42,32 +42,33 @@ function getSelectionHint(app_state, query_state, cube_data, lang) {
     let aggData = cube_data['1x1'].find((entry) =>
       entry[colKey] === app_state.focus_cell[colKey] &&
       entry[rowKey] === app_state.focus_cell[rowKey]);
-    hint = hints[lang][aggKey];
-    hint = hint.replace(/\{agg}/, schema.format(lang, aggKey)(aggData[aggKey]));
-    let cols = [], rows = [];
-    query_state.cols.forEach(function(key) {
-      let colData = cube_data['0x1']
-        .find((column) => column[colKey] === app_state.focus_cell[colKey]);
-      if(colData) {
-        cols.push(msgs[lang][key + hint_suffix].replace(new RegExp("\\{" + key + "}"),
-          schema.format(lang, colKey)(colData[colKey])))
-      }
-    });
-    query_state.rows.forEach(function(key) {
-      let rowData = cube_data['1x0']
-        .find((row) => row[rowKey] === app_state.focus_cell[rowKey])
-      if(rowData) {
-        console.log("Hint for: " + key);
-        rows.push(msgs[lang][key + hint_suffix]
-          .replace(new RegExp("\\{" + key + "}"),
-            schema.format(lang, rowKey)(rowData[rowKey])));
-      }
-    });
-    // TODO, better phrasing when more than one filter on an axis
-    // hint = hint.replace(/\{cols}/, (cols.length > 1 ? cols.join(", ") : cols[0]));
-    //hint = hint.replace(/\{rows}/, (rows.length > 1 ? rows.join(", ") : rows[0]));
-    hint = hint.replace(/\{cols}/, cols[0]);
-    hint = hint.replace(/\{rows}/, rows[0]);
+    if(aggData) {
+      hint = hints[lang][aggKey];
+      hint = hint.replace(/\{agg}/, schema.format(lang, aggKey)(aggData[aggKey]));
+      let cols = [], rows = [];
+      query_state.cols.forEach(function(key) {
+        let colData = cube_data['0x1']
+          .find((column) => column[colKey] === app_state.focus_cell[colKey]);
+        if(colData) {
+          cols.push(msgs[lang][key + hint_suffix].replace(new RegExp("\\{" + key + "}"),
+            schema.format(lang, colKey)(colData[colKey])))
+        }
+      });
+      query_state.rows.forEach(function(key) {
+        let rowData = cube_data['1x0']
+          .find((row) => row[rowKey] === app_state.focus_cell[rowKey])
+        if(rowData) {
+          rows.push(msgs[lang][key + hint_suffix]
+            .replace(new RegExp("\\{" + key + "}"),
+              schema.format(lang, rowKey)(rowData[rowKey])));
+        }
+      });
+      // TODO, better phrasing when more than one filter on an axis
+      // hint = hint.replace(/\{cols}/, (cols.length > 1 ? cols.join(", ") : cols[0]));
+      //hint = hint.replace(/\{rows}/, (rows.length > 1 ? rows.join(", ") : rows[0]));
+      hint = hint.replace(/\{cols}/, cols[0]);
+      hint = hint.replace(/\{rows}/, rows[0]);
+    }
   }
 
   return hint;
@@ -118,7 +119,7 @@ Crosstab.generateTableData = function (app_state, query_state, cube_data, lang) 
   let columns     = [];
   for (var i in lDataSet) {
 		if (lDataSet[i][lColKey]) {
-      columns.push(formatter(lDataSet[i][lColKey]));
+      columns.push(lDataSet[i][lColKey]);
 		}
 	}
   let color = rendering.colors(columns);
@@ -132,8 +133,8 @@ Crosstab.generateTableData = function (app_state, query_state, cube_data, lang) 
         style: {'background-color': cellColor}
       }, h('span.has-tip', {
           "ev-tooltip-create": new foundation.Tooltip(),
-          title: lData
-        }, lData)
+          title: formatter(lData)
+        }, formatter(lData))
       ));
   });
 

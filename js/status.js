@@ -151,10 +151,6 @@ Status.render = function(state, lang, scale) {
     h('div.titlebar', {
         'ev-click' : hg.send(state.status.channels.toggleRegular)
       }, [
-      h('div.querystatus', (state.sel_dates.length == 2) ? [
-        h('span.seldates', state.sel_dates.map(dateFormat).join(' - ') ),
-        h('span.close', { 'ev-click' : hg.send(state.channels.sel_dates) })
-      ] : []),
       new LegendWidget(scale, format, state.status.regular)
     ])
   )
