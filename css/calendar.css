@@ -25,3 +25,18 @@
 .calendar .period {
   cursor: pointer;
 }
+
+.foreground .tooltip {
+  font-size: 11px;
+}
+
+.x.axis .month {
+  text-transform: capitalize;
+}
+
+.calendar-legend {
+  position: absolute;
+  top: 0px;
+  right: 40px;
+  width: 115px;
+}

@@ -185,6 +185,9 @@ Chart.render = function(state, app, query, data, size, legend, lang) {
     return [ svg('tspan', {}, v1), (v1 !== v2) ? svg('title', {}, v2) : null ]
   }
 
+  let f_focus = (row, r_value, col, c_value) =>
+    Object.defineProperty(Object.defineProperty({}, row, {value: r_value}), col, {value: c_value});
+
   let legend_labels = d3.keys(vectors)
 
 //  console.log('legend_labels: ' + JSON.stringify(legend_labels.slice(0,max_legend)))
@@ -216,8 +219,7 @@ Chart.render = function(state, app, query, data, size, legend, lang) {
                 cx: x(f_x(dn)), cy:y(f_y(dn)),
                 r: (state.point === f_x(dn) && state.focus == d.key ? 6 : 4), fill: color(d.key),
                 'ev-click': [
-                  hg.send(app.channels.focus_row, {dimension: query.rows[0], value: f_x(dn), agg: f_y(dn)}),
-                  hg.send(app.channels.focus_col, {dimension: query.cols[0], value: d.key})
+                  hg.send(app.channels.focus_cell, {focus: f_focus(query.rows[0], f_x(dn), query.cols[0], d.key)})
                 ]
               }) : null
             ).concat([

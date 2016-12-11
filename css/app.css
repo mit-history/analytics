@@ -346,3 +346,47 @@ button.secondary:hover {
 	padding:5px 10px;
 	font-size:12px;
 }
+
+.overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 5000;
+}
+
+.modal-message {
+	position: fixed;
+	padding: 25px;
+	background-color: #E7E8EA;
+	border: 1px solid black;
+	z-index: 10000;
+	top: 50%;
+	margin-top: -125px;
+	left: 50%;
+	margin-left: -225px;
+	width: 450px;
+	height: 250px;
+}
+
+.modal-message h1 {
+	font-size: 16px;
+	letter-spacing: 1px;
+	margin-top: 20px;
+	margin-bottom: 10px;
+	text-transform: uppercase;
+}
+
+.modal-message p {
+	font-size: 12px;
+}
+
+.modal-message a:first-of-type {
+	background-color: #C7C8CA;
+	float: left;
+}
+
+.modal-message a:last-of-type {
+	float: right;
+}

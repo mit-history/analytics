@@ -29,6 +29,7 @@ var Download = require('./download')
 var Legend = require('./legend')
 
 var datapoint = require('./util/datapoint')
+var foundation = require('./util/foundation-utils')
 
 var assign = require('object-assign')
 var schema = require('../cfrp-schema');
@@ -115,6 +116,7 @@ function App(url, initial_query) {
             loading: hg.value(false),
             pane_display: hg.value(1),
             show_registry: hg.value(false),
+            show_message: hg.value(false),
 
 // data loaded from server
             calendar_data: hg.value([]),
@@ -137,13 +139,14 @@ function App(url, initial_query) {
               open_theater_period_filter: App.open_theater_period_filter,
               reset_dates: App.reset_dates,
               focus_col: App.focus_col,
-              focus_row: App.focus_row,
               focus_cell: App.focus_cell,
               focus_day: App.focus_day,
               focus_theater: App.focus_theater,
               toggle_modal: App.toggle_modal,
               set_pane: App.set_pane,
               open_calendar: App.open_calendar,
+              confirm: App.confirm,
+              cancel: App.cancel,
               switchTableView: App.switchTableView,
               refresh_pane: App.refresh_pane
             }
@@ -260,6 +263,8 @@ App.loadCalendar = function(state) {
   // presumes access to state... seems bad
   state.calendar_data.set([])
 
+  state.loading.set(true);
+
   var day_window = state.sel_dates ? { day : state.sel_dates() } : {}
   api.summarize([DATE_NAME], state.query.agg(), state.query.filter(), day_window, function(err, raw_data) {
     if (err) { throw err }
@@ -272,6 +277,7 @@ App.loadCalendar = function(state) {
     // NB this works because the date format sorts alphanumerically
     var min_max = d3.extent(d3.keys(data))
     state.calendar_extent.set(min_max)
+    state.loading.set(false);
   })
 }
 // focus changes
@@ -295,8 +301,19 @@ App.sel_dates = function(state, data) {
 }
 
 App.open_calendar = function(state, data) {
+  if(state.pane_display() !== 2) {
+    state.show_message.set(true);
+  }
+}
+
+App.confirm = function(state, data) {
+  state.show_message.set(false);
   App.loadCalendar(state);
   state.pane_display.set(2);
+}
+
+App.cancel = function(state, data) {
+  state.show_message.set(false);
 }
 
 App.set_start_date = function(state, data) {
@@ -361,28 +378,35 @@ App.reset_dates = function(state) {
 
 App.focus_col = function(state, data) {
   let focus = state.focus_cell;
-  focus[data.dimension] = data.value;
+  if(focus[data.dimension] != data.value ) {
+    focus[data.dimension] = data.value;
+    state.legend.focus.set(data.value);
+    state.chart.focus.set(data.value);
+  } else {
+    delete focus[data.dimension];
+    state.legend.focus.set(null);
+    state.chart.focus.set(null);
+  }
   state.focus_cell.set(focus);
-  state.legend.focus.set(data.value);
-  state.chart.focus.set(data.value);
-}
-
-App.focus_row = function(state, data) {
-  let focus = state.focus_cell;
-  focus[data.dimension] = data.value;
-  focus.agg = data.agg;
-  state.focus_cell.set(focus);
-  state.chart.point.set(data.value);
 }
 
 App.focus_cell = function(state, data) {
   let new_focus = data.focus
   let first_col = state.query.cols.slice(0, 1);
-  let first_row = state.query.rows.slice(0, 1)
-  state.focus_cell.set(new_focus);
-  state.legend.focus.set(new_focus[first_col]);
-  state.chart.focus.set(new_focus[first_col]);
-  state.chart.point.set(new_focus[first_row]);
+  let first_row = state.query.rows.slice(0, 1);
+  let focus = state.focus_cell();
+  if(!focus || focus[first_col] != new_focus[first_col] ||
+    focus[first_row] != new_focus[first_row]) {
+    state.focus_cell.set(new_focus);
+    state.legend.focus.set(new_focus[first_col]);
+    state.chart.focus.set(new_focus[first_col]);
+    state.chart.point.set(new_focus[first_row]);
+  } else {
+    state.focus_cell.set({});
+    state.legend.focus.set(null);
+    state.chart.focus.set(null);
+    state.chart.point.set(null);
+  }
   Carousel.setSlide(state.carousel, 1)
 }
 
@@ -448,6 +472,19 @@ App.render = function(state) {
 
   function render_i18n(lang) {
     return h('div.row.main-container', [
+      h('div.overlay' + (state.show_message ? '.show' : '.hide'),
+        { 'ev-click': hg.send(state.channels.cancel) },
+        h('div.modal-message', {}, [
+          h('h1', msgs[lang]['calendar_tool_caption']),
+          h('p', msgs[lang]['calendar_tool_message']),
+          h('a.button.secondary',
+            { 'ev-click': hg.send(state.channels.cancel) },
+            msgs[lang]['cancel']),
+          h('a.button',
+            { 'ev-click': hg.send(state.channels.confirm) },
+            msgs[lang]['ok'])
+        ])
+      ),
 			Query.render(state, state.modal, state.query, lang),
 			h('section.columns.data-display-container', [
 				// h('div.pane_selector', h('nav', [
@@ -477,6 +514,7 @@ App.render = function(state) {
           ]),
         ]),
         h('div.data-container-pane' + (state.pane_display == 2 ? '.show' : '.hide'), [
+            h('div.loading-indicator' + (state.loading ? '.show' : '.hide'), h('div.loading-icon')),
             Calendar.render(state, chart_size(), lang)
         ]),
 			])

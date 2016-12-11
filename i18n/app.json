@@ -24,6 +24,13 @@
     "mean_receipts_day": "{agg} Livres est la moyenne des recettes par jour {cols} {rows}",
     "mean_price": "{agg} Livres est la moyenne du prix des places {cols} {rows}",
 
+    "currency": "Livres",
+
+    "cancel": "Annuler",
+    "ok": "OK",
+    "calendar_tool_caption": "Changement d'outil",
+    "calendar_tool_message": "Le passage de l'outil de comparaison à l'outil calendrier implique la reprise des sélections faites précédemment dans le premier outil. Tous les nouveaux choix de critères faits dans l'outil calendrier ne seront pas pris en compte.",
+
     "download" : "Télécharger au format"
   }
 }

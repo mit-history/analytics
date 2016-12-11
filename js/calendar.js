@@ -30,18 +30,24 @@ const timeFormat = d3.time.format
 const numberFormat = d3.format
 
 const day = d3.time.format('%w')
+const month = d3.time.format('%m');
+
+const msgs = require("json!../i18n/app.json")
 
 // number of sundays since the prior March 1
 const weeksOffset = (e, y) => d3_time.sunday.count(d3_time.sunday(new Date(e.getFullYear(), 3, 1)), y)
 const invertWeekOffset = (y, c) => d3_time.sunday.offset(d3_time.sunday(new Date(y.getFullYear(), 3, 1)), c)
 
-const margins = { top: 30, right: 25, bottom: 10, left: 25 }
-
 const dateIndexFormat = d3.time.format('%Y-%m-%d')
 
+const month_n = (month, season) => ((month.getMonth() - 3) + ((month.getFullYear() - season.getFullYear()) * 12 ));
+const month_y = (month, date, cellSize) => (d3_time.sunday.count(d3_time.sunday(new Date(month.getFullYear(), month.getMonth(), 1)), date)) * cellSize;
+const month_x = (month, season, cellSize) => {
+    let mn = month_n(month, season);
+    return (mn ? (mn * 5) + (mn * 7 * cellSize) : mn);
+}
 
 var y_global = null
-var cellSize = 12
 
 var sameDate = function(d0, d1) {
   return d0 && d1 && (d1 - d0 === 0)
@@ -50,19 +56,9 @@ var sameDate = function(d0, d1) {
 var yearRange = function(i0, i1) {
   var yearFormat = d3.format("04d")
   var [ s0, s1 ] = [ yearFormat(i0), yearFormat(i1) ]
-  var i = 3
-  while (i >= 0 && s0[i] !== s1[i]) {
-    i--
-  }
 
-  return s0 + "-" + s1.slice(i+1)
+  return s0 + "-" + s1;
 }
-
-var greyscale = function(c) {
-  // TODO.  genuine conversion to greyscale from a color
-  return 'lightgrey'
-}
-
 
 function GraphWidget(calendar_data, theater_data, calendar_extent, sel_dates, focus_day, mode, scale, sizes , lang) {
   this.calendar_data = calendar_data
@@ -76,23 +72,40 @@ function GraphWidget(calendar_data, theater_data, calendar_extent, sel_dates, fo
   this.sizes = sizes;
 }
 
+GraphWidget.prototype.width = function() {
+  return this.sizes[0];
+}
+
+GraphWidget.prototype.cellSize = function() {
+  return (this.width() - (60)) / 91;
+}
+
+GraphWidget.prototype.margins = function() {
+  let values = { top: 30, right: 25, bottom: 10, left: 20 }
+  values.left = this.width() > 800 ? 70 : values.left;
+  return values;
+}
+
 GraphWidget.prototype.type = 'Widget'
 
 GraphWidget.prototype.init = function() {
+  var margins = this.margins();
   var elem = document.createElement('div')
-  cellSize = (this.sizes[0] - (margins.left + margins.right)) / 60;
   var graph = d3.select(elem)
       .classed('graph', true)
   var canvas = graph.append('canvas')
-      .attr('width', this.sizes[0])
+      .attr('width', this.width())
   var svg = graph.append('svg')
-    .attr('width', this.sizes[0])
+    .attr('width', this.width())
   var foreground = svg.append('g')
       .classed('foreground', true)
       .attr('transform', 'translate(' + margins.left + ',' + margins.top + ')')
-  var periods = foreground.append('g')
-      .classed('periods', true)
-      .attr('transform', 'translate(' + (59 * cellSize) + ',0)')
+  foreground.append('rect')
+      .attr("fill", "#E7E8EA")
+      .attr("x", "-10")
+      .attr("y", "-3em")
+      .attr("width", this.width() + 10)
+      .attr("height", "2.5em");
   var x_axis = foreground.append('g')
       .classed('x axis', true)
   var y_axis = foreground.append('g')
@@ -108,11 +121,13 @@ GraphWidget.prototype.select = function() {
   this.props.handlePreview(date)
 }
 
-function pointToDate(e, extent) {
+function pointToDate(e, extent, graph) {
   var canvas = d3.select(".calendar canvas")[0][0]
   var rect = canvas.getBoundingClientRect()
   var x = e.clientX - rect.left
-  var y = e.clientY - rect.top
+  var y = e.clientY - rect.top;
+  var margins = graph.margins();
+  var cellSize = graph.cellSize();
 
   if (y < margins.top) { return null }
 
@@ -120,16 +135,45 @@ function pointToDate(e, extent) {
   var season_min = easter(date_min)
 
   var seasonOffset = Math.floor( (y - margins.top) / (cellSize * 9) )
-  var weekOffset = Math.floor( (x - margins.left) / cellSize )
-  var weekdayOffset = Math.floor( (y - margins.top) / cellSize % 9 )
-
-  if(weekdayOffset > 6) { return null }
-
   var season = easterForYear( season_min.getFullYear() + seasonOffset)
-  var week = invertWeekOffset(season, weekOffset)
-  var date = d3_time.day.offset(week, weekdayOffset)
+  var nextSeason = easterForYear(season.getFullYear()+1)
 
-  return date
+  var rx = (x - margins.left + 10);
+  var month = Math.floor(rx / ((cellSize * 7) + 5));
+
+  rx = rx - (month * cellSize * 7) - (month * 5);
+
+  //var day = Math.floor((rx - (month * cellSize * 7)) / cellSize);
+  var first = new Date(season.getFullYear(), month + 3, 1);
+  var last = d3.time.month.offset(first, 1);
+
+  var se = graph.sel_dates
+  var sel = (se.length == 0) || (se[0] < first && first < se[1])
+
+  if(!sel || !y_global) {
+    return null;
+  }
+
+  var d = Math.floor(rx / cellSize);
+  var season_y = margins.top + y_global(season);
+  var ry = Math.floor((y - season_y) / cellSize);
+  if(ry > 5) {
+    return null;
+  }
+
+  var date = d3.time.week.offset(first, ry);
+  date = d3.time.day.offset(date, d - +day(first));
+
+  if(date < first || date >= last) {
+    return null;
+  }
+
+  var nextSeason = easterForYear(season.getFullYear()+1)
+  if(date >= nextSeason || date < season) {
+    return null;
+  }
+
+  return date;
 }
 
 GraphWidget.prototype.listen = function(elem) {
@@ -145,12 +189,26 @@ GraphWidget.prototype.listen = function(elem) {
   function hover() {
     var svg = d3.select(elem)
       .select('svg')
+    var cellSize = this.cellSize();
+    var margins = this.margins();
 
     var locale = i18n[this.lang]
     var tooltipFormat = locale.timeFormat("%a %e %b %Y")
 
     var season = (date) => easter(date)
-    var date = pointToDate(d3.event, this.calendar_extent)
+    var date = pointToDate(d3.event, this.calendar_extent, this)
+    var data;
+    if(date) {
+      var s = dateIndexFormat(date)
+      data = this.calendar_data[s];
+    }
+
+    var rx = 0;
+    var ry = 0;
+    if(date) {
+      rx = month_x(date, season(date), cellSize) - cellSize;
+      ry = y_global(season(date)) + 7.2 * cellSize
+    }
 
     var tooltip = svg.select(".foreground").selectAll(".tooltip")
       .data((date && y_global) ? [ date ] : [])
@@ -158,10 +216,20 @@ GraphWidget.prototype.listen = function(elem) {
     tooltip.enter().append("text")
       .classed("tooltip", true)
       .attr("text-align", "left")
+      .attr("x", rx)
+      .attr("y", ry);
 
-    tooltip.attr("x", (date) => weeksOffset(season(date), d3.time.month(date)) * cellSize)
-      .attr("y", (date) => y_global(season(date)) + 8.2 * cellSize)
-      .text(tooltipFormat)
+    var dataTooltip = svg.select(".foreground").selectAll(".data-tooltip")
+        .data((data) ? [ data ] : [])
+      dataTooltip.exit().remove()
+      dataTooltip.enter().append("text")
+        .classed("data-tooltip", true)
+        .attr("text-align", "left")
+        .attr("x", rx)
+        .attr("y", ry + cellSize)
+
+    tooltip.text(tooltipFormat)
+    dataTooltip.text(data + " " + msgs[this.lang]["currency"]);
   }
 }
 
@@ -171,10 +239,12 @@ GraphWidget.prototype.update = function(prev, elem) {
 
   this.listen(elem)
 
+  var cellSize = this.cellSize();
+  var margins = this.margins();
   var graph = d3.select(elem)
   var canvas = graph.select("canvas")[0][0]
   var locale = i18n[this.lang]
-  var xAxisFormat = (d) => locale.timeFormat('%b')(d).toLowerCase()
+  var xAxisFormat = (d) => locale.timeFormat('%B')(d)
 
   var data = this.calendar_data
   var keys = d3.keys(data)
@@ -184,12 +254,13 @@ GraphWidget.prototype.update = function(prev, elem) {
   var [ lo, hi ] = this.calendar_extent.map(dateIndexFormat.parse)
   var data_extent = [ easter(lo), easterCeiling(hi) ]
   var height = (data_extent[1].getFullYear() - data_extent[0].getFullYear()) * cellSize * 9
+  var width = this.width();
 
   canvas.height = margins.top + margins.bottom + height
+  canvas.width = margins.left + margins.right + width;
   var svg = d3.select(elem)
     .select("svg")
-      .attr("height", canvas.height)
-//    canvas.width = margins.left + margins.right + width
+      .attr("height", canvas.height).attr("width", canvas.width)
 
   var y = d3.scale.linear()
     .domain(data_extent)
@@ -208,7 +279,13 @@ GraphWidget.prototype.update = function(prev, elem) {
 
   seasons.forEach( (season) => {
     ctx.save()
-    ctx.translate(margins.left, margins.top + Math.round( y(season) ))
+    ctx.translate(margins.left - 10, margins.top + Math.round( y(season) ))
+
+    ctx.strokeStyle = "black";
+    ctx.beginPath();
+    ctx.moveTo(0, -3);
+    ctx.lineTo(width, -3);
+    ctx.stroke();
 
     var x = (date) => weeksOffset(season, date) * cellSize
 
@@ -216,50 +293,32 @@ GraphWidget.prototype.update = function(prev, elem) {
     var days = d3.time.days( season, nextSeason )
 
     if (this.mode === 'focus') {
-      var scale = this.scale
-      days.forEach( (d) => {
-        var rx = Math.round( x(d) )
-        var ry = Math.round( +day(d) * cellSize )
-
-        ctx.strokeStyle = '#ccc'
-        ctx.strokeRect(rx, ry, cellSize, cellSize)
-
-        var se = this.sel_dates
-        var sel = (se.length == 0) || (se[0] < d && d < se[1])
-
-        var s = dateIndexFormat(d)
-        var d = this.calendar_data[s]
-
-        ctx.fillStyle = "white"
-        if(d) {
-          var c = scale(d)
-          ctx.fillStyle = sel ? c : greyscale(c)
-        }
-        ctx.fillRect(rx, ry, cellSize, cellSize)
-      })
-
       var months = d3.time.months( new Date(season.getFullYear(), 3, 1), new Date(nextSeason.getFullYear(), 4, 1) )
+      var scale = this.scale
 
-      months.forEach( (t0) => {
-        ctx.strokeStyle = 'black'
+      months.forEach( (month) => {
+        var se = this.sel_dates
+        var sel = (se.length == 0) || (se[0] < month && month < se[1])
+        if(sel) {
+          var days = d3.time.days(month, new Date(month.getFullYear(), month.getMonth() + 1, 1));
+          days.forEach((d => {
+            if(season <= d && d < nextSeason) {
+              var rx = month_x(month, season, cellSize) + (day(d) * cellSize);
+              var ry = month_y(month, d, cellSize);
+              ctx.strokeStyle = '#ccc'
+              ctx.strokeRect(rx, ry, cellSize, cellSize)
+              var s = dateIndexFormat(d)
+              var d = this.calendar_data[s]
 
-        var t1 = new Date(t0.getFullYear(), t0.getMonth() + 1, 0),
-            d0 = +day(t0), w0 = +weeksOffset(season, t0),
-            d1 = +day(t1), w1 = +weeksOffset(season, t1)
-
-        var path = new Path2D()
-        path.moveTo( (w0 + 1) * cellSize, d0 * cellSize )
-        path.lineTo( w0 * cellSize, d0 * cellSize )
-        path.lineTo( w0 * cellSize, 7 * cellSize )
-        path.lineTo( w1 * cellSize, 7 * cellSize )
-        path.lineTo( w1 * cellSize, (d1 + 1) * cellSize )
-        path.lineTo( (w1 + 1) * cellSize, (d1 + 1) * cellSize )
-        path.lineTo( (w1 + 1) * cellSize, 0 )
-        path.lineTo( (w0 + 1) * cellSize, 0 )
-        path.lineTo( (w0 + 1) * cellSize, d0 * cellSize )
-
-        ctx.stroke(path);
-      })
+              ctx.fillStyle = "transparent";
+              if(d) {
+                ctx.fillStyle = scale(d)
+              }
+              ctx.fillRect(rx, ry, cellSize, cellSize)
+            }
+          }));
+        }
+      });
 
     } else if (this.state.mode === 'context') {
 //      console.log("drawing context")
@@ -294,50 +353,8 @@ GraphWidget.prototype.update = function(prev, elem) {
     .attr("fill", "none")
 
   circle
-    .attr("cx", (d) => weeksOffset(easter(d), d) * cellSize + 4)
-    .attr("cy", (d) => y(easter(d)) + +day(d) * cellSize + 4)
-
-  // theater periods
-
-  var theater_extents = (name) => {
-    var theater = this.theater_data[name]
-    var start_season = easter(theater.start_date)
-    var end_season = easterCeiling(theater.end_date)
-
-    return { top : Math.round( y(start_season) ),
-             bottom : Math.round( y(end_season) - cellSize * 2 ) }
-  }
-
-  var period = svg.select('.periods')
-    .selectAll('.period')
-      .data(d3.keys(this.theater_data))
-
-  var period_g = period.enter().append("g")
-      .classed("period", true)
-    .attr('transform', (name) => 'translate(0,' + theater_extents(name).top + ')')
-    .on('click', (d) => alert('selected ' + d))
-
-  period_g
-    .append('path')
-      .attr('d', period_path)
-      .attr('stroke', 'black')
-      .attr('fill', 'transparent')
-
-  period_g
-    .append("text")
-      .attr("dy", "-1.5em")
-      .attr("dx", "1em")
-      .attr("transform", "rotate(90)")
-      .style("text-anchor", "start")
-      .text( (name) => name )
-
-  function period_path(name) {
-    var { top, bottom } = theater_extents(name)
-    var height = bottom - top
-    return 'M0,0h' + cellSize * 2 + 'h' + -cellSize +
-           'V' + (height - cellSize) +
-           'L0,' + height
-  }
+    .attr("cx", (d) => month_x(d, easter(d), cellSize) + (day(d) * cellSize) - 6)
+    .attr("cy", (d) => y(easter(d)) + month_y(new Date(d.getFullYear(), d.getMonth(), 1), d, cellSize) + 4)
 
   // x axis
 
@@ -351,15 +368,16 @@ GraphWidget.prototype.update = function(prev, elem) {
   month.enter()
     .append('text')
       .classed('month', true)
-      .attr('x', (d) => +weeksOffset(seasons[0], d) * cellSize + cellSize * 2, -9)
       .attr('dy', '-1em')
+      .attr('text-anchor', 'middle')
       .text(xAxisFormat)
 
+  month.attr('x', (d) => (month_x(d, seasons[0], cellSize) - (margins.left + 10)) + (6 * cellSize));
   // y axis
 
   var all_years = d3.range(data_extent[0].getFullYear(), data_extent[1].getFullYear())
 
-  var year = svg.select('.axis.x')
+  var year = svg.select('.axis.y')
     .selectAll('.year')
       .data(all_years, (x) => x)
 
@@ -368,13 +386,12 @@ GraphWidget.prototype.update = function(prev, elem) {
     .append('g')
       .classed('year', true)
     .append('text')
-      .attr('dy', '-1em')
       .attr('transform', 'rotate(-90)')
       .attr('text-anchor', 'middle')
     .text( (year) => yearRange(year, year+1))
-
+  year.selectAll('text').attr('dy', (width))
   year
-    .attr('transform', (year) => 'translate(0,' + Math.round( y(easterForYear(year)) + (cellSize * 7) / 2.0) + ')')
+    .attr('transform', (year) => 'translate(0,' + Math.round( y(easterForYear(year)) + (cellSize * 5) / 2.0) + ')')
 }
 
 function Calendar() {
@@ -386,18 +403,25 @@ function Calendar() {
 var dragging = false
 
 Calendar.render = function(state, sizes, lang) {
+  var scale = d3.scale.quantile()
+    .domain( d3.values(state.calendar_data) )
+    .range( colorbrewer.YlGnBu[9].slice(0,7) )
+
+  var graphWidget = new GraphWidget(state.calendar_data,
+    state.theater_data, state.calendar_extent, state.sel_dates,
+    state.focus_day, 'focus', scale, sizes, lang);
 
   var dragDateExtent = hg.BaseEvent(function (ev, broadcast) {
     // @see https://github.com/Raynos/mercury/blob/master/examples/geometry/lib/drag-handler.js
     var del = hg.Delegator()
 
-    var startSelection = pointToDate(ev, state.calendar_extent)
+    var startSelection = pointToDate(ev, state.calendar_extent, graphWidget)
 
     function onmove(ev2) {
       ev2.preventDefault()
       dragging = true
 
-      var endSelection = pointToDate(ev2, state.calendar_extent)
+      var endSelection = pointToDate(ev2, state.calendar_extent, graphWidget)
 
       if(endSelection) {
         var dates = [ startSelection, endSelection ].sort( d3.ascending )
@@ -426,16 +450,12 @@ Calendar.render = function(state, sizes, lang) {
   })
 
   var sendDay = hg.BaseEvent(function(ev, broadcast) {
-    var date = pointToDate(ev, state.calendar_extent)
+    var date = pointToDate(ev, state.calendar_extent, graphWidget)
 
     if(date && !dragging) {
       broadcast(assign(this.data, { date: date }))
     }
   })
-
-  var scale = d3.scale.quantile()
-    .domain( d3.values(state.calendar_data) )
-    .range( colorbrewer.YlGnBu[9].slice(0,7) )
 
   return (
       h('div.calendar', {
@@ -443,9 +463,7 @@ Calendar.render = function(state, sizes, lang) {
         'ev-click' : sendDay(state.channels.focus_day)
       }, [
         Status.render(state, lang, scale, state.status),
-        new GraphWidget(state.calendar_data,
-          state.theater_data, state.calendar_extent, state.sel_dates,
-          state.focus_day, 'focus', scale, sizes, lang)
+        graphWidget
       ])
   )
 }
