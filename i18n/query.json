@@ -97,7 +97,7 @@
         "filter_button_all": "Utiliser tous les filtres",
         "filter_button_clear_all": "Supprimer les filtres",
         "sum_receipts": "Somme des recettes",
-        "sum_receipts_weighted": "Somme recette (pondérée)",
+        "sum_receipts_weighted": "Somme recette",
         "performances_days": "Représentations / jour",
         "mean_receipts_day": "Moyenne des recettes / jour",
         "mean_receipts_day_weighted": "Moyenne recette/jour (pondérée)",
