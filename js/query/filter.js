@@ -59,33 +59,36 @@ Filter.render = function(modal_state, query_state, dim, axis, lang) {
   var sel_values = modal_state.filter_selection[dim] || []
 
   values.forEach( (d, i) => {
-    if (strMatch(d, query_state.filter_state.search)) {
-      var attrs = { type: 'checkbox',
-										id: d,
-                    name: d,
-                    'ev-event': hg.sendChange(modal_state.channels.toggleFilterValue, { dim: dim, value: d } ) }
+    if (d !== "") {
+      if (strMatch(d, query_state.filter_state.search)) {
+        var attrs = { type: 'checkbox',
+  										id: d,
+                      name: d,
+                      'ev-event': hg.sendChange(modal_state.channels.toggleFilterValue, { dim: dim, value: d } ) }
 
-      if(sel_values.indexOf(d) > -1 || modal_state.selectAll[dim]) {
-        attrs.checked = true;
-      }
-      cbs.push(
-        // TODO.  virtual-dom doesn't match changes in <input checked ... /> properly
-        //        a parallel issue for Mithril: https://github.com/lhorie/mithril.js/issues/691
-        //        one workaround is to cache-bust the entire list with a key:
-        h('li.custom-checkbox',
-          {
-            key: unique_key++,
-						'ev-click': hg.send(modal_state.channels.toggleFilterValue, { dim: dim, value: d } )
-					},
-          [
-            h('input', attrs),
-            h('label' + (attrs.checked ? '.selected-filter': ''), [
-              h('span.custom-input', h('span.custom-input')),
-              h('span', formatter(d))
-            ])
-          ]
+        if(sel_values.indexOf(d) > -1 || modal_state.selectAll[dim]) {
+          attrs.checked = true;
+        }
+
+        cbs.push(
+          // TODO.  virtual-dom doesn't match changes in <input checked ... /> properly
+          //        a parallel issue for Mithril: https://github.com/lhorie/mithril.js/issues/691
+          //        one workaround is to cache-bust the entire list with a key:
+          h('li.custom-checkbox',
+            {
+              key: unique_key++,
+  						'ev-click': hg.send(modal_state.channels.toggleFilterValue, { dim: dim, value: d } )
+  					},
+            [
+              h('input', attrs),
+              h('label' + (attrs.checked ? '.selected-filter': ''), [
+                h('span.custom-input', h('span.custom-input')),
+                h('span', formatter(d))
+              ])
+            ]
+          )
         )
-      )
+      }
     }
   })
 
