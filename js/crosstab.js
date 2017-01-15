@@ -82,7 +82,7 @@ Crosstab.generateRowHeadersColumn = function (query_state, cube_data, lang) {
 
 	// Generate header row
 	var lDataSet = cube_data['1x0'];
-	var lRows = [h('tr', h('th.cross-cell', { 'ev-click': hg.send(query_state.channels.interchangeAxis) }, 'X'))];
+	var lRows = [h('tr', h('th.cross-cell', { 'ev-click': hg.send(query_state.channels.interchangeAxis) }, h('span', 'X')))];
 	for (var i in lDataSet) {
 		if (lDataSet[i][lRowKey]) {
 			var lData = schema.format(lang, lRowKey)(lDataSet[i][lRowKey]);
@@ -315,13 +315,13 @@ Crosstab.render = function(state, lang) {
 		// Construct Table display
 		var lTableDisplay = [];
 		// Add Y Axis headers column
-		lTableDisplay.push(h('div.row-headers-col' + lSizingClass, h('table', Crosstab.generateRowHeadersColumn(state.query, state.cube_data, lang))));
+		lTableDisplay.push(h('div.row-headers-col' + lSizingClass, h('table', {cellSpacing: 0, cellPadding: 0}, Crosstab.generateRowHeadersColumn(state.query, state.cube_data, lang))));
 		// Add X axis and data columns
 		if (lColItems > 1) {
-			lTableDisplay.push(h('div.data-content', h('table', Crosstab.generateTableData(state, state.query, state.cube_data, lang))));
+			lTableDisplay.push(h('div.data-content', h('table', {cellSpacing: 0, cellPadding: 0}, Crosstab.generateTableData(state, state.query, state.cube_data, lang))));
 		}
 		// Add results column
-		lTableDisplay.push(h('div.sum-col' + lSizingClass, h('table', Crosstab.generateSumColumn(state.query, state.cube_data, lang))));
+		lTableDisplay.push(h('div.sum-col' + lSizingClass, h('table', {cellSpacing: 0, cellPadding: 0}, Crosstab.generateSumColumn(state.query, state.cube_data, lang))));
 
 	  return h('div.content-container', [
 	  	// h('div.y-axis-dimensions-container', h('ul.axis-selected-dimensions', renderDimentionList('rows'))),

@@ -76,11 +76,15 @@
 	overflow-y:auto;
 	position:relative;
 	font-size:11pt;
-	border:1px solid #CACACA;
+}
+
+.data-table-container > div {
+	border: 0;
 }
 
 .data-table-container table {
 	margin-bottom: 0;
+	border: 0;
 }
 
 .crosstab-container table {
@@ -116,6 +120,10 @@
 	cursor: pointer;
 }
 
+.crosstab-container .cross-cell span {
+	display: inline-block;
+}
+
 .crosstab-container .row-headers-col {
 	float:left;
 	width:15%;
@@ -139,11 +147,9 @@
 	width:100%;
 }
 
-.crosstab-container .data-content .has-tip,
-.crosstab-container .row-headers-col .has-tip,
-.crosstab-container .sum-col .has-tip {
+.crosstab-container table span {
 	font-weight: inherit;
-	border-bottom: 0;
+	border: 0;
 	overflow:hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
