@@ -59,7 +59,7 @@ Filter.render = function(modal_state, query_state, dim, axis, lang) {
   var sel_values = modal_state.filter_selection[dim] || []
 
   values.forEach( (d, i) => {
-    if (d !== "") {
+    if (d !== "" && d !== "0") {
       if (strMatch(d, query_state.filter_state.search)) {
         var attrs = { type: 'checkbox',
   										id: d,
