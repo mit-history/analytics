@@ -13,6 +13,42 @@
   overflow-x: hidden;
 }
 
+.calendar .legend {
+  position: relative;
+  margin-left: 10px;
+  padding-left: 10px;
+  box-sizing: content-box;
+  left: 0;
+  right: 0;
+  height: 70px;
+}
+
+.calendar .legend h3 {
+  text-align: center;
+  margin-bottom: 0;
+}
+
+.calendar .legend .block {
+  display: inline-block;
+  border: 1px solid #ccc;
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+}
+
+.legend .items {
+  float: right;
+}
+
+.legend .item {
+  vertical-align: top;
+  display: inline-block;
+}
+
+.legend .item span:last-child {
+  padding: 0 8px;
+}
+
 .calendar canvas,
 .calendar svg {
   position: absolute;
@@ -28,6 +64,12 @@
 
 .foreground .tooltip {
   font-size: 11px;
+}
+
+.zoomed rect,
+.zoomed .x.axis,
+.zoomed .y.axis {
+  display: none;
 }
 
 .x.axis .month {

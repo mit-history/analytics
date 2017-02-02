@@ -30,7 +30,13 @@
     "ok": "OK",
     "calendar_tool_caption": "Changement d'outil",
     "calendar_tool_message": "Le passage de l'outil de comparaison à l'outil calendrier implique la reprise des sélections faites précédemment dans le premier outil. Tous les nouveaux choix de critères faits dans l'outil calendrier ne seront pas pris en compte.",
+    "criteria_caption": "",
+    "criteria_message": "Vous souhaitez générer un graphique avec une grande quantité de critères. Nous vous invitons à raffiner votre recherche pour une meilleure lisibilité.",
+    "criteria_download_message": "Au besoin, vous pouvez télécharger directement le résultat de cette recherche.",
 
-    "download" : "Télécharger au format"
+    "legend_caption": "Légende : {type}",
+
+    "download" : "Télécharger au format",
+    "download-button": "Télécharger"
   }
 }

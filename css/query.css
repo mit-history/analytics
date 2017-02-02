@@ -226,9 +226,23 @@
 	position:relative;
 }
 
-.time-period-selector select {
-	width: 4em;
+.time-period-selector > select {
+	width: 4.5em;
 	margin:0 0.5em;
+	padding: 0.5rem;
+	border: 1px solid #cacaca;
+	border-radius: 3px;
+}
+.time-period-selector > input {
+	display: inline;
+	margin:0 0.5em;
+	width: 4.5em;
+	height: auto;
+}
+
+.time-period-selector > span {
+	line-height: 2;
+	vertical-align: middle;
 }
 
 button.dropdown-list {

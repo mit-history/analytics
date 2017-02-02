@@ -157,8 +157,10 @@ Query.setSelectedDimension = function (state, data) {
 Query.addFilter = function(state, data) {
   if(state.filter.get(data.dim)) {
     var filters = state.filter.get(data.dim);
-    filters.push(data.value);
-    state.filter.put(data.dim, filters);
+    if(filters.indexOf(data.value) === -1) {
+      filters.push(data.value);
+      state.filter.put(data.dim, filters);
+    }
   } else {
     state.filter.put(data.dim, [data.value]);
   }

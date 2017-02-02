@@ -48,7 +48,7 @@ const schema = require('../cfrp-schema')
 const margins = { top: 10, right: 130, bottom: 100, left: 80 }
 const legend_margins = { top: 5, right: 0, bottom: 0, left: 5 }  /* TODO.  remove */
 
-const max_legend = 10
+const max_legend = 20
 const max_group = 10
 
 const min_spacing = 20

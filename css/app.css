@@ -382,11 +382,22 @@ button.secondary:hover {
 	font-size: 12px;
 }
 
-.modal-message a:first-of-type {
-	background-color: #C7C8CA;
+.modal-message .left {
 	float: left;
 }
-
-.modal-message a:last-of-type {
+.modal-message .right {
 	float: right;
+}
+.modal-message .center {
+	margin: 0 auto;
+	width: 150px;
+	display: block;
+}
+
+.modal-message .secondary {
+	background-color: #C7C8CA;
+}
+
+.modal-message .secondary:hover {
+	background-color: #A7A8AA;
 }

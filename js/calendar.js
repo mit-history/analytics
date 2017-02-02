@@ -9,6 +9,8 @@
 
 require('../css/calendar.css')
 
+const schema = require('../cfrp-schema')
+
 const hg = require('mercury')
 const h = require('mercury').h
 
@@ -24,8 +26,6 @@ const datapoint = require('./util/datapoint')
 
 const assign = require('object-assign')
 
-const Status = require('./status')
-
 const timeFormat = d3.time.format
 const numberFormat = d3.format
 
@@ -33,6 +33,7 @@ const day = d3.time.format('%w')
 const month = d3.time.format('%m');
 
 const msgs = require("json!../i18n/app.json")
+const query_msgs = require("json!../i18n/query.json")
 
 // number of sundays since the prior March 1
 const weeksOffset = (e, y) => d3_time.sunday.count(d3_time.sunday(new Date(e.getFullYear(), 3, 1)), y)
@@ -42,8 +43,9 @@ const dateIndexFormat = d3.time.format('%Y-%m-%d')
 
 const month_n = (month, season) => ((month.getMonth() - 3) + ((month.getFullYear() - season.getFullYear()) * 12 ));
 const month_y = (month, date, cellSize) => (d3_time.sunday.count(d3_time.sunday(new Date(month.getFullYear(), month.getMonth(), 1)), date)) * cellSize;
-const month_x = (month, season, cellSize) => {
+const month_x = (month, season, cellSize, zoom) => {
     let mn = month_n(month, season);
+    mn = zoom ? mn % 5 : mn;
     return (mn ? (mn * 5) + (mn * 7 * cellSize) : mn);
 }
 
@@ -65,11 +67,20 @@ function GraphWidget(calendar_data, theater_data, calendar_extent, sel_dates, fo
   this.theater_data = theater_data
   this.calendar_extent = calendar_extent
   this.sel_dates = sel_dates
-  this.focus_day = focus_day
+  this.focus_day = this.isInRange(sel_dates, focus_day) ? focus_day : null;
+  this.zoom = this.isZoom(sel_dates);
   this.mode = mode
   this.scale = scale
   this.lang = lang
   this.sizes = sizes;
+}
+
+GraphWidget.prototype.isInRange = function(sel_dates, focus_day) {
+  return (sel_dates && focus_day >= easterForYear(sel_dates[0].getFullYear()) &&  focus_day < easterForYear(sel_dates[1].getFullYear()));
+}
+
+GraphWidget.prototype.isZoom = function(sel_dates) {
+  return (sel_dates && sel_dates[1].getFullYear() - sel_dates[0].getFullYear() > 1 ?  false : true);
 }
 
 GraphWidget.prototype.width = function() {
@@ -77,7 +88,8 @@ GraphWidget.prototype.width = function() {
 }
 
 GraphWidget.prototype.cellSize = function() {
-  return (this.width() - (60)) / 91;
+  let cellCount = this.zoom ? 35 : 91;
+  return (this.width() - (60)) / cellCount;
 }
 
 GraphWidget.prototype.margins = function() {
@@ -121,7 +133,7 @@ GraphWidget.prototype.select = function() {
   this.props.handlePreview(date)
 }
 
-function pointToDate(e, extent, graph) {
+function pointToDate(e, extent, graph, click) {
   var canvas = d3.select(".calendar canvas")[0][0]
   var rect = canvas.getBoundingClientRect()
   var x = e.clientX - rect.left
@@ -131,49 +143,80 @@ function pointToDate(e, extent, graph) {
 
   if (y < margins.top) { return null }
 
-  var date_min = dateIndexFormat.parse(extent[0])
-  var season_min = easter(date_min)
 
-  var seasonOffset = Math.floor( (y - margins.top) / (cellSize * 9) )
-  var season = easterForYear( season_min.getFullYear() + seasonOffset)
-  var nextSeason = easterForYear(season.getFullYear()+1)
+  if(graph.zoom) {
+    var season = easterForYear(graph.sel_dates[0].getFullYear());
+    var nextSeason = easterForYear(season.getFullYear()+1);
 
-  var rx = (x - margins.left + 10);
-  var month = Math.floor(rx / ((cellSize * 7) + 5));
+    var ry = y / (8 * cellSize);
+    var rx = (x - margins.left + 10) / ((7 * cellSize) + 5);
 
-  rx = rx - (month * cellSize * 7) - (month * 5);
+    var mn = (Math.floor(ry) * 5) + (Math.floor(rx));
+    var wn = ((ry % 1) * (8 * cellSize) - (cellSize * 1.5)) / cellSize;
+    var dn = ((rx % 1) * ((7 * cellSize) + 5)) / cellSize;
 
-  //var day = Math.floor((rx - (month * cellSize * 7)) / cellSize);
-  var first = new Date(season.getFullYear(), month + 3, 1);
-  var last = d3.time.month.offset(first, 1);
 
-  var se = graph.sel_dates
-  var sel = (se.length == 0) || (se[0] < first && first < se[1])
+    if(wn < 0 || dn < 0 || dn > 7) {
+      return null;
+    }
 
-  if(!sel || !y_global) {
-    return null;
+    var first = new Date(season.getFullYear(), mn + 3, 1);
+    var last = d3.time.month.offset(first, 1);
+    var date = d3.time.week.offset(first, Math.floor(wn));
+    date = d3.time.day.offset(date, Math.floor(dn) - +day(first));
+
+    if(date < first || date >= last) {
+      return null;
+    }
+
+    if(date >= nextSeason || date < season) {
+      return null;
+    }
+
+    return date;
+  } else {
+    var season_min = easterForYear(dateIndexFormat.parse(extent[0]).getFullYear())
+
+    var seasonOffset = Math.floor( (y - margins.top) / (cellSize * 9) )
+    var season = easterForYear( season_min.getFullYear() + seasonOffset)
+    var nextSeason = easterForYear(season.getFullYear()+1)
+
+    var rx = (x - margins.left + 10);
+    var month = Math.floor(rx / ((cellSize * 7) + 5));
+
+    rx = rx - (month * cellSize * 7) - (month * 5);
+
+    //var day = Math.floor((rx - (month * cellSize * 7)) / cellSize);
+    var first = new Date(season.getFullYear(), month + 3, 1);
+    var last = d3.time.month.offset(first, 1);
+
+    var se = graph.sel_dates
+    var sel = (se.length == 0) || (se[0] < first && first < se[1])
+
+    if(!sel || !y_global) {
+      return null;
+    }
+
+    var d = Math.floor(rx / cellSize);
+    var season_y = margins.top + y_global(season);
+    var ry = Math.floor((y - season_y) / cellSize);
+    if(ry > 5) {
+      return null;
+    }
+
+    var date = d3.time.week.offset(first, ry);
+    date = d3.time.day.offset(date, d - +day(first));
+
+    if(date < first || date >= last) {
+      return null;
+    }
+
+    if(date >= nextSeason || date < season) {
+      return null;
+    }
+
+    return date;
   }
-
-  var d = Math.floor(rx / cellSize);
-  var season_y = margins.top + y_global(season);
-  var ry = Math.floor((y - season_y) / cellSize);
-  if(ry > 5) {
-    return null;
-  }
-
-  var date = d3.time.week.offset(first, ry);
-  date = d3.time.day.offset(date, d - +day(first));
-
-  if(date < first || date >= last) {
-    return null;
-  }
-
-  var nextSeason = easterForYear(season.getFullYear()+1)
-  if(date >= nextSeason || date < season) {
-    return null;
-  }
-
-  return date;
 }
 
 GraphWidget.prototype.listen = function(elem) {
@@ -206,8 +249,13 @@ GraphWidget.prototype.listen = function(elem) {
     var rx = 0;
     var ry = 0;
     if(date) {
-      rx = month_x(date, season(date), cellSize) - cellSize;
-      ry = y_global(season(date)) + 7.2 * cellSize
+      if(this.zoom) {
+        rx = this.width() / 2 - cellSize;
+        ry = cellSize * 22;
+      } else {
+        rx = month_x(date, season(date), cellSize) - cellSize;
+        ry = y_global(season(date)) + 7.2 * cellSize
+      }
     }
 
     var tooltip = svg.select(".foreground").selectAll(".tooltip")
@@ -242,18 +290,29 @@ GraphWidget.prototype.update = function(prev, elem) {
   var cellSize = this.cellSize();
   var margins = this.margins();
   var graph = d3.select(elem)
+  var foreground = graph.select("svg").classed({"zoomed": this.zoom});
   var canvas = graph.select("canvas")[0][0]
   var locale = i18n[this.lang]
-  var xAxisFormat = (d) => locale.timeFormat('%B')(d)
+  var day_name = (day) => {
+    return locale.timeFormat('%a')(day).toUpperCase().substring(0, 1);
+  }
+  var month_name = (month) => {
+    var mn = locale.timeFormat('%B')(month);
+    return mn.charAt(0).toUpperCase() + mn.slice(1);
+  }
 
   var data = this.calendar_data
   var keys = d3.keys(data)
 
-  if(keys.length === 0) { return }
-
+  if(!this.calendar_extent || !this.calendar_extent[0]) return;
   var [ lo, hi ] = this.calendar_extent.map(dateIndexFormat.parse)
-  var data_extent = [ easter(lo), easterCeiling(hi) ]
-  var height = (data_extent[1].getFullYear() - data_extent[0].getFullYear()) * cellSize * 9
+  var data_extent = [ easterForYear(lo.getFullYear()), easterCeiling(hi) ]
+  var height;
+  if(this.zoom) {
+    height = (8 * cellSize) * 3;
+  } else {
+    height = (data_extent[1].getFullYear() - data_extent[0].getFullYear()) * cellSize * 9;
+  }
   var width = this.width();
 
   canvas.height = margins.top + margins.bottom + height
@@ -270,35 +329,87 @@ GraphWidget.prototype.update = function(prev, elem) {
   y_global = y
 
   var ctx = canvas.getContext('2d')
-  ctx.save()
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  ctx.translate(0.5,0.5);
-
   var seasons = d3.range(data_extent[0].getFullYear(), data_extent[1].getFullYear()).map(easterForYear)
+  if(this.zoom) {
+    seasons.forEach( (season) => {
 
-  seasons.forEach( (season) => {
-    ctx.save()
-    ctx.translate(margins.left - 10, margins.top + Math.round( y(season) ))
+      var x = (date) => weeksOffset(season, date) * cellSize
+      var nextSeason = easterForYear(season.getFullYear()+1)
+      var monthSeason = new Date(season.getFullYear(), season.getMonth(), 1);
+      var nextMonthSeason = new Date(nextSeason.getFullYear(), nextSeason.getMonth() + 1, 1);
 
-    ctx.strokeStyle = "black";
-    ctx.beginPath();
-    ctx.moveTo(0, -3);
-    ctx.lineTo(width, -3);
-    ctx.stroke();
+      var days = d3.time.days( season, nextSeason )
 
-    var x = (date) => weeksOffset(season, date) * cellSize
-
-    var nextSeason = easterForYear(season.getFullYear()+1)
-    var days = d3.time.days( season, nextSeason )
-
-    if (this.mode === 'focus') {
       var months = d3.time.months( new Date(season.getFullYear(), 3, 1), new Date(nextSeason.getFullYear(), 4, 1) )
       var scale = this.scale
 
       months.forEach( (month) => {
-        var se = this.sel_dates
-        var sel = (se.length == 0) || (se[0] < month && month < se[1])
+        var sel = (monthSeason <= month && month < nextMonthSeason)
+        if(sel) {
+          var days = d3.time.days(month, new Date(month.getFullYear(), month.getMonth() + 1, 1));
+          var my = Math.floor(month_n(month, season, cellSize, this.zoom) / 5) * (8 * cellSize);
+          var mx = month_x(month, season, cellSize, this.zoom) + margins.left - 10;
+          ctx.fillStyle = "#E7E8EA";
+          ctx.fillRect(mx, my, cellSize * 7, cellSize * 1.5)
+
+          ctx.fillStyle = "#333";
+          ctx.textAlign = "center";
+          if(this.width() > 800) {
+            ctx.font = "16px sans-serif";
+          } else {
+            ctx.font = "12px sans-serif";
+          }
+          ctx.fillText(month_name(month), mx + (cellSize * 7) / 2, my + cellSize * 0.5);
+
+          days.forEach((d => {
+            if(season <= d && d < nextSeason) {
+              var rx = mx + (day(d) * cellSize);
+              var ry = month_y(month, d, cellSize) + my + cellSize * 1.5;
+              ctx.fillStyle = "#ccc";
+              ctx.font = "11px sans-serif";
+              ctx.fillText(day_name(d), rx + cellSize / 2, my + cellSize * 1.2);
+
+              ctx.strokeStyle = '#ccc'
+              ctx.strokeRect(rx, ry, cellSize, cellSize)
+              var s = dateIndexFormat(d)
+              var data = this.calendar_data[s]
+
+              ctx.fillStyle = "white";
+              if(data) {
+                ctx.fillStyle = scale(data)
+              }
+              ctx.fillRect(rx, ry, cellSize - 1, cellSize - 1)
+            }
+          }));
+        }
+      });
+    });
+  } else {
+    ctx.translate(0.5,0.5);
+    seasons.forEach( (season) => {
+      ctx.save()
+      ctx.translate(margins.left - 10, margins.top + Math.round( y(season) ))
+
+      ctx.strokeStyle = "black";
+      ctx.beginPath();
+      ctx.moveTo(0, -3);
+      ctx.lineTo(width, -3);
+      ctx.stroke();
+
+      var x = (date) => weeksOffset(season, date) * cellSize
+
+      var nextSeason = easterForYear(season.getFullYear()+1)
+      var monthSeason = new Date(season.getFullYear(), season.getMonth(), 1);
+      var nextMonthSeason = new Date(nextSeason.getFullYear(), nextSeason.getMonth() + 1, 1);
+      var days = d3.time.days( season, nextSeason )
+
+      var months = d3.time.months( new Date(season.getFullYear(), 3, 1), new Date(nextSeason.getFullYear(), 4, 1) )
+      var scale = this.scale
+
+      months.forEach( (month) => {
+        var sel = (monthSeason <= month && month < nextMonthSeason)
         if(sel) {
           var days = d3.time.days(month, new Date(month.getFullYear(), month.getMonth() + 1, 1));
           days.forEach((d => {
@@ -308,29 +419,20 @@ GraphWidget.prototype.update = function(prev, elem) {
               ctx.strokeStyle = '#ccc'
               ctx.strokeRect(rx, ry, cellSize, cellSize)
               var s = dateIndexFormat(d)
-              var d = this.calendar_data[s]
+              var data = this.calendar_data[s]
 
-              ctx.fillStyle = "transparent";
-              if(d) {
-                ctx.fillStyle = scale(d)
+              ctx.fillStyle = "white";
+              if(data) {
+                ctx.fillStyle = scale(data)
               }
-              ctx.fillRect(rx, ry, cellSize, cellSize)
+              ctx.fillRect(rx, ry, cellSize - 1, cellSize - 1)
             }
           }));
         }
       });
-
-    } else if (this.state.mode === 'context') {
-//      console.log("drawing context")
-    } else {
-
-      throw "Unkown mode " + mode;
-    }
-
-    ctx.restore()
-  })
-
-  ctx.restore()
+      ctx.restore()
+    })
+  }
 
   // svg layer
 
@@ -343,19 +445,32 @@ GraphWidget.prototype.update = function(prev, elem) {
   var circle = svg.selectAll("circle.focus")
     .data(this.focus_day ? [this.focus_day] : [])
 
+
   circle.exit().remove()
   circle.enter()
     .append('circle')
     .classed('focus', true)
-    .attr("r", 5)
     .attr("stroke", "red")
     .attr("stroke-width", 1.5)
     .attr("fill", "none")
+  circle.attr("r", cellSize / 2);
 
-  circle
-    .attr("cx", (d) => month_x(d, easter(d), cellSize) + (day(d) * cellSize) - 6)
-    .attr("cy", (d) => y(easter(d)) + month_y(new Date(d.getFullYear(), d.getMonth(), 1), d, cellSize) + 4)
-
+  if(this.zoom) {
+    circle
+      .attr("cx", (d) => month_x(d, easter(d), cellSize, this.zoom) + (day(d) * cellSize) + (cellSize / 2) - 10)
+      .attr("cy", (d) => {
+        var mr = Math.floor(month_n(d, easter(d), cellSize, this.zoom) / 5);
+        var cy = mr * (8 * cellSize);
+        cy += (cellSize * 1.5) - margins.top;
+        cy += month_y(new Date(d.getFullYear(), d.getMonth(), 1), d, cellSize);
+        cy += (cellSize / 2);
+        return cy;
+      });
+  } else {
+    circle
+      .attr("cx", (d) => month_x(d, easter(d), cellSize) + (day(d) * cellSize) + (cellSize / 2) - 10)
+      .attr("cy", (d) => y(easter(d)) + month_y(new Date(d.getFullYear(), d.getMonth(), 1), d, cellSize) + (cellSize / 2))
+  }
   // x axis
 
   var months_extent = d3.time.months( new Date(seasons[0].getFullYear(), 3, 1),
@@ -370,7 +485,7 @@ GraphWidget.prototype.update = function(prev, elem) {
       .classed('month', true)
       .attr('dy', '-1em')
       .attr('text-anchor', 'middle')
-      .text(xAxisFormat)
+      .text(month_name)
 
   month.attr('x', (d) => (month_x(d, seasons[0], cellSize) - (margins.left + 10)) + (6 * cellSize));
   // y axis
@@ -396,7 +511,7 @@ GraphWidget.prototype.update = function(prev, elem) {
 
 function Calendar() {
   return hg.state({
-    status: Status()
+    
   })
 }
 
@@ -411,46 +526,8 @@ Calendar.render = function(state, sizes, lang) {
     state.theater_data, state.calendar_extent, state.sel_dates,
     state.focus_day, 'focus', scale, sizes, lang);
 
-  var dragDateExtent = hg.BaseEvent(function (ev, broadcast) {
-    // @see https://github.com/Raynos/mercury/blob/master/examples/geometry/lib/drag-handler.js
-    var del = hg.Delegator()
-
-    var startSelection = pointToDate(ev, state.calendar_extent, graphWidget)
-
-    function onmove(ev2) {
-      ev2.preventDefault()
-      dragging = true
-
-      var endSelection = pointToDate(ev2, state.calendar_extent, graphWidget)
-
-      if(endSelection) {
-        var dates = [ startSelection, endSelection ].sort( d3.ascending )
-        var msg = { startDate: dates[0], endDate: dates[1] }
-
-        broadcast(msg)
-      }
-    }
-
-    function onup(ev2) {
-      // TODO.  find a better solution
-      setTimeout( () => { dragging = false }, 250)
-
-      del.unlistenTo('mousemove')
-      del.removeGlobalEventListener('mousemove', onmove)
-      del.removeGlobalEventListener('mouseup', onup)
-    }
-
-    ev.preventDefault()
-
-    if(startSelection) {
-      del.listenTo('mousemove')
-      del.addGlobalEventListener('mousemove', onmove)
-      del.addGlobalEventListener('mouseup', onup)
-    }
-  })
-
   var sendDay = hg.BaseEvent(function(ev, broadcast) {
-    var date = pointToDate(ev, state.calendar_extent, graphWidget)
+    var date = pointToDate(ev, state.calendar_extent, graphWidget, true)
 
     if(date && !dragging) {
       broadcast(assign(this.data, { date: date }))
@@ -459,13 +536,25 @@ Calendar.render = function(state, sizes, lang) {
 
   return (
       h('div.calendar', {
-        'ev-mousedown' : dragDateExtent(state.channels.sel_dates),
         'ev-click' : sendDay(state.channels.focus_day)
       }, [
-        Status.render(state, lang, scale, state.status),
-        graphWidget
+        h('div.legend', {
+          style: 'width: ' + sizes[0] + 'px'
+        }, [
+          h('h3', msgs[lang]['legend_caption'].replace(new RegExp("\\{type}"), query_msgs[lang][state.query.agg])),
+          h('div.items', [
+            scale.range().slice().reverse().map((item, index) => {
+              var lo = scale.invertExtent(item)[0];
+              return h('div.item', [
+                h('span.block', {style: 'background-color: ' + item}),
+                h('span', lo ? schema.format(lang, state.query.agg)(lo) : '')
+              ]);
+            })
+          ])
+        ]),
+          graphWidget
       ])
-  )
+    )
 }
 
 export default Calendar

@@ -24,7 +24,6 @@ var Crosstab = require('./crosstab')
 var Chart = require('./chart')
 var Calendar = require('./calendar')
 var Register = require('./register')
-var Status = require('./status')
 var Download = require('./download')
 var Legend = require('./legend')
 
@@ -90,7 +89,6 @@ function App(url, initial_query) {
             modal: Modal(initial_query),
             carousel: Carousel(1),
             register: Register(),
-            status: Status(),
             chart: Chart(),
             legend: Legend(),
             tableView: hg.value('half-table'),
@@ -117,6 +115,9 @@ function App(url, initial_query) {
             pane_display: hg.value(1),
             show_registry: hg.value(false),
             show_message: hg.value(false),
+            message_caption: hg.value(''),
+            message_values: hg.value([]),
+            message_buttons: hg.value([]),
 
 // data loaded from server
             calendar_data: hg.value([]),
@@ -156,15 +157,11 @@ function App(url, initial_query) {
     var debouncingLoadCalendar = debounce(loadCalendar, 500);
 
     state.query(function() {
-      state.cube_data.set(hg.varhash({}))
-      debouncingLoadCube()
-      debouncingLoadCalendar();
+      load()
     })
 
     state.sel_dates(function() {
-      state.cube_data.set(hg.varhash({}))
-      debouncingLoadCube()
-      debouncingLoadCalendar();
+      load()
     })
 
     state.cube_data(alignFocus);
@@ -197,29 +194,28 @@ function App(url, initial_query) {
 
   function loadCube() {
     if(state.pane_display() === 1) {
-      var query = state.query()
-      var first_row = query.rows.slice(0, 1)
-      var first_col = query.cols.slice(0, 1)
-      var day_window = state.sel_dates ? { day : state.sel_dates() } : {}
+        App.loadCube(state);
+    }
+  }
 
-      state.loading.set(true);
-
-      // load the 4 fundamental combinations of cube dimensions;
-      // remainder are accessible via drill-down in the UI
-      queue().defer(api.summarize, [], query.agg, query.filter, day_window)
-             .defer(api.summarize, first_row, query.agg, query.filter, day_window)
-             .defer(api.summarize, first_col, query.agg, query.filter, day_window)
-             .defer(api.summarize, [].concat(first_row).concat(first_col), query.agg, query.filter, day_window)
-             .await( (err, d1, d2, d3, d4) => {
-                if(err) { throw err }
-                state.cube_data.set({
-                  '0x0': d1,
-                  '1x0': d2,
-                  '0x1': d3,
-                  '1x1': d4
-                })
-                state.loading.set(false);
-            })
+  function load() {
+    if(validateFilters()) {
+      state.cube_data.set(hg.varhash({}))
+      debouncingLoadCube()
+      debouncingLoadCalendar();
+    } else {
+      var api = datapoint(state.download.url)
+      var all_dims = ([]).concat(state.query.rows()).concat(state.query.cols())
+      var download_url = api.url(all_dims, state.query.agg(), state.query.filter())
+      state.message_caption.set('criteria_caption');
+      state.message_values.set(['criteria_message', 'criteria_download_message']);
+      state.message_buttons.set([{
+          cls: 'center',
+          url: download_url,
+          text: 'download-button'
+        }
+      ]);
+      state.show_message.set(true);
     }
   }
 
@@ -232,6 +228,15 @@ function App(url, initial_query) {
     if(state.pane_display() === 2) {
       App.loadCalendar(state);
     }
+  }
+
+  function validateFilters() {
+    let filters = state.query().filter;
+    let dimension = Object.keys(filters).find(key => filters[key] && filters[key].length > 19);
+    if(dimension) {
+      console.log(filters[dimension]);
+    }
+    return !dimension;
   }
 
   function loadTheaters() {
@@ -280,6 +285,33 @@ App.loadCalendar = function(state) {
     state.loading.set(false);
   })
 }
+
+App.loadCube = function(state) {
+  var api = datapoint(state.url);
+  var query = state.query()
+  var first_row = query.rows.slice(0, 1)
+  var first_col = query.cols.slice(0, 1)
+  var day_window = state.sel_dates ? { day : state.sel_dates() } : {}
+
+  state.loading.set(true);
+
+  // load the 4 fundamental combinations of cube dimensions;
+  // remainder are accessible via drill-down in the UI
+  queue().defer(api.summarize, [], query.agg, query.filter, day_window)
+         .defer(api.summarize, first_row, query.agg, query.filter, day_window)
+         .defer(api.summarize, first_col, query.agg, query.filter, day_window)
+         .defer(api.summarize, [].concat(first_row).concat(first_col), query.agg, query.filter, day_window)
+         .await( (err, d1, d2, d3, d4) => {
+            if(err) { throw err }
+            state.cube_data.set({
+              '0x0': d1,
+              '1x0': d2,
+              '0x1': d3,
+              '1x1': d4
+            })
+            state.loading.set(false);
+        })
+}
 // focus changes
 
 App.refresh_pane = function(state, data) {
@@ -302,6 +334,18 @@ App.sel_dates = function(state, data) {
 
 App.open_calendar = function(state, data) {
   if(state.pane_display() !== 2) {
+    state.message_caption.set('calendar_tool_caption');
+    state.message_values.set(['calendar_tool_message']);
+    state.message_buttons.set([{
+        cls: 'left.secondary',
+        channel: 'cancel',
+        text: 'cancel'
+      }, {
+        cls: 'right',
+        channel: 'confirm',
+        text: 'ok'
+      },
+    ]);
     state.show_message.set(true);
   }
 }
@@ -412,14 +456,12 @@ App.focus_cell = function(state, data) {
 
 App.focus_day = function(state, data) {
   var new_day = data.date
-  console.log("Setting focus day: " + new_day)
   state.focus_day.set(new_day)
   Carousel.setSlide(state.carousel, 2)
   state.show_registry.set(true)
 }
 
 App.focus_theater = function(state, new_theater) {
-  console.log("Filtering to a theater: " + new_theater)
   var filter = state.query.filter
   var new_filter = assign(filter, { theater_period: new_theater })
   state.query.filter.set(new_filter)
@@ -474,15 +516,20 @@ App.render = function(state) {
     return h('div.row.main-container', [
       h('div.overlay' + (state.show_message ? '.show' : '.hide'),
         { 'ev-click': hg.send(state.channels.cancel) },
-        h('div.modal-message', {}, [
-          h('h1', msgs[lang]['calendar_tool_caption']),
-          h('p', msgs[lang]['calendar_tool_message']),
-          h('a.button.secondary',
-            { 'ev-click': hg.send(state.channels.cancel) },
-            msgs[lang]['cancel']),
-          h('a.button',
-            { 'ev-click': hg.send(state.channels.confirm) },
-            msgs[lang]['ok'])
+        h('div.modal-message',
+          {
+            'ev-click': function() {
+              // do nothing to prevent the dialog from closing due to
+              // the ev-click registered on the overlay
+            }
+          },
+          [
+            h('h1', msgs[lang][state.message_caption]),
+            state.message_values.map(value => h('p', msgs[lang][value])),
+            state.message_buttons.map(button => (h('a.button.' + button.cls, {
+              'ev-click': button.channel ? hg.send(state.channels[button.channel]) : null,
+              'href': button.url
+            }, msgs[lang][button.text])))
         ])
       ),
 			Query.render(state, state.modal, state.query, lang),
