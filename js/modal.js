@@ -93,10 +93,6 @@ Modal.toggleFilterValue = function(modal, data) {
   else { sv.push(value) }
   sv.sort()
 
-  console.log('toggled selection ' + dim + '.' + value + ' (' + sv.length + ')')
-
-  if (sv.length < 5) { console.log(JSON.stringify(sv)) }
-
   modal.filter_selection.put(dim, sv)
   modal.selectAll.put(dim, false);
 }

@@ -149,7 +149,8 @@ function App(url, initial_query) {
               confirm: App.confirm,
               cancel: App.cancel,
               switchTableView: App.switchTableView,
-              refresh_pane: App.refresh_pane
+              refresh_pane: App.refresh_pane,
+              download: App.download
             }
           })
 
@@ -204,18 +205,24 @@ function App(url, initial_query) {
       debouncingLoadCube()
       debouncingLoadCalendar();
     } else {
-      var api = datapoint(state.download.url)
-      var all_dims = ([]).concat(state.query.rows()).concat(state.query.cols())
-      var download_url = api.url(all_dims, state.query.agg(), state.query.filter())
-      state.message_caption.set('criteria_caption');
-      state.message_values.set(['criteria_message', 'criteria_download_message']);
-      state.message_buttons.set([{
-          cls: 'center',
-          url: download_url,
-          text: 'download-button'
-        }
-      ]);
-      state.show_message.set(true);
+      App.loadCube(state, cube_data => {
+        state.download.chartData.set(Chart.generate(state(), cube_data, state().chart.lang));
+        state.download.csv.set(Query.getUrl(state().query));
+        Download.prepare(state.download);
+        state.message_caption.set('criteria_caption');
+        state.message_values.set([{text: 'criteria_message'}, {text: 'criteria_download_message'}]);
+        state.message_buttons.set([{
+            cls: 'right',
+            channels: [state.channels().download],
+            text: 'download-button'
+          }, {
+            cls: 'secondary.left',
+            channels: [state.channels().cancel],
+            text: 'close'
+          }
+        ]);
+        state.show_message.set(true);
+      });
     }
   }
 
@@ -233,9 +240,6 @@ function App(url, initial_query) {
   function validateFilters() {
     let filters = state.query().filter;
     let dimension = Object.keys(filters).find(key => filters[key] && filters[key].length > 19);
-    if(dimension) {
-      console.log(filters[dimension]);
-    }
     return !dimension;
   }
 
@@ -286,7 +290,7 @@ App.loadCalendar = function(state) {
   })
 }
 
-App.loadCube = function(state) {
+App.loadCube = function(state, callback) {
   var api = datapoint(state.url);
   var query = state.query()
   var first_row = query.rows.slice(0, 1)
@@ -303,13 +307,23 @@ App.loadCube = function(state) {
          .defer(api.summarize, [].concat(first_row).concat(first_col), query.agg, query.filter, day_window)
          .await( (err, d1, d2, d3, d4) => {
             if(err) { throw err }
-            state.cube_data.set({
-              '0x0': d1,
-              '1x0': d2,
-              '0x1': d3,
-              '1x1': d4
-            })
-            state.loading.set(false);
+            if(callback) {
+              state.loading.set(false);
+              callback({
+                '0x0': d1,
+                '1x0': d2,
+                '0x1': d3,
+                '1x1': d4
+              });
+            } else {
+              state.cube_data.set({
+                '0x0': d1,
+                '1x0': d2,
+                '0x1': d3,
+                '1x1': d4
+              })
+              state.loading.set(false);
+            }
         })
 }
 // focus changes
@@ -332,17 +346,40 @@ App.sel_dates = function(state, data) {
   App.refresh_pane(state);
 }
 
+App.download = function(state, data) {
+  state.message_caption.set('criteria_caption');
+  state.message_values.set([{cls: 'center-text', text: 'download'}]);
+  state.message_buttons.set([{
+      cls: 'center.small',
+      url: state.download().csv,
+      text: 'csv'
+    }, {
+      cls: 'center.small',
+      url: state.download().svg,
+      text: 'svg'
+    }, {
+      cls: 'center.small',
+      url: state.download().jpeg,
+      text: 'jpg'
+    }, {
+      cls: 'center.small',
+      url: state.download().pdf,
+      text: 'pdf'
+    }
+  ]);
+}
+
 App.open_calendar = function(state, data) {
   if(state.pane_display() !== 2) {
     state.message_caption.set('calendar_tool_caption');
-    state.message_values.set(['calendar_tool_message']);
+    state.message_values.set([{text: 'calendar_tool_message'}]);
     state.message_buttons.set([{
         cls: 'left.secondary',
-        channel: 'cancel',
+        channels: [state.channels().cancel],
         text: 'cancel'
       }, {
         cls: 'right',
-        channel: 'confirm',
+        channels: [state.channels().confirm],
         text: 'ok'
       },
     ]);
@@ -525,9 +562,10 @@ App.render = function(state) {
           },
           [
             h('h1', msgs[lang][state.message_caption]),
-            state.message_values.map(value => h('p', msgs[lang][value])),
+            state.message_values.map(value => h('p' + (value.cls ? ("." + value.cls) : ""), msgs[lang][value.text])),
             state.message_buttons.map(button => (h('a.button.' + button.cls, {
-              'ev-click': button.channel ? hg.send(state.channels[button.channel]) : null,
+              'ev-click': button.channels ? 
+                button.channels.map(channel => hg.send(channel)) : null,
               'href': button.url
             }, msgs[lang][button.text])))
         ])

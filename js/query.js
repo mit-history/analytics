@@ -112,9 +112,6 @@ Query.resetSearch = function (state) {
 
 Query.setSelectedDimension = function (state, data) {
 
-    console.log('select dim');
-    console.log(data);
-
     // Get filter values for selected dimension
     var api = datapoint(state.url)
     var { axis, dim } = data
@@ -143,7 +140,7 @@ Query.setSelectedDimension = function (state, data) {
         state.selectedDimension.set(data)
 
         // Set previously selected filter values if applcable
-        if (state.filter[dim]) {
+        if (state.filter[dim] && state.filter_selection) {
             state.filter_selection.put(dim, state.filter[dim])
         }
     } else {
@@ -269,6 +266,12 @@ Query.togglePivot = function (query) {
     col_splice.apply(query.cols, [0, cols.length].concat(rows))
 
     console.log(JSON.stringify(query.rows()) + ' <--> ' + JSON.stringify(query.cols()))
+}
+
+Query.getUrl = function (state) {
+  var api = datapoint(state.url)
+  var all_dims = ([]).concat(state.rows).concat(state.cols)
+  return api.url(all_dims, state.agg, state.filter);
 }
 
 

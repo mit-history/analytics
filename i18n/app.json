@@ -5,7 +5,7 @@
 
     "pane_selector_button_1" : "Crosstab",
     "pane_selector_button_2" : "Calendar",
-    "pane_selector_button_3" : "Resgistry",
+    "pane_selector_button_3" : "Registry",
 
     "download" : "Download in format"
   },
@@ -27,6 +27,7 @@
     "currency": "Livres",
 
     "cancel": "Annuler",
+    "close": "Fermer",
     "ok": "OK",
     "calendar_tool_caption": "Changement d'outil",
     "calendar_tool_message": "Le passage de l'outil de comparaison à l'outil calendrier implique la reprise des sélections faites précédemment dans le premier outil. Tous les nouveaux choix de critères faits dans l'outil calendrier ne seront pas pris en compte.",
@@ -37,6 +38,10 @@
     "legend_caption": "Légende : {type}",
 
     "download" : "Télécharger au format",
-    "download-button": "Télécharger"
+    "download-button": "Télécharger",
+    "csv": "CSV",
+    "svg": "SVG",
+    "jpg": "JPG",
+    "pdf": "PDF"
   }
 }

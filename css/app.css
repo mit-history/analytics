@@ -55,6 +55,7 @@ body .tooltip::after {
 ::-webkit-scrollbar-thumb {
     border-radius: 4px;
     background-color: #87C6C5;
+	box-shadow: 0 0 1px rgba(255,255,255,.5);
     -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
 }
 
@@ -382,6 +383,10 @@ button.secondary:hover {
 	font-size: 12px;
 }
 
+.modal-message .center-text {
+	text-align: center;
+}
+
 .modal-message .left {
 	float: left;
 }
@@ -392,6 +397,15 @@ button.secondary:hover {
 	margin: 0 auto;
 	width: 150px;
 	display: block;
+}
+
+.modal-message .center.small {
+	width: 75px;
+	margin: 4px auto;
+}
+
+.modal-message .button {
+	margin: 8px;
 }
 
 .modal-message .secondary {

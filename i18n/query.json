@@ -67,7 +67,7 @@
         "genre_2": "Genre (2nd part)",
         "genre_2_hint": "where the second title is a {genre_2} genre",
         "genre_3": "Genre (3rd part)",
-        "genre_2_hint": "where the third title is a {genre_3} genre",
+        "genre_3_hint": "where the third title is a {genre_3} genre",
         "acts": "Acts",
         "acts_hint": "for act {acts}",
         "prose_vers": "Prose/Verse",

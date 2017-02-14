@@ -49,7 +49,7 @@ const margins = { top: 10, right: 130, bottom: 100, left: 80 }
 const legend_margins = { top: 5, right: 0, bottom: 0, left: 5 }  /* TODO.  remove */
 
 const max_legend = 20
-const max_group = 10
+const max_group = 20
 
 const min_spacing = 20
 
@@ -58,6 +58,7 @@ function Chart() {
   return hg.state({
     focus: hg.value(null),
     point: hg.value(null),
+    lang: hg.value(""),
     channels: {
       focus: (state, key) => {
 //        console.log('clicked ' + JSON.stringify(key) + '; state is ' + JSON.stringify(state.focus()))
@@ -68,6 +69,10 @@ function Chart() {
       }
     }
   })
+}
+
+Chart.generate = function(state, cube_data, lang) {
+  return Chart.render(state.chart, state, state.query, cube_data, [1250, 515], true, lang);
 }
 
 /* state, query: required; data, size, lang: optional */
@@ -88,6 +93,9 @@ Chart.render = function(state, app, query, data, size, legend, lang) {
    *
    * in combination with query.filter, any particular series can be charted
    */
+  if(lang) {
+    state.lang = lang;
+  }
 
   let origdata = data
 
@@ -101,11 +109,11 @@ Chart.render = function(state, app, query, data, size, legend, lang) {
   let f_y = (d) => d[query.agg]
   let f_color = (d) => d && query.cols.length ? d[ query.cols[0] ] : 'tous'
 
-  let fmt_x = schema.format(lang, query.rows[query.rows.length-1], 10)
-  let fmt_x_long = schema.format(lang, query.rows[query.rows.length-1])
-  let fmt_y = schema.format(lang, query.agg)
-  let fmt_color = schema.format(lang, query.cols[0], 10)
-  let fmt_color_long = schema.format(lang, query.cols[0])
+  let fmt_x = schema.format(state.lang, query.rows[query.rows.length-1], 10)
+  let fmt_x_long = schema.format(state.lang, query.rows[query.rows.length-1])
+  let fmt_y = schema.format(state.lang, query.agg)
+  let fmt_color = schema.format(state.lang, query.cols[0], 10)
+  let fmt_color_long = schema.format(state.lang, query.cols[0])
 
   let ordinal = ordinal_domain(data, (v) => fmt_x(f_x(v)))
 
@@ -177,7 +185,7 @@ Chart.render = function(state, app, query, data, size, legend, lang) {
   let fmt = (v) => '' + v
   let subscript = (attrs, axis) => {
     if(!(axis && axis[0])) return null
-    return i18n.format_stem_sub(msgs, axis[0], lang, (stem, sub) => {
+    return i18n.format_stem_sub(msgs, axis[0], state.lang, (stem, sub) => {
       return svg('text', attrs || {}, [ stem.toUpperCase(), sub ? svg('tspan', {dy: '1em'}, sub) : null ])
     })
   }
@@ -276,7 +284,7 @@ Chart.render = function(state, app, query, data, size, legend, lang) {
         (legend ? subscript({class: 'cols', transform: 'translate(' + [width + 5, 0] + ')', dy:'0.3em'}, query.cols) : null),
         subscript({class: 'rows', transform: 'translate(' + [width+25, height] + ')', dy: '0.3em'}, query.rows),
         svg('text', {class: 'agg', transform: 'translate(' + -margins.left + ')rotate(-90)', dy: '1em', 'text-anchor': 'end' },
-            msgs[lang][query.agg].toUpperCase())
+            msgs[state.lang][query.agg].toUpperCase())
       ])
     ])
   ])
