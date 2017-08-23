@@ -546,7 +546,7 @@ Calendar.render = function(state, sizes, lang) {
             scale.range().slice().reverse().map((item, index) => {
               var lo = scale.invertExtent(item)[0];
               return h('div.item', [
-                h('span.block', {style: 'background-color: ' + item}),
+                h('span.block', {style: {'background-color': item.toString()}}),
                 h('span', lo ? schema.format(lang, state.query.agg)(lo) : '')
               ]);
             })
