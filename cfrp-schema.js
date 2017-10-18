@@ -207,6 +207,15 @@ function format(lang, field, len) {
   }
 }
 
+function filter(dim, val) {
+  switch(true) {
+    case /^acts(_.*)?/.test(dim):
+      const value = parseInt(val);
+      return isNaN(value) ? true : value % 2;
+  }
+  return val === val;
+}
+
 function sort(vals) {
   if(vals && vals.hasOwnProperty("sort") && vals.length > 0) {
     if(typeof vals[0] === "number") {
@@ -217,4 +226,4 @@ function sort(vals) {
   }
 }
 
-export { group, dimension, aggregate, parse, format, sort };
+export { group, dimension, aggregate, parse, format, sort, filter };

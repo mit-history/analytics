@@ -34,7 +34,7 @@ function Axis(initial_dims) {
 Axis.render = function(modal_state, query_state, axis, lang) {
   var dims = query_state[axis] || []
 	var lIndex = 0;
-
+  console.log(dims);
   var sel_lis = dims.map( (dim) => {
     var sel_values = query_state.filter[dim] || []
 		lIndex++;

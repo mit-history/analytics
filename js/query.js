@@ -130,8 +130,8 @@ Query.DEFAULT_QUERY = DEFAULT_QUERY;
 
 Query.resetSearch = function (state) {
     state.agg.set(DEFAULT_QUERY.agg);
-    state.rows.set(DEFAULT_QUERY.rows);
-    state.cols.set(DEFAULT_QUERY.cols);
+    state.rows.set(["decade"]);
+    state.cols.set(["author_1"]);
     state.filter.set(DEFAULT_QUERY.filter);
     state.selectedDimension.set('');
 }

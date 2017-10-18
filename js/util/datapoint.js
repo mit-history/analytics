@@ -24,8 +24,8 @@ function datapoint(datapoint_url) {
     domain: (dim, fn) => {
       d3.csv(datapoint_url + "/aggregate/default.csv?" + qs.stringify({'axis[]': dim}), (error, data) => {
         if (error) { return console.error(error); }
-        else {
-          data = data.map( (d) => schema.parse(dim)(d[dim]) )
+        else {          
+          data = data.filter(d => schema.filter(dim, d[dim])).map( (d) => schema.parse(dim)(d[dim]) )
           fn(data)
         }
       })
