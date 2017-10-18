@@ -7,7 +7,6 @@
 *
 */
 
-
 require('../css/app.css')
 require('../css/chart.css')
 
@@ -266,7 +265,6 @@ function App(url, initial_query) {
   }
 }
 
-
 App.loadCalendar = function(state) {
   var api = datapoint(state.url);
   // presumes access to state... seems bad
@@ -451,8 +449,8 @@ App.open_theater_period_filter = function(state) {
 }
 
 App.reset_dates = function(state) {
-  state.start_date.set(1680);
-  state.end_date.set(1790);
+  state.start_date.set(1710);
+  state.end_date.set(1750);
   state.period_filters.set({});
   state.pane_display.set(1);
 }

@@ -17,7 +17,6 @@ const subscript = (range, items) => {
 
 const playbills = ['n'].concat(d3.range(1,4))
 
-
 const schema = {
 
   performance:
@@ -46,13 +45,9 @@ const schema = {
     subscript(playbills,
     [ "acts"]),
 
-
-
-
 //   prose_vers:
 //     subscript(playbills,
 //     [ "prose_vers" ]),
-
 
 		  /*performance_addl:
 		    subscript(playbills,
@@ -92,8 +87,6 @@ function parse(field) {
   // only necessary for non-text fields received via AJAX/CSV
   switch(true) {
     case /^decade(_.*)?/.test(field):
-      return parseInt
-    case /^month(_.*)?/.test(field):
       return parseInt
     case /^weekday(_.*)?/.test(field):
       return parseInt
@@ -153,7 +146,7 @@ function format(lang, field, len) {
 	    return (i) => +i   // [i, +i+9].join(' - ')
     case /^month(_.*)?/.test(field):
     // NB. months and weekdays are kept in 1-indexed format (like postgresql; unlike javascript)
-      return (i) => (i === null) ? "" : spec.months[+i-1]
+      return (i) => (i === null) ? "" : spec.months[parseInt(i)-1]
     case /^day(_.*)?/.test(field):
       return fmt.timeFormat("%a %d %b %Y")
     case /^weekday(_.*)?/.test(field):

@@ -27,7 +27,6 @@ var datapoint = require('./util/datapoint')
 
 var filter_dims = ["decade", "month", "weekday", "theater_period"];
 
-
 /** Query selector as a whole **/
 
 function Query(initial_query, url) {
@@ -94,19 +93,46 @@ function Query(initial_query, url) {
     }
 }
 
-
 const ORDER_VALUES = ['nat', 'asc', 'desc']
 
-Query.resetSearch = function (state) {
-    state.agg.set('sum_receipts_weighted');
-    state.rows.set([]);
-    state.cols.set([]);
-    state.filter.set({
+const DEFAULT_QUERY = {
+    rows: [ "decade" ],
+    cols: [ "author_1" ],
+    agg: "sum_receipts",
+    order: {
+        "author_1": "desc",
+        "decade": "nat"
+    },
+    filter: {
+        "author_1":
+        [
+            "Corneille (Pierre)",
+            "Molière (Jean-Baptiste Poquelin dit)",
+            "Racine (Jean)",
+            "Voltaire (François-Marie Arouet dit)",
+        ],
         "decade":
         [
-            1680, 1690, 1700, 1710, 1720, 1730, 1740, 1750, 1760, 1770, 1780, 1790
+            1710,
+            1720,
+            1730,
+            1740,
+            1750,
         ]
-    });
+    },
+    decade_scope: {
+        start: '1710',  // 1680
+        end: '1750'     // 1790
+    }
+  }
+
+Query.DEFAULT_QUERY = DEFAULT_QUERY;
+
+Query.resetSearch = function (state) {
+    state.agg.set(DEFAULT_QUERY.agg);
+    state.rows.set(DEFAULT_QUERY.rows);
+    state.cols.set(DEFAULT_QUERY.cols);
+    state.filter.set(DEFAULT_QUERY.filter);
     state.selectedDimension.set('');
 }
 
@@ -183,7 +209,6 @@ Query.addFilterRange = function(state, data) {
   }
 }
 
-
 Query.setAggregate = function (query, new_agg) {
     query.agg.set(new_agg)
 }
@@ -233,7 +258,6 @@ Query.removeDimension = function (query, data) {
         dims.splice(j, 1)
     }
 
-
     query.filter.put(dim, [])
     // query.filter.delete(dim)
 }
@@ -273,7 +297,6 @@ Query.getUrl = function (state) {
   var all_dims = ([]).concat(state.rows).concat(state.cols)
   return api.url(all_dims, state.agg, state.filter);
 }
-
 
 Query.render = function (app_state, modal_state, query_state, lang) {
     var api = datapoint(query_state.url)
