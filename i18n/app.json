@@ -7,7 +7,31 @@
     "pane_selector_button_2" : "Calendar",
     "pane_selector_button_3" : "Registry",
 
-    "download" : "Download in format"
+    "sum_receipts": "{agg} Pounds is the gross receipts {cols} {rows}",
+    "performances_days": "{agg} is the amount of daily performances {cols} {rows}",
+    "mean_receipts_day": "{agg} Pounds is average receipts per day {cols} {rows}",
+    "mean_price": "{agg} Pounds is the average ticket price {cols} {rows}",
+
+    "currency": "Pounds",
+
+    "cancel": "Cancel",
+    "close": "Close",
+    "ok": "OK",
+    "calendar_tool_caption": "Switch Tool",
+    "calendar_tool_message": "Switching from the comparison tool to the calendar tool implies selecting all criterions again in the first tool. Any new choices done in the calendar tool will not be taken into account.",
+    "criteria_caption": " ",
+    "criteria_message": "You wish to generate a graph with too many criterions. We invite you to refine your search for a better readability.",
+    "criteria_download_message": "If required, you can download the results of your search directly.",
+
+    "legend_caption": "Legend : {type}",
+
+    "download" : "Download in format",
+    "download-button": "Download",
+
+    "csv": "CSV",
+    "svg": "SVG",
+    "jpg": "JPG",
+    "pdf": "PDF"
   },
 
   "fr":
@@ -31,7 +55,7 @@
     "ok": "OK",
     "calendar_tool_caption": "Changement d'outil",
     "calendar_tool_message": "Le passage de l'outil de comparaison à l'outil calendrier implique la reprise des sélections faites précédemment dans le premier outil. Tous les nouveaux choix de critères faits dans l'outil calendrier ne seront pas pris en compte.",
-    "criteria_caption": "",
+    "criteria_caption": " ",
     "criteria_message": "Vous souhaitez générer un graphique avec une grande quantité de critères. Nous vous invitons à raffiner votre recherche pour une meilleure lisibilité.",
     "criteria_download_message": "Au besoin, vous pouvez télécharger directement le résultat de cette recherche.",
 

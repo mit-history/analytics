@@ -89,7 +89,8 @@
         "ex_representation": "Notable performance",
         "ex_place": "Notable place",
         "theater_period": "Theater + Period",
-        "seating_area": "Seat"
+        "seating_area": "Seat",
+        "seating_area_hint": "for the seat {seating_area}"
     },
     "fr": {
         "comparison_tool_title": "Outil de comparaison",
