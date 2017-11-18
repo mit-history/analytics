@@ -79,8 +79,28 @@ function debounce(func, wait, immediate) {
   };
 }
 
+function getDisplayMode() {
+  var display = 1;
+  var location = window.location;
+  if(location.search) {
+    var search = location.search.substr(1);
+    var params = search.split('&');
+    params.forEach(param => {
+      if(param.indexOf('display=') !== -1) {
+        display = parseInt(param.substr(param.indexOf('=') + 1), 10);
+        if(display !== 2) {
+          display = 1;
+        }
+      }
+    });
+  }
+
+  return display;
+}
+
 function App(url, initial_query) {
   var api = datapoint(url)
+  var pane_display = getDisplayMode();
   var state = hg.state({
 
 // component state
@@ -111,7 +131,7 @@ function App(url, initial_query) {
             available_theater_periods: hg.value([]),
 
             loading: hg.value(false),
-            pane_display: hg.value(1),
+            pane_display: hg.value(pane_display),
             show_registry: hg.value(false),
             show_message: hg.value(false),
             message_caption: hg.value(''),
@@ -170,7 +190,12 @@ function App(url, initial_query) {
     // this might be bad form... how to send a message to a component?
     state.focus_day( (date) => Register.setDate(state.register, url, date) )
 
-    loadCube()
+    if(pane_display === 1) {
+      loadCube()
+    } else {
+      loadCalendar();
+    }
+    
     loadTheaters()
 
     // Loading filters to be used in query panel
