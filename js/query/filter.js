@@ -31,8 +31,6 @@ function strMatch(s, p) {
 
 function Filter() {
 
-//  console.log("FILTER: " + JSON.stringify(initial_query))
-
   return hg.state({
     search: hg.value(''),
     channels: {

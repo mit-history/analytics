@@ -42,6 +42,17 @@ const dateIndexFormat = d3.time.format('%Y-%m-%d')
 
 const filterDims = ["decade", "month", "weekday", "theater_period"];
 
+const urlParamsMapping = {
+    'author1': 'author_1',
+    'author2': 'author_2',
+    'author3': 'author_3',
+    'title1': 'title_1',
+    'title2': 'title_2',
+    'title3': 'title_3',
+    'season': 'season',
+    'weekday': 'weekday'
+}
+
 // cribbed from underscore: http://underscorejs.org/docs/underscore.html#section-69
 function debounce(func, wait, immediate) {
   var timeout, args, context, timestamp, result;
@@ -98,10 +109,50 @@ function getDisplayMode() {
   return display;
 }
 
+function getInitialQuery(initial_query) {
+    var parsed_query = {
+        agg: initial_query.agg,
+        rows: [],
+        cols: [],
+        decade_scope: initial_query.decade_scope
+    };
+    var location = window.location;
+    if(location.search) {
+        var search = location.search.substr(1);
+        var params = search.split('&');
+        params.forEach(param => {
+            var key = param.split('=')[0];
+            var value = decodeURIComponent(param.split('=')[1]);
+            if (urlParamsMapping[key]) {
+                parsed_query.rows.push(urlParamsMapping[key]);
+                if (!parsed_query.order) {
+                    parsed_query.order = {};
+                    parsed_query.order[urlParamsMapping[key]] = 'desc';
+                    parsed_query.filter = {};
+                }
+                parsed_query.filter[urlParamsMapping[key]] = [ value ];
+            }
+        });
+    }
+
+    if (parsed_query.rows.length <= 0 ) {
+        parsed_query.rows = initial_query.rows;
+        parsed_query.cols = initial_query.cols;
+        parsed_query.filter = initial_query.filter;
+    }
+
+    return parsed_query;
+}
+
 function App(url, initial_query) {
   var api = datapoint(url)
   var pane_display = getDisplayMode();
+
+  // Override initial query with urls params if any
+  initial_query = getInitialQuery(initial_query);
+
   var state = hg.state({
+
 
 // component state
             route: Router(),
@@ -195,7 +246,7 @@ function App(url, initial_query) {
     } else {
       loadCalendar();
     }
-    
+
     loadTheaters()
 
     // Loading filters to be used in query panel
@@ -587,7 +638,7 @@ App.render = function(state) {
             h('h1', msgs[lang][state.message_caption]),
             state.message_values.map(value => h('p' + (value.cls ? ("." + value.cls) : ""), msgs[lang][value.text])),
             state.message_buttons.map(button => (h('a.button.' + button.cls, {
-              'ev-click': button.channels ? 
+              'ev-click': button.channels ?
                 button.channels.map(channel => hg.send(channel)) : null,
               'href': button.url
             }, msgs[lang][button.text])))
