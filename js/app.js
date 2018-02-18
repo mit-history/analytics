@@ -49,8 +49,20 @@ const urlParamsMapping = {
     'title1': 'title_1',
     'title2': 'title_2',
     'title3': 'title_3',
+    'genre1': 'genre_1',
+    'genre2': 'genre_2',
+    'genre3': 'genre_3',
+    'acts1': 'acts_1',
+    'acts1': 'acts_2',
+    'acts1': 'acts_3',
+    'performance': 'performance',
     'season': 'season',
-    'weekday': 'weekday'
+    'decade': 'decade',
+    'month': 'month',
+    'day': 'day',
+    // 'weekday': 'weekday', // Weekday causes problem because server do not accept specidif weekdays as filters, but only weekday dimension
+    'prosevers': 'prose_vers',
+    'total_receipts': 'sum_receipts',
 }
 
 // cribbed from underscore: http://underscorejs.org/docs/underscore.html#section-69
@@ -131,6 +143,10 @@ function getInitialQuery(initial_query) {
                     parsed_query.filter = {};
                 }
                 parsed_query.filter[urlParamsMapping[key]] = [ value ];
+            } else if (key == "weekday") {
+                parsed_query.rows.push(key);
+                parsed_query.order = {};
+                parsed_query.order[urlParamsMapping[key]] = 'desc';
             }
         });
     }
