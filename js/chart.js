@@ -128,11 +128,13 @@ Chart.render = function(state, app, query, data, size, legend, lang) {
   sums = sums.filter( (d) => {
     var c = f_color(d)
     var b = sel_vectors.indexOf(c) > -1
-//    console.log(c + " : " + b)
     return true
   })
-  sums = sums.sort((a,b) => d3.descending(f_y(a), f_y(b)))
-//  console.log(sums)
+
+      // Only sort non ordinal data
+  if (!ordinal) {
+    sums = sums.sort((a,b) => d3.descending(f_y(a), f_y(b)))
+  }
 
   let sel_groups = sums.slice(0, max_group).map(f_x)
 
